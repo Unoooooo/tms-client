@@ -2,9 +2,8 @@
   <section-block title="OverTime Request">
     <div>
       <section class="group-filter">
-     
         <el-input
-        :disabled="$authInfo.role() == 4"
+          :disabled="$authInfo.role() == 4"
           v-model="fullnameSearch"
           placeholder="Account"
           class="input-search"
@@ -12,7 +11,7 @@
         />
 
         <el-input
-        :disabled="$authInfo.role() == 4"
+          :disabled="$authInfo.role() == 4"
           v-model="projectSearch"
           placeholder="Project"
           class="input-search"
@@ -232,12 +231,12 @@
             </div>
             <div class="form-group row">
               <label class="col-sm-3 col-form-label">List member</label>
-              <div class="col-sm-8 data-detail">
+              <div class="col-sm-8 data-detail" style="display: flex;">
                 <div
                   v-for="username in request.listUsernameWithOt"
-                  :key="username"
+                  :key="username"  
                 >
-                  {{ username + '' }}
+                  {{ username + "," }}
                 </div>
               </div>
             </div>
@@ -250,18 +249,15 @@
           </div>
 
           <el-form v-else ref="dataForm" :rules="rules" :model="request">
+       
             <el-row :gutter="20">
-              <el-col :span="24">
+              <el-col :span="12">
                 <div class="form-group row">
-                  <label class="col-sm-1 col-form-label titleForm">Title</label>
-                  <el-form-item prop="title" class="col-sm-9">
+                  <label class="col-sm-3 col-form-label">Title</label>
+                  <el-form-item prop="title" class="col-sm-6">
                     <el-input v-model="request.title" />
                   </el-form-item>
                 </div>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12">
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label">Fullname</label>
                   <el-form-item prop="full_name" class="col-sm-6">
@@ -289,23 +285,20 @@
                     </el-select>
                   </el-form-item>
                 </div>
-                <div class="form-group row">
-                  <label class="col-sm-3 col-form-label">List Member</label>
-                  <el-form-item prop="checkedMembers" class="col-sm-6">
-                    <el-checkbox-group
-                      v-model="addMemberToGroup.checkedMembers"
-                      class="list-member"
-                    >
-                      <el-checkbox
+                <!-- <div class="form-group row">
+                  <label class="col-sm-6 col-form-label">List Member With OT</label>
+                 
+                    <el-select v-model="addMemberToGroup.checkedMembers" multiple collapse-tags placeholder="Select Member" class="col-sm-7">
+                      <el-option
                         v-for="(member, index) in members"
                         :key="index"
                         :label="member.username"
+                        :value="member.username"
                       >
-                        {{ member.username }}
-                      </el-checkbox>
-                    </el-checkbox-group>
-                  </el-form-item>
-                </div>
+                      </el-option>
+                    </el-select>
+   
+                </div> -->
               </el-col>
               <el-col :span="12">
                 <div class="form-group row">
@@ -334,8 +327,10 @@
                     </el-select>
                   </el-form-item>
                 </div>
-                     <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">OT Date <span>*</span></label>
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label"
+                    >OT Date <span>*</span></label
+                  >
                   <el-form-item prop="date_ot" class="col-sm-6">
                     <el-date-picker
                       v-model="request.date_ot"
@@ -343,11 +338,25 @@
                       placeholder="Pick a day"
                       format="dd-MM-yyyy"
                       value-format="yyyy-MM-dd"
-                       class="itemSelec"
+                      class="itemSelec"
                     />
                   </el-form-item>
                 </div>
               </el-col>
+              <div class="form-group row">
+                  <label class="col-sm-3 col-form-label">List Member With OT</label>
+                 
+                    <el-select v-model="addMemberToGroup.checkedMembers" multiple collapse-tags placeholder="Select Member" class="col-sm-5">
+                      <el-option
+                        v-for="(member, index) in members"
+                        :key="index"
+                        :label="member.username"
+                        :value="member.username"
+                      >
+                      </el-option>
+                    </el-select>
+                  <!-- </el-form-item> -->
+                </div>
             </el-row>
           </el-form>
           <hr class="mb-0" />
@@ -407,6 +416,10 @@
 .el-date-editor {
   width: 50%;
 }
+.el-select__tags {
+top: 36%;
+}
+
 .titleForm {
   margin-right: 31px;
 }
