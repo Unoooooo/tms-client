@@ -1,0 +1,27 @@
+{
+  "home": "Trang chủ",
+  "messages": {
+    "alpha": "alpha error",
+    "alphaNum": "alphaNum error",
+    "and": "and error",
+    "between": "between error",
+    "common": "common error",
+    "decimal": "decimal error",
+    "email": "email error",
+    "integer": "integer error",
+    "ipAddress": "ipAddress error",
+    "macAddress": "macAddress error",
+    "maxLength": "maxLength error",
+    "maxValue": "maxValue error",
+    "minLength": "{min} minLength lỗi",
+    "minValue": "minValue error",
+    "not": "not error",
+    "numeric": "numeric error",
+    "or": "or error",
+    "required": "required error",
+    "requiredIf": "requiredIf error",
+    "requiredUnless": "requiredUnless error",
+    "sameAs": "sameAs error",
+    "url": "url error"
+  }
+}

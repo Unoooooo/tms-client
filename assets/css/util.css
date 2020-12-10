@@ -1,0 +1,150 @@
+.page {
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 1280px;
+}
+.page-header {
+  -webkit-box-flex: 0;
+  /* flex: 0 0 60px; */
+  min-height: 60px;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+  -webkit-box-align: stretch;
+  align-items: stretch;
+  background-color: #fff;
+  color: #353a40;
+  border-bottom: 1px solid #edeff0;
+  padding: 0 18px;
+  position: relative;
+}
+.page-header .text-info .badge {
+  border: 1px solid #adb5bd;
+  color: #adb5bd;
+}
+.page-header > div {
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-align: stretch;
+  align-items: stretch;
+}
+.page-header .header-logo {
+  padding-right: 1rem;
+}
+.page-header .header-logo img {
+  height: 23px;
+}
+.header-menu i {
+  font-size: 1.5rem;
+}
+.page-container {
+  flex: 1 1 auto;
+  margin: 80px 20px;
+}
+.page-nav a {
+  color: #495057;
+}
+.page-nav a:hover,
+.page-nav a:active,
+.page-nav a .active {
+  color: #212529;
+}
+.left-menu {
+  position: relative;
+  -webkit-box-flex: 0;
+  flex: 0 0 280px;
+  background: #f8f9fa;
+  border-right: 1px solid #dee2e6;
+}
+.left-menu a {
+  color: #495057;
+}
+.left-menu a:hover,
+.left-menu a:active,
+.left-menu a.active,
+.left-menu a.nuxt-link-active {
+  color: #00b900 !important;
+}
+.page-footer {
+  -webkit-box-flex: 0;
+  flex: 0 0 60px;
+  height: 60px;
+  padding: 0 15px;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+  border-top: 1px solid #dee2e6;
+}
+
+.font-weight-bold {
+  font-weight: 700 !important;
+}
+
+.text-info {
+  color: black !important;
+}
+
+.nav-bordered .nav-link.active,
+.nav-bordered .nav-link.nuxt-link-exact-active {
+  border-bottom-color: #00b900;
+}
+
+.nav-bordered .nav-link {
+  border-bottom: 3px solid transparent;
+}
+
+.nav-bordered .nav-link:hover {
+  border-bottom-color: rgba(0, 185, 0, 0.25);
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #00b900;
+  border-color: #00b900;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #009300;
+  border-color: #008600;
+}
+
+.text-muted {
+  color: #adb5bd !important;
+}
+
+.el-table th > .cell {
+  text-align: center !important;
+  font-size: 18px;
+  color: white;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+main {
+  min-width: calc(100% - 280px);
+}
+
+.table-serenade table thead th {
+  background-color: #409EFF;
+}
+
+.dialog-alert {
+  display: flex;
+  padding-top: 0.6rem;
+  min-width: 38px;
+}
