@@ -3,10 +3,10 @@ export default {
   // Disable server-side rendering (https://go.nuxtjs.dev/ssr-mode)
   ssr: false,
 
-  server: {
-    port: process.env.APP_PORT || 3000, // default: 3000
-    host: 'localhost', // default: localhost
-  },
+  // server: {
+  //   port: process.env.APP_PORT || 3000, // default: 3000
+  //   host: 'localhost', // default: localhost
+  // },
 
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
@@ -82,10 +82,10 @@ export default {
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    baseURL: process.env.URL_API + '/api',
-    https: false,
-    // baseURL: 'https://time-management-system-fpt.herokuapp.com/api',
-    // https: true,
+    // baseURL: process.env.URL_API + '/api',
+    // https: false,
+    baseURL: 'https://time-management-system-fpt.herokuapp.com/api',
+    https: true,
     proxy: false,
     // debug: 'debug',
   },
