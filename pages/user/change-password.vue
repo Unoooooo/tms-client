@@ -25,9 +25,9 @@
 
     .form-login,
     .form-register {
-      .form-group {
-        margin-bottom: 15px;
-      }
+      // .form-group {
+      //   margin-bottom: 15px;
+      // }
 
       .help-block {
         color: red !important;

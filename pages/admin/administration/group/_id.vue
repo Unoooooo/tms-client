@@ -4,7 +4,7 @@
       <div class="content">
         <el-row :gutter="20">
           <el-col :span="12">
-            <h5 style="margin-bottom: 15px">Group name: {{ groupName }}</h5>
+            <div class="titleGroup"> Group name: {{ groupName }}</div>
           </el-col>
         </el-row>
 
@@ -266,7 +266,7 @@
                 </div>
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label"
-                    >Fingerprint Code</label
+                    >#Finger</label
                   >
                   <div
                     class="col-sm-5 data-detail"
@@ -423,7 +423,7 @@
                 </div>
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label"
-                    >Fingerprint code</label
+                    >#Finger</label
                   >
                   <div class="dialog-alert">{{ $t('(*)') }}</div>
                   <el-form-item prop="fingerprint_code" class="col-sm-7">
@@ -458,7 +458,14 @@
 .el-table tr th {
   background-color: #f5f7fa;
 }
-
+.titleGroup{
+    font-size: 26px;
+    margin-left: -600px;
+    margin-bottom: 10px;
+}
+.form-group{
+  margin-bottom: 0px;
+}
 .demo-input-label {
   display: inline-block;
   width: 45px;
@@ -492,6 +499,7 @@
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 [class*='el-col-'] {
   float: right;

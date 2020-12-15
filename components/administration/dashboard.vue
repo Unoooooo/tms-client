@@ -33,7 +33,10 @@
       <section class="group-filter">
         <label>Request Summary</label>
 
-        <el-select v-if="$authInfo.role() != 4" v-model="group" />
+        <el-select
+          v-if="$authInfo.role() != constant.Role.STAFF"
+          v-model="group"
+        />
 
         <el-date-picker
           v-model="startDate"
@@ -147,7 +150,6 @@
   margin-top: 20px;
 }
 .container {
-  
   .row {
     .col-sm {
       margin: 20px;
@@ -166,7 +168,6 @@
           text-align: center;
         }
         .sub-title {
-          
           text-align: left;
           flex: 2;
         }
@@ -204,12 +205,12 @@
     font-size: 30px;
     font-weight: bold;
   }
-
 }
 </style>
 
 <script>
 import validate from '@/helpers/custom-rules-validate'
+import Constant from '~/constant'
 
 export default {
   mixins: [validate],
@@ -217,6 +218,7 @@ export default {
   middleware: 'auth',
   data() {
     return {
+      constant: Constant,
       loading: false,
       tableData: [],
       startDate: '',

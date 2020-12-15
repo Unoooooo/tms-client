@@ -254,6 +254,7 @@ label {
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 </style>
 

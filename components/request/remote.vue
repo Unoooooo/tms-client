@@ -2,53 +2,65 @@
   <section-block title="Check Remote">
     <div>
       <section class="group-filter">
-        <el-input
-        :disabled="$authInfo.role() == 4"
-          v-model="fullnameSearch"
-          placeholder="Account"
-          class="input-search"
-          clearable
-        />
+        <div class="pc-hidden">
+          <el-input
+            v-model="fullnameSearch"
+            :disabled="$authInfo.role() == constant.Role.STAFF"
+            placeholder="Account"
+            class="input-search"
+            clearable
+          />
 
-        <el-date-picker
-          v-model="start_date"
-          type="date"
-          placeholder="Start date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          class="date-picker"
-        />
+          <el-date-picker
+            v-model="start_date"
+            type="date"
+            placeholder="Start date"
+            format="dd-MM-yyyy"
+            value-format="yyyy-MM-dd"
+            class="date-picker"
+          />
 
-        <el-date-picker
-          v-model="end_date"
-          type="date"
-          placeholder="End date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          class="date-picker"
-        />
+          <el-date-picker
+            v-model="end_date"
+            type="date"
+            placeholder="End date"
+            format="dd-MM-yyyy"
+            value-format="yyyy-MM-dd"
+            class="date-picker"
+          />
 
-        <el-button
-          class="button-delete-multi"
-          type="primary"
-          @click="searchRemoteRequest()"
-        >
-          <i class="el-icon-search"></i>
-        </el-button>
+          <el-button
+            class="button-delete-multi"
+            type="primary"
+            @click="searchRemoteRequest()"
+          >
+            <i class="el-icon-search"></i>
+          </el-button>
 
-        <el-button
-          class="button-delete-multi"
-          type="primary"
-          @click="getListRemoteRequest(page, size)"
-        >
-          <i class="el-icon-refresh"></i>
-        </el-button>
-
-        <div v-if="$authInfo.role() !== 3" class="gr-button">
-          <el-button class="add-new" @click="handleCreate()">
+          <el-button
+            class="button-delete-multi"
+            type="primary"
+            @click="getListRemoteRequest(page, size)"
+          >
+            <i class="el-icon-refresh"></i>
+          </el-button>
+          <el-button
+            v-if="$authInfo.role() !== constant.Role.MANAGER"
+            class="gr-button"
+            @click="handleCreate()"
+          >
             {{ $t('Add request') }}
           </el-button>
         </div>
+
+        <!-- <div
+          v-if="$authInfo.role() !== constant.Role.MANAGER"
+          class="gr-button"
+        >
+          <el-button class="add-new" @click="handleCreate()">
+            {{ $t('Add request') }}
+          </el-button>
+        </div> -->
       </section>
 
       <el-table
@@ -83,11 +95,6 @@
           prop="status"
           :label="$t('Status')"
         />
-        <!-- <el-table-column
-          class-name="text-left"
-          prop="response_msg"
-          :label="$t('Message')"
-        /> -->
         <el-table-column
           class-name="text-center"
           prop="action"
@@ -98,7 +105,7 @@
             <el-button
               v-if="
                 scope.row.status == 'Completed' &&
-                $authInfo.role() == 3 &&
+                $authInfo.role() == constant.Role.MANAGER &&
                 $authInfo.username() != scope.row.account_sent
               "
               class="button-action"
@@ -122,11 +129,11 @@
         <el-dialog
           :title="titlePopup"
           :visible.sync="dialogFormWithInput"
-          width="50%"
+          width="47%"
         >
           <el-form ref="dataForm" :rules="rules" :model="checkIn">
             <el-row v-if="dialogMode !== 'detail'" :gutter="20">
-              <el-col :span="10" style="padding-top:70px">
+              <el-col :sm="24" :lg="10">
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">Full Name</label>
                   <el-form-item prop="full_name" class="col-sm-7">
@@ -139,18 +146,18 @@
                     <el-input v-model="checkIn.group_name" disabled />
                   </el-form-item>
                 </div>
-                <!-- <div class="form-group row">
+                <div class="form-group row">
                   <label class="col-sm-4 col-form-label">Time</label>
                   <el-form-item class="col-sm-7">
                     <el-input :placeholder="dataString" disabled />
                   </el-form-item>
-                </div> -->
+                </div>
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">Site Name</label>
                   <el-form-item prop="sitename" class="col-sm-7">
                     <el-select
                       v-model="checkIn.sitename"
-                      placeholder="Please select sitename"
+                      placeholder="Select sitename"
                       class="col-sm-12 pl-0"
                     >
                       <el-option
@@ -164,66 +171,62 @@
                   </el-form-item>
                 </div>
               </el-col>
-              <el-col :span="14">
-                <div class="form-group row">
-                  <el-form-item class="col-sm-12">
-                    <input
-                      id="avatar"
-                      ref="avatar"
-                      type="file"
-                      @change="handleFileUpload()"
-                    />
-                  </el-form-item>
-                  <el-image
-                    :src="image_url_preview"
-                    fit="contain"
-                    class="image-remote"
+              <el-col :sm="24" :lg="14">
+                <div class="form-group">
+                  <el-upload
+                    class="avatar-uploader"
+                    action=""
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
                   >
-                    <div slot="error" class="image-slot">
-                      <i class="el-icon-picture-outline"></i>
-                    </div>
-                  </el-image>
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  </el-upload>
                 </div>
               </el-col>
             </el-row>
             <el-row :gutter="20">
-              <el-col :span="24" >
+              <el-col :span="24">
                 <div v-if="dialogMode === 'detail'">
-                  <el-col :span="12" style="float: right; width: 45%; padding-right:30px;">
-                  <div class="form-group row">
-                    <div class="dialog-alert"></div>
-                    <el-image :src="image_url_preview" fit="contain">
-                      <div slot="error" class="image-slot">
-                        <i class="el-icon-picture-outline"></i>
-                      </div>
-                    </el-image>
-                  </div>
+                  <el-col :span="12" style="float: right">
+                    <div class="form-group row">
+                      <div class="dialog-alert"></div>
+                      <el-image
+                        :src="image_url_preview"
+                        fit="contain"
+                        style="width: 70%"
+                      >
+                        <div slot="error" class="image-slot">
+                          <i class="el-icon-picture-outline"></i>
+                        </div>
+                      </el-image>
+                    </div>
                   </el-col>
-                   <el-col :span="12">
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">Time</label>
-                    <el-form-item class="col-sm-8">
-                      {{ checkIn.check_time }}
-                    </el-form-item>
-                  </div>
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">Site</label>
-                    <el-form-item prop="site" class="col-sm-5">
-                      {{ checkIn.site }}
-                    </el-form-item>
-                  </div>
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">Status</label>
-                    <el-form-item prop="status" class="col-sm-5">
-                      {{ checkIn.status }}
-                    </el-form-item>
-                  </div>
-                  <div class="form-group row">
-                    <label class="col-sm-3 col-form-label">Message</label>
-                    <el-form-item prop="response_msg" class="col-sm-5">
-                      {{ checkIn.response_msg }}
-                    </el-form-item>
-                  </div>
+                  <el-col :span="12">
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Time</label>
+                      <el-form-item class="col-sm-8">
+                        {{ checkIn.check_time }}
+                      </el-form-item>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Site</label>
+                      <el-form-item prop="site" class="col-sm-5">
+                        {{ checkIn.site }}
+                      </el-form-item>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Status</label>
+                      <el-form-item prop="status" class="col-sm-5">
+                        {{ checkIn.status }}
+                      </el-form-item>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Message</label>
+                      <el-form-item prop="response_msg" class="col-sm-5">
+                        {{ checkIn.response_msg }}
+                      </el-form-item>
+                    </div>
                   </el-col>
                 </div>
               </el-col>
@@ -231,7 +234,7 @@
           </el-form>
           <hr class="mb-0" />
           <span slot="footer" class="dialog-footer">
-           <el-button @click="dialogFormWithInput = false">Close</el-button>
+            <el-button @click="dialogFormWithInput = false">Close</el-button>
             <el-button
               v-if="dialogMode !== 'detail'"
               class="mr-auto"
@@ -249,7 +252,6 @@
             >
               OK
             </el-button>
-           
           </span>
         </el-dialog>
       </section>
@@ -290,8 +292,38 @@
 
 <style lang="scss" scoped>
 .image-remote {
-  max-width: 95%;
+  max-width: 70%;
 }
+.avatar-uploader {
+  margin: auto;
+  max-width: 300px;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  border: 1px dashed #d9d9d9;
+  font-size: 28px;
+  color: #8c939d;
+  width: 300px;
+  height: 300px;
+  line-height: 300px;
+  text-align: center;
+}
+.avatar {
+  width: 300px;
+  height: 300px;
+  display: block;
+  object-fit: cover;
+}
+
 .el-select {
   padding-right: 0;
 }
@@ -360,16 +392,20 @@ label {
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 .date-picker {
   width: 150px;
+   margin-bottom: 10px;
 }
 @media screen and (max-width: 1370px) {
   .input-search {
     width: 120px;
+    margin-bottom: 10px;
   }
   .date-picker {
     width: 140px;
+     margin-bottom: 10px;
   }
 }
 </style>
@@ -377,6 +413,7 @@ label {
 <script>
 import SimplePagination from '~/components/pagination/SimplePagination'
 import validate from '@/helpers/custom-rules-validate'
+import Constant from '~/constant'
 
 export default {
   components: { SimplePagination },
@@ -385,6 +422,8 @@ export default {
   middleware: 'auth',
   data() {
     return {
+      constant: Constant,
+      imageUrl: '',
       tableData: [],
       groupSearch: '',
       user_name: '',
@@ -410,7 +449,6 @@ export default {
         account_receiver: '',
         groupCompany: '',
       },
-      imageUrl: '',
       image_url_preview: '',
       rules: {
         sitename: this.validateRequired('sitename'),
@@ -439,6 +477,9 @@ export default {
       new Date().toLocaleTimeString()
   },
   methods: {
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw)
+    },
     resetImagePreview() {
       this.image_url_preview = ''
     },

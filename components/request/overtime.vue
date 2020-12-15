@@ -2,57 +2,59 @@
   <section-block title="OverTime Request">
     <div>
       <section class="group-filter">
-        <el-input
-          :disabled="$authInfo.role() == 4"
-          v-model="fullnameSearch"
-          placeholder="Account"
-          class="input-search"
-          clearable
-        />
+        <div class="pc-hidden">
+          <el-input
+            v-model="fullnameSearch"
+            :disabled="$authInfo.role() == constant.Role.STAFF"
+            placeholder="Account"
+            class="input-search"
+            clearable
+          />
+          <el-input
+            v-model="projectSearch"
+            :disabled="$authInfo.role() == constant.Role.STAFF"
+            placeholder="Project"
+            class="input-search"
+            clearable
+          />
+          <el-date-picker
+            v-model="startDate"
+            type="date"
+            placeholder="Start date"
+            format="dd-MM-yyyy"
+            value-format="yyyy-MM-dd"
+            class="date-picker"
+          />
 
-        <el-input
-          :disabled="$authInfo.role() == 4"
-          v-model="projectSearch"
-          placeholder="Project"
-          class="input-search"
-          clearable
-        />
-        <el-date-picker
-          v-model="startDate"
-          type="date"
-          placeholder="Start date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          class="date-picker"
-        />
+          <el-date-picker
+            v-model="endDate"
+            type="date"
+            placeholder="End date"
+            format="dd-MM-yyyy"
+            value-format="yyyy-MM-dd"
+            class="date-picker"
+          />
 
-        <el-date-picker
-          v-model="endDate"
-          type="date"
-          placeholder="End date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          class="date-picker"
-        />
+          <el-button
+            class="button-delete-multi"
+            type="primary"
+            @click="searchOtRequest()"
+          >
+            <i class="el-icon-search"></i>
+          </el-button>
 
-        <el-button
-          class="button-delete-multi"
-          type="primary"
-          @click="searchOtRequest()"
-        >
-          <i class="el-icon-search"></i>
-        </el-button>
-
-        <el-button
-          class="button-delete-multi"
-          type="primary"
-          @click="getListOTRequest(page, size)"
-        >
-          <i class="el-icon-refresh"></i>
-        </el-button>
-
-        <div v-if="$authInfo.role() !== 3" class="gr-button">
-          <el-button class="add-new" @click="handleCreate()">
+          <el-button
+            class="button-delete-multi"
+            type="primary"
+            @click="getListOTRequest(page, size)"
+          >
+            <i class="el-icon-refresh"></i>
+          </el-button>
+          <el-button
+            v-if="$authInfo.role() !== constant.Role.MANAGER"
+            class="gr-button"
+            @click="handleCreate()"
+          >
             {{ $t('Add request') }}
           </el-button>
         </div>
@@ -66,19 +68,6 @@
         class="table-serenade"
         @selection-change="handleSelectionChange"
       >
-        <!-- <el-table-column
-          :selectable="canSelectRow"
-          type="selection"
-          class-name="text-center"
-          width="60px"
-        /> -->
-        <!-- <el-table-column class-name="text-center" :label="$t('Date')">
-          <template slot-scope="{ row }">
-            {{
-              row.created_at ? showDateTime(row.update_at, 'DD/MM/YYYY') : ''
-            }}
-          </template>
-        </el-table-column> -->
         <el-table-column
           class-name="text-left"
           prop="title"
@@ -111,12 +100,6 @@
           sortable
           :label="$t('Status')"
         />
-
-        <!-- <el-table-column
-          class-name="text-left"
-          prop="response_msg"
-          :label="$t('Message')"
-        /> -->
         <el-table-column
           class-name="text-center"
           prop="action"
@@ -148,7 +131,7 @@
             </el-button>
             <el-button
               v-if="
-                $authInfo.role() !== 3 &&
+                $authInfo.role() !== constant.Role.MANAGER &&
                 scope.row.status == 'Pending' &&
                 scope.row.account_sent === user.username
               "
@@ -161,7 +144,7 @@
 
             <el-button
               v-if="
-                $authInfo.role() !== 3 &&
+                $authInfo.role() !== constant.Role.MANAGER &&
                 scope.row.status == 'Pending' &&
                 scope.row.account_sent === user.username
               "
@@ -188,74 +171,16 @@
           :visible.sync="dialogFormWithInput"
           width="50%"
         >
-          <div v-if="dialogMode === 'detail'">
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Title</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.title }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Account</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.account_sent }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Project</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.project }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">OverTime date</label>
-              <div class="col-sm-8 data-detail">
-                {{
-                  request.date_ot
-                    ? showDateTime(request.date_ot, 'DD/MM/YYYY')
-                    : ''
-                }}
-              </div>
-            </div>
-            <!-- <div class="form-group row">
-              <label class="col-sm-3 col-form-label">List Member</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.listUsernameWithOt }}
-              </div>
-            </div> -->
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Status</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.status }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">List member</label>
-              <div class="col-sm-8 data-detail" style="display: flex;">
-                <div
-                  v-for="username in request.listUsernameWithOt"
-                  :key="username"  
-                >
-                  {{ username + "," }}
-                </div>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Message</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.response_msg }}
-              </div>
-            </div>
-          </div>
-
-          <el-form v-else ref="dataForm" :rules="rules" :model="request">
-       
+          <el-form ref="dataForm" :rules="rules" :model="request">
             <el-row :gutter="20">
               <el-col :span="12">
                 <div class="form-group row">
                   <label class="col-sm-3 col-form-label">Title</label>
                   <el-form-item prop="title" class="col-sm-6">
-                    <el-input v-model="request.title" />
+                    <el-input
+                      v-model="request.title"
+                      :disabled="isDetailForm"
+                    />
                   </el-form-item>
                 </div>
                 <div class="form-group row">
@@ -274,6 +199,7 @@
                       v-model="request.project"
                       placeholder="Select project"
                       class="itemSelec"
+                      :disabled="isDetailForm"
                     >
                       <el-option
                         v-for="item in projects"
@@ -285,20 +211,12 @@
                     </el-select>
                   </el-form-item>
                 </div>
-                <!-- <div class="form-group row">
-                  <label class="col-sm-6 col-form-label">List Member With OT</label>
-                 
-                    <el-select v-model="addMemberToGroup.checkedMembers" multiple collapse-tags placeholder="Select Member" class="col-sm-7">
-                      <el-option
-                        v-for="(member, index) in members"
-                        :key="index"
-                        :label="member.username"
-                        :value="member.username"
-                      >
-                      </el-option>
-                    </el-select>
-   
-                </div> -->
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label">Message</label>
+                  <el-form-item prop="response_msg" class="col-sm-6">
+                    <el-input v-model="request.response_msg" disabled />
+                  </el-form-item>
+                </div>
               </el-col>
               <el-col :span="12">
                 <div class="form-group row">
@@ -316,6 +234,7 @@
                       v-model="request.account_receiver"
                       placeholder="Account receiver"
                       class="itemSelec"
+                      :disabled="isDetailForm"
                     >
                       <el-option
                         v-for="(item, index) in account_receivers"
@@ -328,9 +247,9 @@
                   </el-form-item>
                 </div>
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label"
-                    >OT Date <span>*</span></label
-                  >
+                  <label class="col-sm-4 col-form-label">
+                    OT Date <span>*</span>
+                  </label>
                   <el-form-item prop="date_ot" class="col-sm-6">
                     <el-date-picker
                       v-model="request.date_ot"
@@ -339,25 +258,51 @@
                       format="dd-MM-yyyy"
                       value-format="yyyy-MM-dd"
                       class="itemSelec"
+                      :disabled="isDetailForm"
                     />
                   </el-form-item>
                 </div>
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Status</label>
+                  <el-form-item prop="status" class="col-sm-6">
+                    <el-input v-model="request.status" disabled />
+                  </el-form-item>
+                </div>
               </el-col>
-              <div class="form-group row">
-                  <label class="col-sm-3 col-form-label">List Member With OT</label>
-                 
-                    <el-select v-model="addMemberToGroup.checkedMembers" multiple collapse-tags placeholder="Select Member" class="col-sm-5">
-                      <el-option
-                        v-for="(member, index) in members"
-                        :key="index"
-                        :label="member.username"
-                        :value="member.username"
-                      >
-                      </el-option>
-                    </el-select>
+              <el-col :span="24">
+                <div class="form-group row">
+                  <label class="col-sm-3 col-form-label">
+                    List Member With OT
+                  </label>
+
+                  <el-select
+                    v-model="addMemberToGroup.checkedMembers"
+                    multiple
+                    filterable
+                    allow-create
+                    default-first-option
+                    placeholder="Select Member"
+                    class="col-sm-8"
+                  >
+                    <el-option
+                      v-for="(member, index) in members"
+                      :key="index"
+                      :label="member.username"
+                      :value="member.username"
+                    >
+                    </el-option>
+                  </el-select>
                   <!-- </el-form-item> -->
                 </div>
+              </el-col>
             </el-row>
+            <el-form-item label="Note">
+              <el-input
+                v-model="request.content"
+                :disabled="isDetailForm"
+                type="textarea"
+              ></el-input>
+            </el-form-item>
           </el-form>
           <hr class="mb-0" />
           <span slot="footer" class="dialog-footer">
@@ -417,7 +362,7 @@
   width: 50%;
 }
 .el-select__tags {
-top: 36%;
+  top: 36%;
 }
 
 .titleForm {
@@ -488,17 +433,21 @@ label {
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 
 .date-picker {
   width: 150px;
+   margin-bottom: 10px;
 }
 @media screen and (max-width: 1370px) {
   .input-search {
     width: 120px;
+    margin-bottom: 10px;
   }
   .date-picker {
     width: 140px;
+     margin-bottom: 10px;
   }
 }
 .list-member > .el-checkbox {
@@ -511,6 +460,7 @@ label {
 <script>
 import SimplePagination from '~/components/pagination/SimplePagination'
 import validate from '@/helpers/custom-rules-validate'
+import Constant from '~/constant'
 
 export default {
   components: { SimplePagination },
@@ -519,6 +469,7 @@ export default {
   middleware: 'auth',
   data() {
     return {
+      constant: Constant,
       tableData: [],
       projectSearch: '',
       fullnameSearch: '',
@@ -530,6 +481,7 @@ export default {
       dialogMode: '',
       groups: [],
       projects: [],
+      isDetailForm: false,
       listUsernameWithOt: [],
       account_receivers: [],
       members: [],
@@ -672,6 +624,7 @@ export default {
     },
     handleCreate() {
       this.addMemberToGroup.checkedMembers = []
+      this.isDetailForm = false
       this.dialogMode = 'create'
       this.titlePopup = 'Create OverTime Request'
       this.dialogFormWithInput = true
@@ -682,6 +635,7 @@ export default {
     },
     handleUpdate(index, row) {
       this.request = Object.assign({}, row)
+      this.isDetailForm = false
       this.dialogMode = 'update'
       this.titlePopup = 'Edit OverTime Request'
       this.dialogFormWithInput = true
@@ -694,6 +648,7 @@ export default {
     handleInfo(index, row) {
       this.titlePopup = 'View OverTime Request'
       this.dialogMode = 'detail'
+      this.isDetailForm = true
       this.dialogFormWithInput = true
       this.request = Object.assign({}, row)
       this.rowSelected = index + 1

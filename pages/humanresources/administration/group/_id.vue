@@ -445,6 +445,7 @@
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 .el-image {
   width: 200px;

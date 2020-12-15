@@ -10,7 +10,7 @@
 
     <section
       class="layout layout-main"
-      :style="{ paddingLeft: collapseAside ? '80px' : '256px' }"
+      :class="{ 'layout-collapse': collapseAside }"
     >
       <div
         class="layout-header flex justify-between items-center text-gray-600"
@@ -22,7 +22,11 @@
         </div>
         <HeaderProfile />
       </div>
-      <div ref="mainBox" class="relative" style="padding: 20px">
+      <div
+        ref="mainBox"
+        class="relative"
+        :style="{ padding: screenWidth < 500 ? '5px' : '20px' }"
+      >
         <nuxt v-if="isRouterAlive"></nuxt>
       </div>
     </section>
@@ -36,6 +40,16 @@ export default {
       isRouterAlive: true,
       collapseAside: false,
     }
+  },
+
+  computed: {
+    screenWidth() {
+      return window.innerWidth
+    },
+  },
+
+  created() {
+    this.collapseAside = this.screenWidth < 500 ? true : false
   },
 
   provide() {
@@ -52,7 +66,7 @@ export default {
       })
     },
     updateCollapseAside() {
-       this.collapseAside = !this.collapseAside
+      this.collapseAside = !this.collapseAside
     },
   },
 }
@@ -76,6 +90,9 @@ export default {
     &.aside-collapse {
       flex: 0 0 80px;
       width: 80px;
+      @media only screen and (max-width: 650px) {
+        display: none;
+      }
     }
 
     &.aside-fixed {
@@ -93,6 +110,13 @@ export default {
   flex-direction: column;
   min-height: 100vh;
   transition: all 0.3s ease-in-out;
+  padding-left: 256px;
+  &.layout-collapse {
+    padding-left: 80px;
+    @media only screen and (max-width: 650px) {
+      padding-left: 0px;
+    }
+  }
 }
 
 .layout-header {

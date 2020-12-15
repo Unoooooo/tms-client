@@ -28,7 +28,7 @@
                     Username <span>*</span>
                   </label>
                   <el-form-item prop="username" class="col-sm-7">
-                    <el-input v-model="user.username" />
+                    <el-input v-model="user.username" disabled/>
                   </el-form-item>
                 </div>
                 <div class="form-group row">
@@ -44,7 +44,7 @@
                     Email <span>*</span>
                   </label>
                   <el-form-item prop="email" class="col-sm-7">
-                    <el-input v-model="user.email" type="email" />
+                    <el-input v-model="user.email" disabled type="email" />
                   </el-form-item>
                 </div>
                 <div class="form-group row">
@@ -108,6 +108,7 @@
                       format="dd-MM-yyyy"
                       value-format="yyyy-MM-dd"
                       class="dob"
+                      disabled
                     />
                   </el-form-item>
                 </div>
@@ -120,6 +121,7 @@
                       v-model="user.groupCompanyName"
                       placeholder="Please select group"
                       class="dob"
+                      disabled
                     >
                       <el-option
                         v-for="item in groups"
@@ -140,6 +142,7 @@
                       v-model="user.role"
                       placeholder="Please select role"
                       class="dob"
+                      disabled
                     >
                       <el-option
                         v-for="item in roles"
@@ -180,7 +183,7 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :span="8" style="margin-bottom: 5px">
-                <label class="label">{{ $t('Mobile') }}</label>
+                <label class="label">{{ $t('Phone') }}</label>
               </el-col>
               <el-col :span="16">{{ userData.mobile }}</el-col>
             </el-row>
@@ -216,7 +219,7 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :span="8" style="margin-bottom: 5px">
-                <label class="label">{{ $t('Number of fingers') }}</label>
+                <label class="label">{{ $t('#Fingers') }}</label>
               </el-col>
               <el-col :span="16">{{ userData.finger_number }}</el-col>
             </el-row>
@@ -344,8 +347,8 @@ export default {
         fingerprint_code: '',
       },
       rules: {
-        username: this.validateRequired('Username'),
-        full_name: this.validateRequired('Fullname'),
+        username: this.validateRequired('username'),
+        full_name: this.validateRequired('fullname'),
         email: this.validateEmailAddress(),
         mobile: this.validatePhoneNumber(),
         dob: this.validateRequired('date of birth'),

@@ -1,8 +1,8 @@
 import BaseService from './BaseService'
 
 export default class DailyTimeSheetAPI extends BaseService {
-  async getListTimeSheet( success, error) {
-    await this.post(`daily-timesheet/search`, success, error)
+  async getListTimeSheet( params,success, error) {
+    await this.post(`daily-timesheet/search`,params, success, error)
   }
 
 
@@ -22,16 +22,17 @@ export default class DailyTimeSheetAPI extends BaseService {
   async searchTimeSheetReport(params, success, error) {
     await this.post('daily-timesheet/search', params, success, error)
   }
-  async searchMothly(
+  async searchTimeSheet(
     groupId,
     userName,
-    dateDailyReport,
+    startDate,
+    endDate,
     params,
     success,
     error
   ) {
     this.get(
-      `daily-timesheet/search?groupId=${groupId}&userName=${userName}&=${dateDailyReport}${params}`,
+      `daily-timesheet/search?groupId=${groupId}&userName=${userName}&startDate=${startDate}&endDate=${endDate}${params}`,
       success,
       error
     )

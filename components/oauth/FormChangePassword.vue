@@ -9,7 +9,7 @@
         label-position="left"
         @keydown.native.enter.prevent="submitForm('ruleForm')"
       >
-        <el-form-item label="Current password" prop="oldPassword">
+          <el-form-item label="Current Password" prop="oldPassword">
           <el-input
             v-model="ruleForm.oldPassword"
             class="input-left"
@@ -19,7 +19,7 @@
           />
         </el-form-item>
 
-        <el-form-item label="New password" prop="newPassword">
+        <el-form-item label="New Password" prop="newPassword">
           <el-input
             v-model="ruleForm.newPassword"
             class="input-left"
@@ -29,7 +29,7 @@
           />
         </el-form-item>
 
-        <el-form-item label="Confirm password" prop="confirmPassword">
+        <el-form-item label="Confirm Password" prop="confirmPassword">
           <el-input
             v-model="ruleForm.confirmPassword"
             class="input-left"
@@ -41,7 +41,7 @@
 
         <p class="error">{{ error }}</p>
         <el-row :gutter="20" class="mt-30">
-          <el-col :span="12" :offset="8">
+          <el-col :span="12" :offset="8" style="margin-left: 200px;">
             <el-button type="primary" @click="submitForm('ruleForm')">
               {{ $t('Submit') }}
             </el-button>

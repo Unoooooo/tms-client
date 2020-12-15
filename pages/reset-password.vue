@@ -2,7 +2,7 @@
   <section class="page-login">
     <div class="page-login-box">
       <div class="content">
-        <h3>{{ $t('Reset password') }}</h3>
+        <h3>{{ $t('Reset Password') }}</h3>
         <form-reset-password @data="getData"></form-reset-password>
       </div>
     </div>
@@ -35,9 +35,9 @@
 
       .form-login,
       .form-register {
-        .form-group {
-          margin-bottom: 15px;
-        }
+        // .form-group {
+        //   margin-bottom: 15px;
+        // }
 
         .help-block {
           color: red !important;

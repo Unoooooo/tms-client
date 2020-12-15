@@ -2,47 +2,48 @@
   <section-block title="Explanation Request">
     <div>
       <section class="group-filter">
-        <el-input
-         :disabled="$authInfo.role() == 4"
-          v-model="fullnameSearch"
-          placeholder="Account"
-          class="input-search"
-          clearable
-        />
+        <div class="pc-hidden">
+          <el-input
+            v-model="fullnameSearch"
+            :disabled="$authInfo.role() == constant.Role.STAFF"
+            placeholder="Account"
+            class="input-search"
+            clearable
+          />
 
-        <el-date-picker
-          v-model="startDate"
-          type="date"
-          placeholder="Start date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          class="date-picker"
-        />
+          <el-date-picker
+            v-model="startDate"
+            type="date"
+            placeholder="Start date"
+            format="dd-MM-yyyy"
+            value-format="yyyy-MM-dd"
+            class="date-picker"
+          />
 
-        <el-date-picker
-          v-model="endDate"
-          type="date"
-          placeholder="End date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          class="date-picker"
-        />
+          <el-date-picker
+            v-model="endDate"
+            type="date"
+            placeholder="End date"
+            format="dd-MM-yyyy"
+            value-format="yyyy-MM-dd"
+            class="date-picker"
+          />
 
-        <el-button
-          class="button-delete-multi"
-          type="primary"
-          @click="searchExplanation()"
-        >
-          <i class="el-icon-search"></i>
-        </el-button>
-
-        <el-button
-          class="button-delete-multi"
-          type="primary"
-          @click="getListExplanation(page, size)"
-        >
-          <i class="el-icon-refresh"></i>
-        </el-button>
+          <el-button
+            class="button-delete-multi"
+            type="primary"
+            @click="searchExplanation()"
+          >
+            <i class="el-icon-search"></i>
+          </el-button>
+          <el-button
+            class="button-delete-multi"
+            type="primary"
+            @click="getListExplanation(page, size)"
+          >
+            <i class="el-icon-refresh"></i>
+          </el-button>
+        </div>
       </section>
 
       <el-table
@@ -53,19 +54,8 @@
         class="table-serenade"
         @selection-change="handleSelectionChange"
       >
-        <!-- <el-table-column
-          :selectable="canSelectRow"
-          type="selection"
-          class-name="text-center"
-          width="60px"
-        /> -->
-        <!-- <el-table-column class-name="text-center" :label="$t('Date')">
-          <template slot-scope="{ row }">
-            {{ row.update_at ? showDateTime(row.update_at, 'DD/MM/YYYY') : '' }}
-          </template>
-        </el-table-column> -->
         <el-table-column
-          class-name="text-center"
+          class-name="text-left"
           prop="account_sent"
           sortable
           :label="$t('Account')"
@@ -77,21 +67,32 @@
           :label="$t('Title')"
         />
         <el-table-column
+          class-name="text-center"
+          prop="abnormal_date"
+          :label="$t('Date')"
+          width="100px"
+        />
+        <el-table-column
+          class-name="text-center"
+          prop="explanInTime"
+          :label="$t('In Time')"
+        />
+        <el-table-column
+          class-name="text-center"
+          prop="explanOutTime"
+          :label="$t('Out Time')"
+        />
+        <el-table-column
           class-name="text-left"
           prop="type"
           :label="$t('Abnormal Type')"
         />
         <el-table-column
-          class-name="text-left"
+          class-name="text-center"
           prop="status"
           sortable
           :label="$t('Status')"
         />
-        <!-- <el-table-column
-          class-name="text-left"
-          prop="response_msg"
-          :label="$t('Message')"
-        /> -->
         <el-table-column
           class-name="text-center"
           prop="action"
@@ -123,7 +124,7 @@
             </el-button>
             <el-button
               v-if="
-                $authInfo.role() !== 3 &&
+                $authInfo.role() !== constant.Role.MANAGER &&
                 scope.row.status == 'Pending' &&
                 scope.row.account_sent === user.username
               "
@@ -167,6 +168,18 @@
               <label class="col-sm-3 col-form-label">Abnormal Type</label>
               <div class="col-sm-8 data-detail">
                 {{ explanation.type }}
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label">Explan In Time</label>
+              <div class="col-sm-8 data-detail">
+                {{ explanation.explanInTime }}
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label">Explan Out Time</label>
+              <div class="col-sm-8 data-detail">
+                {{ explanation.explanOutTime }}
               </div>
             </div>
             <div class="form-group row">
@@ -302,16 +315,20 @@ label {
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 .date-picker {
   width: 150px;
+   margin-bottom: 10px;
 }
 @media screen and (max-width: 1370px) {
   .input-search {
     width: 120px;
+    margin-bottom: 10px;
   }
   .date-picker {
     width: 140px;
+     margin-bottom: 10px;
   }
 }
 </style>
@@ -319,6 +336,7 @@ label {
 <script>
 import SimplePagination from '~/components/pagination/SimplePagination'
 import validate from '@/helpers/custom-rules-validate'
+import Constant from '~/constant'
 
 export default {
   components: { SimplePagination },
@@ -327,6 +345,7 @@ export default {
   middleware: 'auth',
   data() {
     return {
+      constant: Constant,
       tableData: [],
       groupSearch: '',
       fullnameSearch: '',
@@ -393,7 +412,7 @@ export default {
       this.size = query.size
     }
     this.getListExplanation(this.page, this.size)
-    this.getListUser()
+    // this.getListUser()
     this.getUserInfo()
   },
   methods: {
@@ -425,7 +444,7 @@ export default {
       )
     },
     async getListUser() {
-      if (this.$authInfo.role() === 4) {
+      if (this.$authInfo.role() === Constant.Role.STAFF) {
         await this.$services.explanation.getListAccountReceiver(
           (response) => {
             if (response.listData && response.listData.length > 0) {

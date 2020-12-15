@@ -7,20 +7,24 @@ export default class ActualAPI extends BaseService {
 
     await this.post('actual-in-out/search', params, success, error)
   }
-
+  async getListGroupActual(params, success, error) {
+    await this.get(`actual-in-out/list-group`,params, success, error)
+  }
   async searchActualReport(params, success, error) {
     await this.post('actual-in-out/search', params, success, error)
   }
   async searchMothly(
   
     userName,
-    dateActualInOut,
+    startDate,
+    endDate,
+    groupId,
     params,
     success,
     error
   ) {
     this.get(
-      `actual-in-out/search?userName=${userName}&dateActualInOut=${dateActualInOut}${params}`,
+      `actual-in-out/search?groupId=${groupId}&userName=${userName}&startDate=${startDate}&endDate=${endDate}${params}`,
       success,
       error
     )

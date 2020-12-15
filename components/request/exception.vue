@@ -2,61 +2,76 @@
   <section-block title="Exception Request">
     <div>
       <section class="group-filter">
-        <el-input
-          :disabled="$authInfo.role() == 4"
-          v-model="fullnameSearch"
-          placeholder="Account"
-          class="input-search"
-          clearable
-        />
+        <div class="pc-hidden">
+          <el-input
+            v-model="fullnameSearch"
+            :disabled="$authInfo.role() == constant.Role.STAFF"
+            placeholder="Account"
+            class="input-search"
+            clearable
+          />
 
-        <el-input
-         :disabled="$authInfo.role() == 4 || $authInfo.role() == 3"
-          v-model="groupSearch"
-          placeholder="Group"
-          class="input-search"
-          clearable
-        />
+          <el-input
+            v-model="groupSearch"
+            :disabled="
+              $authInfo.role() == constant.Role.STAFF ||
+              $authInfo.role() == constant.Role.MANAGER
+            "
+            placeholder="Group"
+            class="input-search"
+            clearable
+          />
 
-        <el-date-picker
-          v-model="startDate"
-          type="date"
-          placeholder="Start date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          class="date-picker"
-        />
+          <el-date-picker
+            v-model="startDate"
+            type="date"
+            placeholder="Start date"
+            format="dd-MM-yyyy"
+            value-format="yyyy-MM-dd"
+            class="date-picker"
+          />
 
-        <el-date-picker
-          v-model="endDate"
-          type="date"
-          placeholder="End date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          class="date-picker"
-        />
+          <el-date-picker
+            v-model="endDate"
+            type="date"
+            placeholder="End date"
+            format="dd-MM-yyyy"
+            value-format="yyyy-MM-dd"
+            class="date-picker"
+          />
 
-        <el-button
-          class="button-delete-multi"
-          type="primary"
-          @click="searchException()"
-        >
-          <i class="el-icon-search"></i>
-        </el-button>
+          <el-button
+            class="button-delete-multi"
+            type="primary"
+            @click="searchException()"
+          >
+            <i class="el-icon-search"></i>
+          </el-button>
 
-        <el-button
-          class="button-delete-multi"
-          type="primary"
-          @click="getListException(page, size)"
-        >
-          <i class="el-icon-refresh"></i>
-        </el-button>
-
-        <div v-if="$authInfo.role() !== 3" class="gr-button">
-          <el-button class="add-new" @click="handleCreate()">
+          <el-button
+            class="button-delete-multi"
+            type="primary"
+            @click="getListException(page, size)"
+          >
+            <i class="el-icon-refresh"></i>
+          </el-button>
+          <el-button
+            class="gr-button"
+            @click="handleCreate()"
+            v-if="$authInfo.role() !== constant.Role.MANAGER"
+          >
             {{ $t('Add request') }}
           </el-button>
         </div>
+
+        <!-- <div
+          v-if="$authInfo.role() !== constant.Role.MANAGER"
+          class="gr-button"
+        >
+          <el-button class="add-new" @click="handleCreate()">
+            {{ $t('Add request') }}
+          </el-button>
+        </div> -->
       </section>
 
       <el-table
@@ -150,7 +165,7 @@
             </el-button>
             <el-button
               v-if="
-                $authInfo.role() !== 3 &&
+                $authInfo.role() !== constant.Role.MANAGER &&
                 scope.row.status == 'Pending' &&
                 scope.row.account_sent === user.username
               "
@@ -162,7 +177,7 @@
             </el-button>
             <el-button
               v-if="
-                $authInfo.role() !== 3 &&
+                $authInfo.role() !== constant.Role.MANAGER &&
                 scope.row.status == 'Pending' &&
                 scope.row.account_sent === user.username
               "
@@ -190,106 +205,16 @@
           :visible.sync="dialogFormWithInput"
           width="50%"
         >
-          <div v-if="dialogMode === 'detail'">
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Title</label>
-              <div class="col-sm-6 data-detail">
-                {{ exception.title }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Account</label>
-              <div class="col-sm-6 data-detail">
-                {{ exception.account_sent }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Group</label>
-              <div class="col-sm-6 data-detail">
-                {{ exception.groupCompany }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Request type</label>
-              <div class="col-sm-8 data-detail">
-                {{ exception.type }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Start Date</label>
-              <div class="col-sm-6 data-detail">
-                {{
-                  exception.start_date
-                    ? showDateTime(exception.start_date, 'DD/MM/YYYY')
-                    : ''
-                }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">End Date</label>
-              <div class="col-sm-6 data-detail">
-                {{
-                  exception.end_date
-                    ? showDateTime(exception.end_date, 'DD/MM/YYYY')
-                    : ''
-                }}
-              </div>
-            </div>
-            <!-- <div
-              v-if="exception.type === 'Sooner working'"
-              class="form-group row"
-            >
-              <label class="col-sm-3 col-form-label">Soon Time</label>
-              <div class="col-sm-6 data-detail">
-                {{ exception.soon_time ? exception.soon_time : '' }}
-              </div>
-            </div> -->
-            <!-- <div
-              v-if="exception.type === 'Late working'"
-              class="form-group row"
-            >
-              <label class="col-sm-3 col-form-label">Late Time</label>
-              <div class="col-sm-6 data-detail">
-                {{ exception.late_time ? exception.late_time : '' }}
-              </div>
-            </div> -->
-
-            <div
-              v-if="exception.type === 'Parttime working'"
-              class="form-group row"
-            >
-              <label class="col-sm-3 col-form-label">Parttime</label>
-              <div class="col-sm-8 data-detail">
-                {{ exception.part_time_infor }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Note</label>
-              <div class="col-sm-6 data-detail">
-                {{ exception.content }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Status</label>
-              <div class="col-sm-6 data-detail">
-                {{ exception.status }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Message</label>
-              <div class="col-sm-6 data-detail">
-                {{ exception.response_msg }}
-              </div>
-            </div>
-          </div>
-
-          <el-form v-else ref="dataForm" :rules="rules" :model="exception">
+          <el-form ref="dataForm" :rules="rules" :model="exception">
             <el-row :gutter="20">
               <el-col :span="24">
                 <div class="form-group row">
                   <label class="col-sm-2 col-form-label">Title</label>
                   <el-form-item prop="title" class="col-sm-9">
-                    <el-input v-model="exception.title" />
+                    <el-input
+                      v-model="exception.title"
+                      :disabled="isDetailForm"
+                    />
                   </el-form-item>
                 </div>
               </el-col>
@@ -311,6 +236,7 @@
                       placeholder="Pick a day"
                       format="dd-MM-yyyy"
                       value-format="yyyy-MM-dd"
+                      :disabled="isDetailForm"
                     />
                   </el-form-item>
                 </div>
@@ -320,6 +246,7 @@
                     <el-select
                       v-model="exception.type"
                       placeholder="Abnormal type"
+                      :disabled="isDetailForm"
                     >
                       <el-option
                         v-for="(item, index) in abnormal_types"
@@ -330,40 +257,12 @@
                     </el-select>
                   </el-form-item>
                 </div>
-                <!-- <div
-                  v-if="exception.type === 'Late working'"
-                  class="form-group row"
-                >
-                  <label class="col-sm-4 col-form-label"> Late Time </label>
-                  <el-form-item prop="late_time" class="col-sm-6">
-                    <el-time-select
-                      v-model="exception.late_time"
-                      placeholder="Late time"
-                      :picker-options="{
-                        start: '06:00',
-                        step: '00:15',
-                        end: '23:45',
-                      }"
-                    />
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Message</label>
+                  <el-form-item prop="response_msg" class="col-sm-6">
+                    <el-input v-model="exception.response_msg" disabled />
                   </el-form-item>
-                </div> -->
-                <!-- <div
-                  v-if="exception.type === 'Sooner working'"
-                  class="form-group row"
-                >
-                  <label class="col-sm-4 col-form-label"> Sooner Time </label>
-                  <el-form-item prop="soon_time" class="col-sm-6">
-                    <el-time-select
-                      v-model="exception.soon_time"
-                      placeholder="Sooner time"
-                      :picker-options="{
-                        start: '06:00',
-                        step: '00:15',
-                        end: '23:45',
-                      }"
-                    />
-                  </el-form-item>
-                </div> -->
+                </div>
               </el-col>
               <el-col :span="12">
                 <div class="form-group row">
@@ -381,6 +280,7 @@
                       placeholder="Pick a day"
                       format="dd-MM-yyyy"
                       value-format="yyyy-MM-dd"
+                      :disabled="isDetailForm"
                     />
                   </el-form-item>
                 </div>
@@ -390,14 +290,21 @@
                     <el-select
                       v-model="exception.account_receiver"
                       placeholder="account receiver"
+                      :disabled="isDetailForm"
                     >
                       <el-option
                         v-for="(item, index) in account_receivers"
                         :key="index"
-                        :label="item.label"
-                        :value="item.value"
+                        :label="item.username"
+                        :value="item.username"
                       ></el-option>
                     </el-select>
+                  </el-form-item>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Status</label>
+                  <el-form-item prop="status" class="col-sm-6">
+                    <el-input v-model="exception.status" disabled />
                   </el-form-item>
                 </div>
               </el-col>
@@ -408,7 +315,7 @@
             >
               <label class="col-sm-2 col-form-label">Choose day</label>
               <el-form-item prop="type" class="col-sm-9">
-                <el-checkbox-group v-model="checkList">
+                <el-checkbox-group v-model="checkList" :disabled="isDetailForm">
                   <el-checkbox
                     v-for="(item, index) in checkListData"
                     :key="index"
@@ -420,7 +327,11 @@
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Note</label>
               <el-form-item prop="title" class="col-sm-9">
-                <el-input v-model="exception.content" type="textarea" />
+                <el-input
+                  v-model="exception.content"
+                  :disabled="isDetailForm"
+                  type="textarea"
+                />
               </el-form-item>
             </div>
           </el-form>
@@ -480,6 +391,9 @@
 }
 .el-checkbox {
   margin-right: 35px;
+}
+.form-group {
+  margin-bottom: 0px;
 }
 .el-dialog {
   margin-top: 10px;
@@ -552,6 +466,7 @@
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 label {
   text-align: center;
@@ -559,13 +474,16 @@ label {
 
 .date-picker {
   width: 150px;
+   margin-bottom: 10px;
 }
 @media screen and (max-width: 1370px) {
   .input-search {
     width: 120px;
+    margin-bottom: 10px;
   }
   .date-picker {
     width: 140px;
+     margin-bottom: 10px;
   }
 }
 
@@ -580,6 +498,7 @@ label {
 import SimplePagination from '~/components/pagination/SimplePagination'
 import validate from '@/helpers/custom-rules-validate'
 import moment from 'moment'
+import Constant from '~/constant'
 
 export default {
   components: { SimplePagination },
@@ -604,36 +523,19 @@ export default {
     }
     return {
       checkListData: [
-        'Morning Monday',
-        'Morning Tusday',
-        'Morning Wednesday',
-        'Morning Thursday',
-        'Morning Friday',
-        'Afternoon Monday',
-        'Afternoon Tusday',
-        'Afternoon Wednesday',
-        'Afternoon Thursday',
-        'Afternoon Friday',
+        'M-Mon',
+        'M-Tue',
+        'M-Wed',
+        'M-Thu',
+        'M-Fri',
+        'A-Mon',
+        'A-Tue',
+        'A-Wed',
+        'A-Thu',
+        'A-Fri',
       ],
+      constant: Constant,
       checkList: [],
-      daysData: [
-        {
-          name: 'Morning',
-          mon: 'Morning Monday',
-          tue: 'Morning Tusday',
-          wed: 'Morning Wednesday',
-          thur: 'Morning Thursday',
-          fri: 'Morning Friday',
-        },
-        {
-          name: 'Afternoon',
-          mon: 'Afternoon Monday',
-          tue: 'Afternoon Tusday',
-          wed: 'Afternoon Wednesday',
-          thur: 'Afternoon Thursday',
-          fri: 'Morning Friday',
-        },
-      ],
       tableData: [],
       groupSearch: '',
       fullnameSearch: '',
@@ -643,6 +545,7 @@ export default {
       showFormMessage: false,
       titlePopup: '',
       dialogMode: '',
+      isDetailForm: false,
       groups: [],
       projects: [],
       account_receivers: [],
@@ -688,8 +591,6 @@ export default {
           },
         ],
         type: this.validateRequired('type'),
-        // late_time: this.validateRequired('late_time'),
-        //  soon_time: this.validateRequired('soon_time'),
         mailCC: this.validateEmailAddress(),
       },
       rowSelected: null,
@@ -713,7 +614,6 @@ export default {
       this.size = query.size
     }
     this.getListException(this.page, this.size)
-    this.getListUser()
     this.getUserInfo()
     this.getListExceptionalCaseType()
   },
@@ -741,6 +641,7 @@ export default {
       await this.$services.exception.getListExceptionalCaseType(
         (response) => {
           this.abnormal_types = response.listExceptionalCaseType
+          this.account_receivers = response.listReceiver
         },
         (err) => {
           this.notifyError(err.error.error)
@@ -756,7 +657,7 @@ export default {
       )
     },
     async getListUser() {
-      if (this.$authInfo.role() === 4) {
+      if (this.$authInfo.role() === Constant.Role.STAFF) {
         await this.$services.exception.getListAccountReceiver(
           (response) => {
             if (response.listData && response.listData.length > 0) {
@@ -835,6 +736,7 @@ export default {
       }
     },
     handleCreate() {
+      this.isDetailForm = false
       this.dialogMode = 'create'
       this.titlePopup = 'Create Exception Case Request'
       this.dialogFormWithInput = true
@@ -844,9 +746,12 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    handleUpdate(index, row) {
+    async handleUpdate(index, row) {
       this.exception = Object.assign({}, row)
-      this.checkList = this.progressListTime(this.exception.part_time_infor)
+      this.checkList = await this.progressListTime(
+        this.exception.part_time_infor
+      )
+      this.isDetailForm = false
       this.dialogMode = 'update'
       this.titlePopup = 'Edit Exception Case Request'
       this.dialogFormWithInput = true
@@ -858,14 +763,13 @@ export default {
     handleInfo(index, row) {
       this.titlePopup = 'View Exception Case Request'
       this.dialogMode = 'detail'
+      this.isDetailForm = true
       this.dialogFormWithInput = true
       this.exception = Object.assign({}, row)
       this.rowSelected = index + 1
     },
     progressListTime(data) {
-      return data
-        .split(',  ')
-        .filter((item) => item.trim() !== '' ?? item.trim())
+      return data.split(',').filter((item) => item.trim() !== '' ?? item.trim())
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {

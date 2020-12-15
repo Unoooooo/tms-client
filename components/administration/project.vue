@@ -131,13 +131,17 @@
             </h6>
             <hr />
             <div class="form-group row" style="margin-top: 1rem">
-              <label class="col-sm-3 col-form-label">Project Name <span>*</span></label>
+              <label class="col-sm-3 col-form-label"
+                >Project Name <span>*</span></label
+              >
               <el-form-item prop="name" class="col-sm-8">
                 <el-input v-model="project.name" />
               </el-form-item>
             </div>
             <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Group Name <span>*</span></label>
+              <label class="col-sm-3 col-form-label"
+                >Group Name <span>*</span></label
+              >
               <el-form-item prop="group_name" class="col-sm-8">
                 <el-select
                   v-model="project.group_name"
@@ -186,7 +190,7 @@
   width: 50%;
   padding-right: 0;
 }
-label{
+label {
   text-align: center;
 }
 .content {
@@ -239,6 +243,7 @@ label{
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 </style>
 
@@ -265,7 +270,7 @@ export default {
       projects: [],
       rules: {
         name: this.validateRequired('project name'),
-        
+        group_name: this.validateRequired('group name'),
       },
       project: {
         id: '',

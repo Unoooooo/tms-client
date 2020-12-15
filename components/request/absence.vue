@@ -2,57 +2,63 @@
   <section-block title="Absence Request">
     <div>
       <section class="group-filter">
-        <el-input
-          :disabled="$authInfo.role() == 4"
-          v-model="fullnameSearch"
-          placeholder="Account"
-          class="input-search"
-          clearable
-        />
-        <el-input
-          :disabled="$authInfo.role() == 4 || $authInfo.role() == 3"
-          v-model="groupSearch"
-          placeholder="Group"
-          class="input-search"
-          clearable
-        />
+        <div class="pc-hidden">
+          <el-input
+            v-model="fullnameSearch"
+            :disabled="$authInfo.role() == constant.Role.STAFF"
+            placeholder="Account"
+            class="input-search"
+            clearable
+          />
+          <el-input
+            v-model="groupSearch"
+            :disabled="
+              $authInfo.role() == constant.Role.STAFF ||
+              $authInfo.role() == constant.Role.MANAGER
+            "
+            placeholder="Group"
+            class="input-search"
+            clearable
+          />
 
-        <el-date-picker
-          v-model="startDate"
-          type="date"
-          placeholder="Start date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          class="date-picker"
-        />
+          <el-date-picker
+            v-model="startDate"
+            type="date"
+            placeholder="Start date"
+            format="dd-MM-yyyy"
+            value-format="yyyy-MM-dd"
+            class="date-picker"
+          />
 
-        <el-date-picker
-          v-model="endDate"
-          type="date"
-          placeholder="End date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          class="date-picker"
-        />
+          <el-date-picker
+            v-model="endDate"
+            type="date"
+            placeholder="End date"
+            format="dd-MM-yyyy"
+            value-format="yyyy-MM-dd"
+            class="date-picker"
+          />
 
-        <el-button
-          class="button-delete-multi"
-          type="primary"
-          @click="searchAbsenceRequest()"
-        >
-          <i class="el-icon-search"></i>
-        </el-button>
+          <el-button
+            class="button-delete-multi"
+            type="primary"
+            @click="searchAbsenceRequest()"
+          >
+            <i class="el-icon-search"></i>
+          </el-button>
 
-        <el-button
-          class="button-delete-multi"
-          type="primary"
-          @click="getListAbsenceRequest(page, size)"
-        >
-          <i class="el-icon-refresh"></i>
-        </el-button>
-
-        <div v-if="$authInfo.role() !== 3" class="gr-button">
-          <el-button class="add-new" @click="handleCreate()">
+          <el-button
+            class="button-delete-multi"
+            type="primary"
+            @click="getListAbsenceRequest(page, size)"
+          >
+            <i class="el-icon-refresh"></i>
+          </el-button>
+          <el-button
+            v-if="$authInfo.role() !== constant.Role.MANAGER"
+            class="gr-button"
+            @click="handleCreate()"
+          >
             {{ $t('Add request') }}
           </el-button>
         </div>
@@ -66,19 +72,6 @@
         class="table-serenade"
         @selection-change="handleSelectionChange"
       >
-        <!-- <el-table-column
-          :selectable="canSelectRow"
-          type="selection"
-          class-name="text-center"
-          width="60px"
-        /> -->
-        <!-- <el-table-column class-name="text-center" :label="$t('Date')">
-          <template slot-scope="{ row }">
-            {{
-              row.created_at ? showDateTime(row.update_at, 'DD/MM/YYYY') : ''
-            }}
-          </template>
-        </el-table-column> -->
         <el-table-column
           class-name="text-left"
           prop="title"
@@ -158,7 +151,7 @@
             </el-button>
             <el-button
               v-if="
-                $authInfo.role() !== 3 &&
+                $authInfo.role() !== constant.Role.MANAGER &&
                 scope.row.status == 'Pending' &&
                 scope.row.account_sent === user.username
               "
@@ -170,7 +163,7 @@
             </el-button>
             <el-button
               v-if="
-                $authInfo.role() !== 3 &&
+                $authInfo.role() !== constant.Role.MANAGER &&
                 scope.row.status == 'Pending' &&
                 scope.row.account_sent === user.username
               "
@@ -198,90 +191,16 @@
           :visible.sync="dialogFormWithInput"
           width="50%"
         >
-          <div v-if="dialogMode === 'detail'">
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Title</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.title }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Account</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.account_sent }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Group</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.groupCompany }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Status</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.status }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Request Type</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.type }}
-              </div>
-            </div>
-            <div v-if="request.type == 'Check in/out'" class="form-group row">
-              <label class="col-sm-3 col-form-label">Soon Time</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.soon_time }}
-              </div>
-            </div>
-            <div v-if="request.type == 'Check in/out'" class="form-group row">
-              <label class="col-sm-3 col-form-label">Last Time</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.late_time }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Start Date</label>
-              <div class="col-sm-8 data-detail">
-                {{
-                  request.start_date
-                    ? showDateTime(request.start_date, 'DD/MM/YYYY')
-                    : ''
-                }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">End Date</label>
-              <div class="col-sm-8 data-detail">
-                {{
-                  request.end_date
-                    ? showDateTime(request.end_date, 'DD/MM/YYYY')
-                    : ''
-                }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Note</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.content }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Message</label>
-              <div class="col-sm-8 data-detail">
-                {{ request.response_msg }}
-              </div>
-            </div>
-          </div>
-
-          <el-form v-else ref="dataForm" :rules="rules" :model="request">
+          <el-form ref="dataForm" :rules="rules" :model="request">
             <el-row :gutter="20">
               <el-col :span="24">
                 <div class="form-group row">
                   <label class="col-sm-2 col-form-label">Title</label>
                   <el-form-item prop="title" class="col-sm-9">
-                    <el-input v-model="request.title" />
+                    <el-input
+                      v-model="request.title"
+                      :disabled="isDetailForm"
+                    />
                   </el-form-item>
                 </div>
               </el-col>
@@ -303,6 +222,7 @@
                       placeholder="Pick a day"
                       format="dd-MM-yyyy"
                       value-format="yyyy-MM-dd"
+                      :disabled="isDetailForm"
                     />
                   </el-form-item>
                 </div>
@@ -312,6 +232,7 @@
                     <el-select
                       v-model="request.type"
                       placeholder="Absence type"
+                      :disabled="isDetailForm"
                     >
                       <el-option
                         v-for="item in listTypes"
@@ -327,13 +248,18 @@
                   class="form-group row"
                 >
                   <div class="col-sm-3 col-form-label">
-                    <el-checkbox v-model="late_checked"> Late </el-checkbox>
+                    <el-checkbox
+                      v-model="late_checked"
+                      :disabled="isDetailForm"
+                    >
+                      Late
+                    </el-checkbox>
                   </div>
                   <label class="col-sm-2 col-form-label">Time</label>
                   <el-form-item prop="late_time" class="col-sm-5">
                     <el-time-select
                       v-model="request.late_time"
-                      :disabled="!late_checked"
+                      :disabled="!late_checked || isDetailForm"
                       placeholder="Select late_time"
                       :picker-options="{
                         start: '06:00',
@@ -343,13 +269,18 @@
                     />
                   </el-form-item>
                   <div class="col-sm-3 col-form-label">
-                    <el-checkbox v-model="soon_checked"> Soon </el-checkbox>
+                    <el-checkbox
+                      v-model="soon_checked"
+                      :disabled="isDetailForm"
+                    >
+                      Soon
+                    </el-checkbox>
                   </div>
                   <label class="col-sm-2 col-form-label">Time</label>
                   <el-form-item prop="soon_time" class="col-sm-5">
                     <el-time-select
                       v-model="request.soon_time"
-                      :disabled="!soon_checked"
+                      :disabled="!soon_checked || isDetailForm"
                       placeholder="Select soon_time"
                       :picker-options="{
                         start: '06:00',
@@ -357,6 +288,12 @@
                         end: '23:45',
                       }"
                     />
+                  </el-form-item>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Message</label>
+                  <el-form-item prop="response_msg" class="col-sm-6">
+                    <el-input v-model="request.response_msg" disabled />
                   </el-form-item>
                 </div>
               </el-col>
@@ -376,6 +313,7 @@
                       placeholder="Pick a day"
                       format="dd-MM-yyyy"
                       value-format="yyyy-MM-dd"
+                      :disabled="isDetailForm"
                     />
                   </el-form-item>
                 </div>
@@ -385,6 +323,7 @@
                     <el-select
                       v-model="request.account_receiver"
                       placeholder="account receiver"
+                      :disabled="isDetailForm"
                     >
                       <el-option
                         v-for="(item, index) in account_receivers"
@@ -395,100 +334,21 @@
                     </el-select>
                   </el-form-item>
                 </div>
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Status</label>
+                  <el-form-item prop="status" class="col-sm-6">
+                    <el-input v-model="request.status" disabled />
+                  </el-form-item>
+                </div>
               </el-col>
             </el-row>
-            <!-- <el-form-item label="Request type"> </el-form-item>
-            <el-row :gutter="20">
-              <el-radio-group v-model="radioType" class="w-100">
-                <el-col :span="12">
-                  <el-radio :label="1">Absence</el-radio>
-                </el-col>
-                <el-col :span="12">
-                  <el-radio :label="2">Check In/Out</el-radio>
-                </el-col>
-              </el-radio-group>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item prop="type" class="col-sm-6">
-                  <el-select
-                    v-model="request.type"
-                    placeholder="Please select type"
-                    :disabled="disable"
-                  >
-                    <el-option
-                      v-for="item in listTypes"
-                      :key="item.value"
-                      :label="item.value"
-                      :value="item.value"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12" style="padding-left: 40px">
-                <el-row :gutter="20">
-                  <el-col :span="6">
-                    <div class="form-group row" style="margin-top: 8px">
-                      <el-checkbox
-                        v-model="late_checked"
-                        :disabled="radioType == 1"
-                      >
-                        Late
-                      </el-checkbox>
-                    </div>
-                  </el-col>
-                  <el-col :span="16">
-                    <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Time</label>
-                      <el-form-item prop="late_time" class="col-sm-6">
-                        <el-time-select
-                          v-model="request.late_time"
-                          :disabled="!late_checked"
-                          placeholder="Select late_time"
-                          :picker-options="{
-                            start: '06:00',
-                            step: '00:15',
-                            end: '23:45',
-                          }"
-                        />
-                      </el-form-item>
-                    </div>
-                  </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                  <el-col :span="6">
-                    <div class="form-group row" style="margin-top: 8px">
-                      <el-checkbox
-                        v-model="soon_checked"
-                        :disabled="radioType == 1"
-                      >
-                        Soon
-                      </el-checkbox>
-                    </div>
-                  </el-col>
-                  <el-col :span="16">
-                    <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Time</label>
-                      <el-form-item prop="soon_time" class="col-sm-8">
-                        <el-time-select
-                          v-model="request.soon_time"
-                          :disabled="!soon_checked"
-                          placeholder="Select soon_time"
-                          :picker-options="{
-                            start: '06:00',
-                            step: '00:15',
-                            end: '23:45',
-                          }"
-                        />
-                      </el-form-item>
-                    </div>
-                  </el-col>
-                </el-row>
-              </el-col>
-            </el-row> -->
+
             <el-form-item label="Note">
-              <el-input v-model="request.content" type="textarea"></el-input>
+              <el-input
+                v-model="request.content"
+                :disabled="isDetailForm"
+                type="textarea"
+              ></el-input>
             </el-form-item>
           </el-form>
           <hr class="mb-0" />
@@ -569,7 +429,9 @@
   width: 45px;
   text-align: center;
 }
-
+.form-group {
+  margin-bottom: 0px;
+}
 .demo-input-suffix .el-input {
   width: 80px;
 }
@@ -607,19 +469,24 @@
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 .date-picker {
   width: 150px;
+   margin-bottom: 10px;
 }
 label {
   text-align: center;
 }
+
 @media screen and (max-width: 1370px) {
   .input-search {
     width: 120px;
+    margin-bottom: 10px;
   }
   .date-picker {
     width: 140px;
+     margin-bottom: 10px;
   }
 }
 </style>
@@ -628,6 +495,7 @@ label {
 import SimplePagination from '~/components/pagination/SimplePagination'
 import validate from '@/helpers/custom-rules-validate'
 import moment from 'moment'
+import Constant from '~/constant'
 
 export default {
   components: { SimplePagination },
@@ -662,7 +530,8 @@ export default {
       if (this.request.start_date != null && this.request.end_date != null) {
         if (
           moment(this.request.start_date).format('YYYY-MM-DD') >
-          moment(this.request.end_date).format('YYYY-MM-DD')
+            moment(this.request.end_date).format('YYYY-MM-DD') &&
+          !this.isDetailForm
         ) {
           callback(new Error('Please select an end date after the start date'))
         } else {
@@ -671,6 +540,7 @@ export default {
       }
     }
     return {
+      constant: Constant,
       disable: false,
       tableData: [],
       groupSearch: '',
@@ -684,6 +554,7 @@ export default {
       dialogMode: '',
       groups: [],
       account_receivers: [],
+      isDetailForm: false,
       listTypes: [],
       message: {
         response_msg: '',
@@ -881,6 +752,7 @@ export default {
       }
     },
     handleCreate() {
+      this.isDetailForm = false
       this.dialogMode = 'create'
       this.titlePopup = 'Create Absence Request'
       this.dialogFormWithInput = true
@@ -926,12 +798,14 @@ export default {
     handleInfo(index, row) {
       this.titlePopup = 'View Absence Request'
       this.dialogMode = 'detail'
+      this.isDetailForm = true
       this.dialogFormWithInput = true
       this.request = Object.assign({}, row)
       this.rowSelected = index + 1
     },
     handleUpdate(index, row) {
       this.request = Object.assign({}, row)
+      this.isDetailForm = false
       this.dialogMode = 'update'
       this.titlePopup = 'Edit Absence Request'
       this.soon_checked = false

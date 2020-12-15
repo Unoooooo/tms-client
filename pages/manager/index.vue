@@ -1,51 +1,51 @@
 <template>
   <section-block title="Dashboard">
-    <el-row :gutter="12">
-      <el-col :span="4">
-        <el-card style="padding: 20px 30px" shadow="always">
+     <el-row :gutter="12" class="row">
+      <div class="column">
+        <el-card shadow="always"> 
           <div class="number-req">
             <label>{{ persionDataDashboard.personal_request }}</label>
             <i class="el-icon-folder-opened"></i>
           </div>
           <label>Personal Request</label>
         </el-card>
-      </el-col>
-      <el-col :span="5">
-        <el-card style="padding: 20px 30px" shadow="always">
+      </div>
+      <div class="column">
+        <el-card shadow="always">
           <div class="number-req">
             <label>{{ persionDataDashboard.personal_absence }}</label>
             <i class="el-icon-document"></i>
           </div>
           <label>Personal Absence Request</label>
         </el-card>
-      </el-col>
-      <el-col :span="5">
-        <el-card style="padding: 20px 30px" shadow="always">
+      </div>
+      <div class="column">
+        <el-card shadow="always">
           <div class="number-req">
             <label>{{ persionDataDashboard.personal_ot_request }}</label>
             <i class="el-icon-timer"></i>
           </div>
           <label>Personal OT Request</label>
         </el-card>
-      </el-col>
-      <el-col :span="5">
-        <el-card style="padding: 20px 30px" shadow="always">
+      </div>
+      <div class="column">
+        <el-card shadow="always">
           <div class="number-req">
             <label>{{ persionDataDashboard.personal_explaned }}</label>
             <i class="el-icon-document"></i>
           </div>
           <label>Personal Exception cases</label>
         </el-card>
-      </el-col>
-      <el-col :span="5">
-        <el-card style="padding: 20px 30px" shadow="always">
+       </div>
+      <div class="column">
+        <el-card shadow="always">
           <div class="number-req">
             <label>{{ persionDataDashboard.personal_exception }}</label>
             <i class="el-icon-document"></i>
           </div>
           <label>Personal Explanation</label>
         </el-card>
-      </el-col>
+       </div>
     </el-row>
 
     <div class="table-data">
@@ -78,7 +78,7 @@
                   100
                 "
                 class="percent"
-                status="exception"
+                status="warning"
                 :show-text="false"
               />
               <label class="value">
@@ -118,7 +118,7 @@
                   100
                 "
                 class="percent"
-                status="danger"
+                status="exception"
                 :show-text="false"
               />
               <label class="value">
@@ -142,7 +142,7 @@
                   100
                 "
                 class="percent"
-                status="exception"
+                status="warning"
                 :show-text="false"
               />
               <label class="value">
@@ -182,7 +182,7 @@
                   100
                 "
                 class="percent"
-                status="danger"
+                status="exception"
                 :show-text="false"
               />
               <label class="value">
@@ -205,7 +205,7 @@
                   100
                 "
                 class="percent"
-                status="exception"
+                status="warning"
                 :show-text="false"
               />
               <label class="value">
@@ -245,7 +245,7 @@
                   100
                 "
                 class="percent"
-                status="danger"
+                status="exception"
                 :show-text="false"
               />
               <label class="value">
@@ -268,7 +268,7 @@
                   100
                 "
                 class="percent"
-                status="exception"
+                status="warning"
                 :show-text="false"
               />
               <label class="value">
@@ -308,7 +308,7 @@
                   100
                 "
                 class="percent"
-                status="danger"
+                status="exception"
                 :show-text="false"
               />
               <label class="value">
@@ -323,6 +323,20 @@
 </template>
 
 <style lang="scss" scoped>
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  .column {
+    padding: 0px 6px;
+    width: 20%;
+    margin-bottom: 10px;
+    min-width: 200px;
+    .el-card {
+      height: 100%;
+    }
+  }
+}
+
 .number-req {
   label {
     font-size: 30px;

@@ -2,44 +2,74 @@
   <section-block title="Actual in Out report">
     <div>
       <section class="group-filter">
-        
-      
-          <el-input
-          :disabled="$authInfo.role() == 4"
-            v-model="fullnameSearch"
-            placeholder="Account"
-            class="input-search"
-            clearable
-          />
-
-          <el-date-picker
-            v-model="actualDate"
-            type="date"
-            placeholder="Daily Report"
-            format="dd-MM-yyyy"
-            value-format="yyyy-MM-dd"
-            class="date-picker"
-          />
-          <el-button
-            class="button-delete-multi"
-            type="primary"
-            @click="searchActualReport()"
+        <el-input
+          v-model="fullnameSearch"
+          :disabled="$authInfo.role() == constant.Role.STAFF"
+          placeholder="Account"
+          class="input-search"
+          clearable
+        />
+        <el-select
+          v-model="groupSearch"
+          class="table"
+          placeholder="Group"
+          :disabled="
+            $authInfo.role() == constant.Role.STAFF ||
+            $authInfo.role() == constant.Role.MANAGER
+          "
+        >
+          <el-option
+            v-for="(item, index) in groups"
+            :key="index"
+            :label="item.label"
+            :value="item.value"
           >
-            <i class="el-icon-search"></i>
-          </el-button>
-        
+          </el-option>
+        </el-select>
+
+        <el-date-picker
+          v-model="startDate"
+          type="date"
+          placeholder="Start date"
+          format="dd-MM-yyyy"
+          value-format="yyyy-MM-dd"
+          class="date-picker"
+        />
+
+        <el-date-picker
+          v-model="endDate"
+          type="date"
+          placeholder="End date"
+          format="dd-MM-yyyy"
+          value-format="yyyy-MM-dd"
+          class="date-picker"
+        />
+        <el-button
+          class="button-delete-multi"
+          type="primary"
+          @click="searchActualReport()"
+        >
+          <i class="el-icon-search"></i>
+        </el-button>
+        <el-button
+          class="button-delete-multi"
+          type="primary"
+          @click="getListActual(page, size)"
+        >
+          <i class="el-icon-refresh"></i>
+        </el-button>
 
         <div class="gr-button">
-          <el-button
-            class="button-delete-multi"
-            type="primary"
-            @click="getListTimeSheet(page, size)"
+          <export-excel
+            :data="tableData"
+            :title="titleExcel"
+            name="ActualIn/Out.xls"
+            :fields="json_fields"
           >
-            <i class="el-icon-refresh"></i>
-          </el-button>
-          <el-button class="add-new" @click="exportExcelDaily()">
-            Export excel
-          </el-button>
+            <el-button class="add-new">
+              <i class="el-icon-download"></i> Export excel
+            </el-button>
+          </export-excel>
         </div>
       </section>
 
@@ -52,44 +82,48 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column
+          class-name="text-center"
+          prop="stt"
+          :label="$t('STT')"
+          width="80px"
+        />
+        <el-table-column
           class-name="text-left"
           prop="userName"
           :label="$t('Account')"
         />
-        <el-table-column class-name="text-center" :label="$t('Date')">
+        <el-table-column
+          class-name="text-left"
+          prop="groupName"
+          :label="$t('Group')"
+        />
+        <el-table-column
+          class-name="text-left"
+          prop="date"
+          :label="$t('Date')"
+        />
+        <!-- <el-table-column class-name="text-center" :label="$t('Date')">
           <template slot-scope="{ row }">
             {{ row.date ? showDateTime(row.date, 'DD/MM/YYYY') : '' }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           class-name="text-center"
           prop="check_time"
           :label="$t('Check Time')"
         />
-        <!-- <el-table-column class-name="text-center" :label="$t('Check Time')">
-          <template slot-scope="{ row }">
-            {{ row.check_time ? showDateTime(row.check_time, 'HH: mm: ss') : '' }}
-          </template>
-        </el-table-column> -->
         <el-table-column
           class-name="text-left"
           prop="type"
           :label="$t('Type')"
         />
-
-        <el-table-column
-          class-name="text-left"
-          prop="value"
-          :label="$t('Value')"
-        />
         <el-table-column
           class-name="text-right"
           prop="checkPosition"
-          :label="$t('Position')"
+          :label="$t('Location')"
         />
-
       </el-table>
-     
+
       <div class="d-flex pagination">
         <SimplePagination
           v-if="!isEmpty(tableData) && totalPages > 1"
@@ -133,7 +167,6 @@
 .el-form-item__label {
   text-align: left;
 }
-
 .line {
   margin-top: -30px;
 }
@@ -163,13 +196,18 @@ label {
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 </style>
 
 <script>
 import SimplePagination from '~/components/pagination/SimplePagination'
 import validate from '@/helpers/custom-rules-validate'
+import Constant from '~/constant'
 
+import Vue from 'vue'
+import excel from 'vue-excel-export'
+Vue.use(excel)
 export default {
   components: { SimplePagination },
   mixins: [validate],
@@ -177,9 +215,15 @@ export default {
   middleware: 'auth',
   data() {
     return {
+      json_fields: null,
+      titleExcel: '',
+      constant: Constant,
       tableData: [],
+      groupSearch: '',
       fullnameSearch: '',
       actualDate: '',
+      endDate: '',
+      startDate: '',
       dateActualInOut: '',
       dialogFormWithInput: false,
       showFormMessage: false,
@@ -242,7 +286,7 @@ export default {
     }
     await this.getListActual(this.page, this.size)
     await this.getUserInfo()
-
+    await this.getListGroupActual()
   },
   methods: {
     // async refreshSearch() {
@@ -269,6 +313,15 @@ export default {
             if (response.data && response.data.length > 0) {
               this.tableData = response.data
               this.totalPages = response.totalPages
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'date',
+                'Check Time': 'check_time',
+                'Type': 'type',
+                'Location': 'checkPosition'
+              }
             }
           },
           (err) => {
@@ -282,6 +335,16 @@ export default {
             if (response.data && response.data.length > 0) {
               this.tableData = response.data
               this.totalPages = response.totalPages
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'date',
+                'Check Time': 'check_time',
+                'Type': 'type',
+                'Location': 'checkPosition'
+              }
+               console.log(this.json_fields)
             }
           },
           (err) => {
@@ -293,18 +356,18 @@ export default {
         this.endLoading()
       }, 300)
     },
-    // async getListGroupTimesheet() {
-    //   await this.$services.dailytimesheet.getListGroupTimesheet(
-    //     (response) => {
-    //       if (response.listData && response.listData.length > 0) {
-    //         this.groups = response.listData.map((item) => {
-    //           return { label: item.name, value: Number(item.group_id) }
-    //         })
-    //       }
-    //     },
-    //     (err) => this.notifyError(err.error.error)
-    //   )
-    // },
+    async getListGroupActual() {
+      await this.$services.actual.getListGroupActual(
+        (response) => {
+          if (response.listData && response.listData.length > 0) {
+            this.groups = response.listData.map((item) => {
+              return { label: item.name, value: Number(item.group_id) }
+            })
+          }
+        },
+        (err) => this.notifyError(err.error.error)
+      )
+    },
     async getUserInfo() {
       await this.$services.common.getUserInfo(
         (response) => {
@@ -334,9 +397,17 @@ export default {
       if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
         filterObj.userName = this.fullnameSearch.trim()
       }
-     
-      if (this.actualDate && (!this.actualDate.length == 0 || this.dateDailyDate.trim())) {
-        filterObj.dateActualInOut = this.actualDate
+       if (this.groupSearch !== '') {
+        filterObj.groupId = this.groupSearch
+      }
+      if (
+        this.startDate &&
+        (!this.startDate.length == 0 || this.startDate.trim())
+      ) {
+        filterObj.startDate = this.startDate
+      }
+      if (this.endDate && (!this.endDate.length == 0 || this.endDate.trim())) {
+        filterObj.endDate = this.endDate
       }
 
       await this.$services.actual.searchActualReport(
@@ -345,6 +416,18 @@ export default {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
             this.totalPages = response.totalPages
+            if (this.fullnameSearch != undefined) {
+              this.titleExcel += 'Account: ' + this.fullnameSearch
+            }
+            if (this.groupSearch != undefined) {
+              this.titleExcel += '- Group: ' + this.groupSearch
+            }
+            if (this.startDate != undefined) {
+              this.titleExcel += '- Start Date: ' + this.startDate
+            }
+            if (this.endDate != undefined) {
+              this.titleExcel += '- End Date:' + this.endDate
+            }
           } else {
             this.tableData = []
             this.totalPages = 0
@@ -367,7 +450,7 @@ export default {
       this.page = page
       const roleValue = this.$authInfo.roleValue()
       this.$router.push({
-        name: `${roleValue}-report-abnormal`,
+        name: `${roleValue}-report-actual`,
         query: { page, size: this.size },
       })
     },
@@ -437,35 +520,35 @@ export default {
     },
   },
 
-  exportExcelDaily() {
-    this.$confirm('Export danh sách?', 'Xác Thực', {
-      confirmButtonText: 'Đồng ý',
-      cancelButtonText: 'Hủy bỏ',
-    }).then(() => {
-      this.$services.dailytimesheet.getExportExcel(
-        (res) => {
-          var blob = res
-          if (window.navigator.msSaveOrOpenBlob) {
-            window.navigator.msSaveBlob(blob)
-          } else {
-            var downloadLink = window.document.createElement('a')
-            downloadLink.href = window.URL.createObjectURL(
-              new Blob([blob], {
-                type:
-                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-              })
-            )
-            downloadLink.download = 'excel.xlsx'
-            document.body.appendChild(downloadLink)
-            downloadLink.click()
-            document.body.removeChild(downloadLink)
-          }
-        },
-        (err) => {
-          this.notifyError(err.error.error)
-        }
-      )
-    })
-  },
+  // exportExcelDaily() {
+  //   this.$confirm('Export danh sách?', 'Xác Thực', {
+  //     confirmButtonText: 'Đồng ý',
+  //     cancelButtonText: 'Hủy bỏ',
+  //   }).then(() => {
+  //     this.$services.dailytimesheet.getExportExcel(
+  //       (res) => {
+  //         var blob = res
+  //         if (window.navigator.msSaveOrOpenBlob) {
+  //           window.navigator.msSaveBlob(blob)
+  //         } else {
+  //           var downloadLink = window.document.createElement('a')
+  //           downloadLink.href = window.URL.createObjectURL(
+  //             new Blob([blob], {
+  //               type:
+  //                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  //             })
+  //           )
+  //           downloadLink.download = 'excel.xlsx'
+  //           document.body.appendChild(downloadLink)
+  //           downloadLink.click()
+  //           document.body.removeChild(downloadLink)
+  //         }
+  //       },
+  //       (err) => {
+  //         this.notifyError(err.error.error)
+  //       }
+  //     )
+  //   })
+  // },
 }
 </script>

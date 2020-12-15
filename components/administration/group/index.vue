@@ -70,7 +70,7 @@
           prop="manager_phone"
           :label="$t('GM Number Phone')"
         />
-        <el-table-column class-name="text-right" :label="$t('Number member')">
+        <el-table-column class-name="text-right" :label="$t('Number Member')">
           <template slot-scope="{ row }">
             {{ row.number_member }}
           </template>
@@ -135,9 +135,9 @@
           </div>
 
           <el-form v-else ref="dataForm" :rules="rules" :model="group">
-            <h6 v-if="dialogMode === 'update'">
+            <!-- <h6 v-if="dialogMode === 'update'">
               {{ $t('No.') + rowSelected }}
-            </h6>
+            </h6> -->
             <hr />
             <div class="form-group row" style="margin-top: 1rem">
               <label class="col-sm-3 col-form-label">Group Name <span>*</span></label>
@@ -249,6 +249,7 @@
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 </style>
 

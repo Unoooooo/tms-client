@@ -6,7 +6,7 @@
         alt="logo"
       />
       <transition name="zoom-in-center">
-        <h1>TMS</h1>
+        <h1 class="pc-hidden">TMS</h1>
       </transition>
     </div>
   </div>
@@ -36,11 +36,12 @@ export default {
     display: inline-block;
     height: 32px;
     vertical-align: middle;
+    margin-left: 10px;
   }
 
   h1 {
     display: inline-block;
-    margin: 0 0 0 12px;
+    margin: 0 0 0 5px;
     color: #fff;
     font-weight: 600;
     font-size: 20px;

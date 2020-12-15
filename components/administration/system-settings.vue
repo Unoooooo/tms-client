@@ -1,14 +1,13 @@
 <template>
   <div>
-    <section-block title="System setting ">
+    <section-block title="System Setting ">
       <el-form ref="dataForm" :rules="rules" :model="setting">
-        <h4 class="mt-30 mb-10 font">Checkin - Checkout Time</h4>
         <el-row :gutter="20">
           <el-col :span="12">
+            <h4 class="mt-30 mb-12 font">Checkin - Checkout Time</h4>
             <div class="grid-content bg-purple">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Check in time</label>
-
+                <label class="col-sm-5 col-form-label">Check In Time</label>
                 <el-form-item prop="checkInTime" class="col-sm-2">
                   <el-time-select
                     v-model="setting.checkInTime"
@@ -23,7 +22,7 @@
                 </el-form-item>
               </div>
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Check out time</label>
+                <label class="col-sm-5 col-form-label">Check Out Time</label>
 
                 <el-form-item prop="checkOutTime" class="col-sm-2">
                   <el-time-select
@@ -38,8 +37,75 @@
                   />
                 </el-form-item>
               </div>
+     
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">OverTime on week</label>
+                <label class="col-sm-5 col-form-label">
+                  Afternoon Check In Time
+                </label>
+
+                <el-form-item prop="afternoonCheckTime" class="col-sm-2">
+                  <el-time-select
+                    v-model="setting.afternoonCheckTime"
+                    class="select-date"
+                    placeholder="Select time"
+                    :picker-options="{
+                      start: '06:00',
+                      step: '00:15',
+                      end: '23:45',
+                    }"
+                  />
+                </el-form-item>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-5 col-form-label">Lunch Time</label>
+
+                <el-form-item prop="lunchTime" class="col-sm-2">
+                  <el-time-select
+                    v-model="setting.lunchTime"
+                    class="select-date"
+                    placeholder="Select time"
+                    :picker-options="{
+                      start: '06:00',
+                      step: '00:15',
+                      end: '23:45',
+                    }"
+                  />
+                </el-form-item>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-8 col-form-label">
+                  OverTime In Weekend/Holiday
+                </label>
+                <div class="col-sm-8 d-flex align-items-center">
+                  <el-form-item prop="overTimeOnWeekendStart">
+                    <el-time-select
+                      v-model="setting.overTimeOnWeekendStart"
+                      class="select-date"
+                      placeholder="Select time"
+                      :picker-options="{
+                        start: '06:00',
+                        step: '00:15',
+                        end: '23:45',
+                      }"
+                    />
+                  </el-form-item>
+                  <el-form-item prop="overTimeOnWeekendEnd">
+                    <el-time-select
+                      v-model="setting.overTimeOnWeekendEnd"
+                      class="select-date"
+                      placeholder="End time"
+                      :picker-options="{
+                        start: '06:00',
+                        step: '00:15',
+                        end: '23:45',
+                        minTime: setting.overTimeOnWeekendStart,
+                      }"
+                    />
+                  </el-form-item>
+                </div>
+              </div>
+                       <div class="form-group row">
+                <label class="col-sm-5 col-form-label">OverTime On Week</label>
                 <div class="col-sm-8 d-flex align-items-center">
                   <el-form-item prop="overTimeDayOfTheWeekStart">
                     <el-time-select
@@ -71,98 +137,59 @@
             </div>
           </el-col>
           <el-col :span="12">
+            <h4 class="mt-30 mb-10 font">Fingerprinters</h4>
             <div class="grid-content bg-purple">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">
-                  Afternoon check in time
-                </label>
-
-                <el-form-item prop="afternoonCheckTime" class="col-sm-2">
-                  <el-time-select
-                    v-model="setting.afternoonCheckTime"
-                    class="select-date"
-                    placeholder="Select time"
-                    :picker-options="{
-                      start: '06:00',
-                      step: '00:15',
-                      end: '23:45',
-                    }"
-                  />
-                </el-form-item>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Lunch time</label>
-
-                <el-form-item prop="lunchTime" class="col-sm-2">
-                  <el-time-select
-                    v-model="setting.lunchTime"
-                    class="select-date"
-                    placeholder="Select time"
-                    :picker-options="{
-                      start: '06:00',
-                      step: '00:15',
-                      end: '23:45',
-                    }"
-                  />
-                </el-form-item>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label">
-                  OverTime in weekend/holiday
-                </label>
-                <div class="col-sm-8 d-flex align-items-center">
-                  <el-form-item prop="overTimeOnWeekendStart">
-                    <el-time-select
-                      v-model="setting.overTimeOnWeekendStart"
-                      class="select-date"
-                      placeholder="Select time"
-                      :picker-options="{
-                        start: '06:00',
-                        step: '00:15',
-                        end: '23:45',
-                      }"
-                    />
-                  </el-form-item>
-                  <el-form-item prop="overTimeOnWeekendEnd">
-                    <el-time-select
-                      v-model="setting.overTimeOnWeekendEnd"
-                      class="select-date"
-                      placeholder="End time"
-                      :picker-options="{
-                        start: '06:00',
-                        step: '00:15',
-                        end: '23:45',
-                        minTime: setting.overTimeOnWeekendStart,
-                      }"
-                    />
-                  </el-form-item>
-                </div>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-        <h4 class="mt-30 mb-10 font">Fingerprinters</h4>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label">
+                <label class="col-sm-4 col-form-label">
                   Time Reset(minutes)
                 </label>
                 <el-form-item prop="timeReset" class="col-sm-3">
                   <el-input v-model="setting.timeReset" />
                 </el-form-item>
               </div>
-          
+
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Port</label>
+                <label class="col-sm-4 col-form-label">Port</label>
                 <el-form-item prop="port" class="col-sm-3">
                   <el-input v-model="setting.port" />
                 </el-form-item>
               </div>
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Push Device</label>
-                <el-form-item prop="pushDevice" class="col-sm-8">
+           
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label">Ipv4</label>
+
+              <el-form-item prop="ipv4" class="col-sm-4">
+                <el-input v-model="setting.ipv4" />
+              </el-form-item>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label"> Machine Number </label>
+              <el-form-item prop="machineNumber" class="col-sm-4">
+                <el-input v-model="setting.machineNumber" />
+              </el-form-item>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label"> Clear Log </label>
+              <el-form-item prop="clearLog" class="col-sm-7">
+                <el-select
+                  v-model="setting.clearLog"
+                  placeholder="Please select clearLog"
+                  class="col-sm-4 pl-0"
+                >
+                  <el-option
+                    v-for="item in clearLogs"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </div>
+               <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Push Device</label>
+                <el-form-item prop="pushDevice" class="col-sm-7">
                   <el-select
                     v-model="setting.pushDevice"
                     placeholder="Please select Push Device"
@@ -178,64 +205,25 @@
                   </el-select>
                 </el-form-item>
               </div>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-             
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Ipv4</label>
-
-                <el-form-item prop="ipv4" class="col-sm-4">
-                  <el-input v-model="setting.ipv4" />
-                </el-form-item>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label"> Machine Number </label>
-                <el-form-item prop="machineNumber" class="col-sm-4">
-                  <el-input v-model="setting.machineNumber" />
-                </el-form-item>
-              </div>
-               <div class="form-group row">
-                <label class="col-sm-3 col-form-label"> Clear Log </label>
-                <el-form-item prop="clearLog" class="col-sm-8">
-                  <el-select
-                    v-model="setting.clearLog"
-                    placeholder="Please select clearLog"
-                    class="col-sm-4 pl-0"
-                  >
-                    <el-option
-                      v-for="item in clearLogs"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-            </div>
           </el-col>
         </el-row>
       </el-form>
       <div class="mt-30">
         <el-button type="primary" @click="updateData()">Save changes</el-button>
         <el-button type="danger" @click="resetData()">Reset</el-button>
-
       </div>
     </section-block>
-    
-      <section-block title="Job service" style="margin-top: 30px">
+
+    <section-block title="Job service" style="margin-top: 30px">
       <div>
         <section class="jobservice">
-           <el-button type="danger" @click="dailyTimesheet()">
-          DailyTimesheet
-        </el-button>
-        <el-button type="danger" @click="rejectRequest()">
-          Reject Request
-        </el-button>
+          <el-button type="danger" @click="dailyTimesheet()">
+            DailyTimesheet
+          </el-button>
+          <el-button type="danger" @click="rejectRequest()">
+            Reject Request
+          </el-button>
         </section>
-
       </div>
     </section-block>
 
@@ -338,8 +326,6 @@
         </section>
       </div>
     </section-block>
-
-  
   </div>
 </template>
 
@@ -396,7 +382,7 @@ label {
   font-size: 25px;
   font-weight: 100;
 }
-.jobservice{
+.jobservice {
   float: left;
   margin-bottom: 20px;
 }

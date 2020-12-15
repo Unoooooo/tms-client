@@ -140,11 +140,31 @@ main {
 }
 
 .table-serenade table thead th {
-  background-color: #409EFF;
+  background-color: #409eff;
 }
 
 .dialog-alert {
   display: flex;
   padding-top: 0.6rem;
   min-width: 38px;
+}
+
+@media screen and (max-width: 450px) {
+  /* .pc-hidden {
+    display: none !important;
+  } */
+
+  .el-dialog {
+    width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .el-card__header {
+    font-size: 18px !important;
+  }
+
+  .el-table th > .cell {
+    font-size: 14px !important;
+  }
 }

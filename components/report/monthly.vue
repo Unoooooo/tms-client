@@ -2,48 +2,76 @@
   <section-block title="Monthly Report">
     <div>
       <section class="group-filter">
-        <div v-if="$authInfo.role() !== 4" class="gr-search">
-          <el-select v-model="groupSearch" class="table" placeholder="Group" :disabled="$authInfo.role() == 3">
-            <el-option
-              v-for="(item, index) in groups"
-              :key="index"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-          <el-input
-            v-model="fullnameSearch"
-            placeholder="Account"
-            class="input-search"
-            clearable
-          />
-        </div>
-        <div class="el-searchDate">
-          <el-date-picker
-            v-model="dateMonthlyDate"
-            type="date"
-            placeholder="Monthly Report"
-            format="dd-MM-yyyy"
-            value-format="yyyy-MM-dd"
-            class="date-picker"
-          />
-
-          <el-button
-            class="button-delete-multi"
-            type="primary"
-            @click="searchMonthlyReport()"
+        <el-input
+          v-model="fullnameSearch"
+          :disabled="$authInfo.role() == constant.Role.STAFF"
+          placeholder="Account"
+          class="input-search"
+          clearable
+        />
+        <el-select
+          v-model="groupSearch"
+          class="table"
+          placeholder="Group"
+          :disabled="
+            $authInfo.role() == constant.Role.MANAGER ||
+            $authInfo.role() == constant.Role.STAFF
+          "
+        >
+          <el-option
+            v-for="(item, index) in groups"
+            :key="index"
+            :label="item.label"
+            :value="item.value"
           >
-            <i class="el-icon-search"></i>
-          </el-button>
+          </el-option>
+        </el-select>
 
-          <el-button
-            class="button-delete-multi"
-            type="primary"
-            @click="getListMonthly(page, size)"
+        <el-date-picker
+          v-model="startDate"
+          type="date"
+          placeholder="Start date"
+          format="dd-MM-yyyy"
+          value-format="yyyy-MM-dd"
+          class="date-picker"
+        />
+
+        <el-date-picker
+          v-model="endDate"
+          type="date"
+          placeholder="End date"
+          format="dd-MM-yyyy"
+          value-format="yyyy-MM-dd"
+          class="date-picker"
+        />
+
+        <el-button
+          class="button-delete-multi"
+          type="primary"
+          @click="searchMonthlyReport()"
+        >
+          <i class="el-icon-search"></i>
+        </el-button>
+
+        <el-button
+          class="button-delete-multi"
+          type="primary"
+          @click="getListMonthly(page, size)"
+        >
+          <i class="el-icon-refresh"></i>
+        </el-button>
+
+        <div class="gr-button">
+          <export-excel
+            :data="tableData"
+            :title="titleExcel"
+            name="MonthlyPayrollReport.xls"
+            :fields="json_fields"
           >
-            <i class="el-icon-refresh"></i>
-          </el-button>
+            <el-button class="add-new">
+              <i class="el-icon-download"></i> Export excel
+            </el-button>
+          </export-excel>
         </div>
       </section>
 
@@ -55,6 +83,12 @@
         class="table-serenade"
         @selection-change="handleSelectionChange"
       >
+        <el-table-column
+          class-name="text-center"
+          prop="stt"
+          :label="$t('STT')"
+          width="80px"
+        />
         <el-table-column
           class-name="text-left"
           prop="account"
@@ -73,13 +107,13 @@
         />
         <el-table-column
           class-name="text-center"
-          prop="paidLeave"
-          :label="$t('Paid Leave')"
+          prop="totalLeave"
+          :label="$t('Total Leave')"
         />
         <el-table-column
           class-name="text-center"
-          prop="nonPaidLeave"
-          :label="$t('Non Paid Leave')"
+          prop="unpermittedLeave"
+          :label="$t('Unpermitted Leave')"
         />
 
         <el-table-column
@@ -122,13 +156,14 @@
 
             <el-table
               :data="request.list"
+              class="table-serenade"
               style="
-                width: 60%;
+                width: 452px;
                 margin: 20px 0 20px 65px;
                 border: 1px solid #e2e8f0;
               "
             >
-              <el-table-column label="Paid Leave" width="200">
+              <el-table-column label="Permitted Leave Day" width="200">
                 <template slot-scope="{ row }">
                   <i v-if="row.paidLeave" class="el-icon-time"></i>
                   <span style="margin-left: 10px">
@@ -136,7 +171,7 @@
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column label="Non Paid Leave" width="200">
+              <el-table-column label="Inpermitted Leave Day" width="250">
                 <template slot-scope="{ row }">
                   <i v-if="row.nonPaidLeave" class="el-icon-time"></i>
                   <span style="margin-left: 10px">
@@ -221,7 +256,6 @@ label {
 }
 .group-filter {
   margin-bottom: 20px;
-  display: flex;
   .gr-button {
     float: right;
     margin-bottom: 15px;
@@ -242,12 +276,14 @@ label {
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 </style>
 
 <script>
 import SimplePagination from '~/components/pagination/SimplePagination'
 import validate from '@/helpers/custom-rules-validate'
+import Constant from '~/constant'
 
 export default {
   components: { SimplePagination },
@@ -256,9 +292,13 @@ export default {
   middleware: 'auth',
   data() {
     return {
+      json_fields: null,
+      titleExcel: '',
+      constant: Constant,
       tableData: [],
       fullnameSearch: '',
       groupSearch: '',
+      endDate: '',
       startDate: '',
       dateMonthlyDate: '',
       dateMonthlyReport: '',
@@ -381,6 +421,15 @@ export default {
             this.groups = response.listData.map((item) => {
               return { label: item.name, value: Number(item.group_id) }
             })
+            this.json_fields = {
+              'STT' :'stt',
+              'Account': 'account',
+              'Group': 'group_name',
+              'Total Work Day': 'total_work_day',
+              'Total Leave': 'totalLeave',
+              'Unpermitted Leave': 'unpermittedLeave',
+            }
+            console.log(this.json_fields)
           }
         },
         (err) => this.notifyError(err.error.error)
@@ -419,10 +468,13 @@ export default {
         filterObj.groupId = this.groupSearch
       }
       if (
-        this.dateMonthlyDate &&
-        (!this.dateMonthlyDate.length == 0 || this.dateMonthlyDate.trim())
+        this.startDate &&
+        (!this.startDate.length == 0 || this.startDate.trim())
       ) {
-        filterObj.dateMonthlyReport = this.dateMonthlyDate
+        filterObj.startDate = this.startDate
+      }
+      if (this.endDate && (!this.endDate.length == 0 || this.endDate.trim())) {
+        filterObj.endDate = this.endDate
       }
 
       await this.$services.monthly.searchMonthlyReport(
@@ -431,6 +483,15 @@ export default {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
             this.totalPages = response.totalPages
+            if (this.fullnameSearch != undefined) {
+              this.titleExcel += 'Account: ' + this.fullnameSearch
+            }
+            if (this.groupSearch != undefined) {
+              this.titleExcel += '- Group: ' + this.groupSearch
+            }
+            if (this.dateMonthlyDate != undefined) {
+              this.titleExcel += '- Start Date: ' + this.dateMonthlyDate
+            }
           } else {
             this.tableData = []
             this.totalPages = 0
@@ -453,7 +514,7 @@ export default {
       this.page = page
       const roleValue = this.$authInfo.roleValue()
       this.$router.push({
-        name: `${roleValue}-report-abnormal`,
+        name: `${roleValue}-report-monthly`,
         query: { page, size: this.size },
       })
     },
@@ -493,26 +554,65 @@ export default {
       )
     },
 
+    // getListMonthlyDetail(dataRequest) {
+    //   this.startLoading()
+    //   this.$services.monthly.getListMonthlyDetail(
+    //     dataRequest,
+    //     (res) => {
+    //       this.request.list = []
+    //       let length = res.listPaidLeaveDay.length
+    //       if (res.listNonPaidLeaveDay.length >= res.listPaidLeaveDay.length) {
+    //         length = res.listNonPaidLeaveDay.length
+    //       }
+    //       for (let i = 0; i < length; i++) {
+    //         let element = {
+    //           nonPaidLeave: null,
+    //           paidLeave: null,
+    //         }
+    //         if (res.listNonPaidLeaveDay[i]) {
+    //           element.nonPaidLeave = res.listNonPaidLeaveDay[i]
+    //         }
+    //         if (res.listPaidLeaveDay[i]) {
+    //           element.paidLeave = res.listPaidLeaveDay[i]
+    //         }
+    //         this.request.list.push(element)
+    //       }
+    //       console.log(length)
+    //       console.log('res', this.request.list)
+    //       this.dialogFormWithInput = true
+    //       this.endLoading()
+    //     },
+    //     (err) => {
+    //       this.endLoading()
+    //       this.notifyError(err.error.error)
+    //     }
+    //   )
+    // },
     getListMonthlyDetail(dataRequest) {
       this.startLoading()
+      console.log('a', dataRequest)
       this.$services.monthly.getListMonthlyDetail(
         dataRequest,
         (res) => {
+          console.log('b', res)
           this.request.list = []
-          let length = res.listPaidLeaveDay.length
-          if (res.listNonPaidLeaveDay.length >= res.listPaidLeaveDay.length) {
-            length = res.listNonPaidLeaveDay.length
+          let length = res.listPermittedLeaveDay.length
+          if (
+            res.listUnpermittedLeaveDay.length >=
+            res.listPermittedLeaveDay.length
+          ) {
+            length = res.listUnpermittedLeaveDay.length
           }
           for (let i = 0; i < length; i++) {
             let element = {
               nonPaidLeave: null,
               paidLeave: null,
             }
-            if (res.listNonPaidLeaveDay[i]) {
-              element.nonPaidLeave = res.listNonPaidLeaveDay[i]
+            if (res.listUnpermittedLeaveDay[i]) {
+              element.nonPaidLeave = res.listUnpermittedLeaveDay[i]
             }
-            if (res.listPaidLeaveDay[i]) {
-              element.paidLeave = res.listPaidLeaveDay[i]
+            if (res.listPermittedLeaveDay[i]) {
+              element.paidLeave = res.listPermittedLeaveDay[i]
             }
             this.request.list.push(element)
           }
@@ -533,7 +633,8 @@ export default {
       const temp = Object.assign({}, row)
       const dataRequest = {
         accountId: temp.account_id,
-        dateMonthlyReport: temp.monthly || null,
+        startDate: temp.startDate || null,
+        endDate: temp.endDate || null,
       }
       this.Monthly = Object.assign({}, row)
       console.log(index)

@@ -2,61 +2,75 @@
   <section-block title="OverTime Report">
     <div>
       <section class="group-filter">
-        <div  class="gr-search">
-          <el-input
-          :disabled="$authInfo.role() == 4"
-            v-model="fullnameSearch"
-            placeholder="Account"
-            class="input-search"
-            clearable
-          />
-          <el-select v-model="groupSearch" class="table" placeholder="Group" :disabled="$authInfo.role() == 3 || $authInfo.role() == 4">
-            <el-option
-              v-for="(item, index) in groups"
-              :key="index"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-
-          
-        </div>
-
-        <div class="el-searchDate">
-          <el-date-picker
-            v-model="startDate"
-            type="date"
-            placeholder="Start date"
-            format="dd-MM-yyyy"
-            value-format="yyyy-MM-dd"
-            class="date-picker"
-          />
-
-          <el-date-picker
-            v-model="endDate"
-            type="date"
-            placeholder="End date"
-            format="dd-MM-yyyy"
-            value-format="yyyy-MM-dd"
-            class="date-picker"
-          />
-
-          <el-button
-            class="button-delete-multi"
-            type="primary"
-            @click="searchOvertimeReport()"
+        <el-input
+          v-model="fullnameSearch"
+          :disabled="$authInfo.role() == constant.Role.STAFF"
+          placeholder="Account"
+          class="input-search"
+          clearable
+        />
+        <el-select
+          v-model="groupSearch"
+          class="table"
+          placeholder="Group"
+          :disabled="
+            $authInfo.role() == constant.Role.MANAGER ||
+            $authInfo.role() == constant.Role.STAFF
+          "
+        >
+          <el-option
+            v-for="(item, index) in groups"
+            :key="index"
+            :label="item.label"
+            :value="item.value"
           >
-            <i class="el-icon-search"></i>
-          </el-button>
+          </el-option>
+        </el-select>
+        <el-date-picker
+          v-model="startDate"
+          type="date"
+          placeholder="Start date"
+          format="dd-MM-yyyy"
+          value-format="yyyy-MM-dd"
+          class="date-picker"
+        />
 
-          <el-button
-            class="button-delete-multi"
-            type="primary"
-            @click="getListOvertime(page, size)"
+        <el-date-picker
+          v-model="endDate"
+          type="date"
+          placeholder="End date"
+          format="dd-MM-yyyy"
+          value-format="yyyy-MM-dd"
+          class="date-picker"
+        />
+
+        <el-button
+          class="button-delete-multi"
+          type="primary"
+          @click="searchOvertimeReport()"
+        >
+          <i class="el-icon-search"></i>
+        </el-button>
+
+        <el-button
+          class="button-delete-multi"
+          type="primary"
+          @click="getListOvertime(page, size)"
+        >
+          <i class="el-icon-refresh"></i>
+        </el-button>
+
+        <div class="gr-button">
+          <export-excel
+            :data="tableData"
+            :title="titleExcel"
+            name="OverTimeReport.xls"
+            :fields="json_fields"
           >
-            <i class="el-icon-refresh"></i>
-          </el-button>
+            <el-button class="add-new">
+              <i class="el-icon-download"></i> Export excel
+            </el-button>
+          </export-excel>
         </div>
       </section>
 
@@ -69,6 +83,12 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column
+          class-name="text-center"
+          prop="stt"
+          :label="$t('STT')"
+          width="80px"
+        />
+        <el-table-column
           class-name="text-left"
           prop="account"
           sortable
@@ -79,29 +99,25 @@
           prop="group"
           :label="$t('Group')"
         />
-        <el-table-column
+        <!-- <el-table-column
           class-name="text-left"
           prop="project"
           :label="$t('Project')"
-        />
-        <!-- <el-table-column class-name="text-center" :label="$t('Start Date')">
-          <template slot-scope="{ row }">
-            {{
-              row.startDate ? showDateTime(row.startDate, 'DD/MM/YYYY') : ''
-            }}
-          </template>
-        </el-table-column>
-         <el-table-column class-name="text-center" :label="$t('End Date')">
-          <template slot-scope="{ row }">
-            {{
-              row.endDate ? showDateTime(row.endDate, 'DD/MM/YYYY') : ''
-            }}
-          </template>
-        </el-table-column> -->
+        /> -->
         <el-table-column
           class-name="text-center"
-          prop="totalTimeOt"
-          :label="$t(' Time OverTime')"
+          prop="totalTimeOtNormal"
+          :label="$t('Total Normal OT')"
+        />
+        <el-table-column
+          class-name="text-center"
+          prop="totalTimeOtWeekend"
+          :label="$t('Total Weekend OT')"
+        />
+        <el-table-column
+          class-name="text-center"
+          prop="totalTimeOtHoliday"
+          :label="$t('Total Holiday OT')"
         />
 
         <el-table-column
@@ -142,23 +158,57 @@
               </div>
             </div>
 
+            <div class="noteBorder">
+              <div class="noteTitle">Note</div>
+              <div class="noteTxt">N: Normal</div>
+              <div class="noteTxt">W: Weekend</div>
+              <div class="noteTxt">H: Holiday</div>
+            </div>
+
+            <!-- <div class="form-group row">
+              <label class="col-sm-3 col-form-label">Account</label>
+              <div class="col-sm-8 data-detail">
+                {{ overtime.account }}
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label">Group</label>
+              <div class="col-sm-8 data-detail">
+                {{ overtime.group }}
+              </div>
+            </div> -->
+
             <el-table
               :data="request.list"
+              class="table-serenade"
               style="
-                width: 60%;
+                width: 582px;
                 margin: 20px 0 20px 65px;
                 border: 1px solid #e2e8f0;
               "
             >
-              <el-table-column prop="project" label="Project" width="180">
+              <el-table-column
+                prop="project"
+                label="Project"
+                width="190"
+                style="color: #000"
+              >
               </el-table-column>
-              <el-table-column label="Time Overtime" width="200">
+
+              <el-table-column label="Date" width="200">
                 <template slot-scope="{ row }">
-                  <i v-if="row.totalTimeOt" class="el-icon-time"></i>
+                  <i v-if="row.dateOt" class="el-icon-time"></i>
                   <span style="margin-left: 10px">
-                    {{ row.totalTimeOt }}
+                    {{ row.dateOt }}
                   </span>
                 </template>
+              </el-table-column>
+              <el-table-column
+                prop="timeOt"
+                label="Time"
+                width="190"
+                style="color: #000"
+              >
               </el-table-column>
             </el-table>
           </div>
@@ -216,8 +266,29 @@
 .el-select {
   width: 100%;
 }
+.noteBorder {
+  border: 1px solid #000;
+  width: 80px;
+  float: right;
+  margin-top: -97px;
+  margin-bottom: 10px;
+  margin-right: 80px;
+}
+.noteTitle {
+  font-size: 15px;
+  text-align: center;
+  margin-top: 5px;
+}
+.noteTxt {
+  font-size: 10px;
+  margin-left: 10px;
+  margin-bottom: 5px;
+}
 .data-detail {
   line-height: 35px;
+}
+.el-table th > .cell {
+  color: #000;
 }
 .content {
   margin: 70px 32px 20px;
@@ -260,7 +331,6 @@ label {
 }
 .group-filter {
   margin-bottom: 20px;
-  display: flex;
   .gr-button {
     float: right;
     margin-bottom: 15px;
@@ -281,12 +351,14 @@ label {
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 </style>
 
 <script>
 import SimplePagination from '~/components/pagination/SimplePagination'
 import validate from '@/helpers/custom-rules-validate'
+import Constant from '~/constant'
 
 export default {
   components: { SimplePagination },
@@ -295,6 +367,9 @@ export default {
   middleware: 'auth',
   data() {
     return {
+      json_fields: null,
+      titleExcel: '',
+      constant: Constant,
       tableData: [],
       fullnameSearch: '',
       groupSearch: '',
@@ -470,6 +545,18 @@ export default {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
             this.totalPages = response.totalPages
+            if (this.fullnameSearch != undefined) {
+              this.titleExcel += 'Account: ' + this.fullnameSearch
+            }
+            if (this.groupSearch != undefined) {
+              this.titleExcel += '- Group: ' + this.groupSearch
+            }
+            if (this.startDate != undefined) {
+              this.titleExcel += '- Start Date: ' + this.startDate
+            }
+            if (this.endDate != undefined) {
+              this.titleExcel += '- End Date:' + this.endDate
+            }
           } else {
             this.tableData = []
             this.totalPages = 0
@@ -492,7 +579,7 @@ export default {
       this.page = page
       const roleValue = this.$authInfo.roleValue()
       this.$router.push({
-        name: `${roleValue}-report-abnormal`,
+        name: `${roleValue}-report-overtime`,
         query: { page, size: this.size },
       })
     },
@@ -524,6 +611,15 @@ export default {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.json_fields = {
+              'STT': 'stt',
+              'Account': 'account',
+              'Group': 'group',
+              'Time Normal OT': 'totalTimeOtNormal',
+              'Total Weekend OT': 'totalTimeOtWeekend',
+              'Total Holiday OT': 'totalTimeOtHoliday',
+            }
+            console.log(this.json_fields)
           }
         },
         (err) => {

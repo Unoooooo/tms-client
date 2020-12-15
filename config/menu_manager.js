@@ -92,13 +92,13 @@ export default [
       {
         key: 'manager-administration-project',
         path: '/manager/administration/project',
-        name: 'Manager Project',
+        name: 'Project Management',
         permission: null,
       },
       {
         key: 'manager-administration-site',
         path: '/manager/administration/site',
-        name: 'Manager Site',
+        name: 'Site Management',
         permission: null,
       },
     ],

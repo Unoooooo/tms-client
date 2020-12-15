@@ -48,7 +48,7 @@
     <hr class="my-3" />
     <div class="actions">
       <nuxt-link class="btn-forget mb-3" to="/reset-password">
-        {{ $t(`Reset password`) }}
+        {{ $t(`Reset Password`) }}
       </nuxt-link>
     </div>
   </div>

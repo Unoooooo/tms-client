@@ -1,3 +1,9 @@
 {
-  "PassWordDefault": "12345678"
+  "PassWordDefault": "12345678",
+  "Role": {
+    "ADMIN": 1,
+    "HR": 2,
+    "MANAGER": 3,
+    "STAFF": 4
+  }
 }

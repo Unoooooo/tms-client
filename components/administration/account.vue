@@ -33,14 +33,6 @@
         </el-button>
 
         <div class="gr-button">
-          <!-- <el-button
-            class="button-delete-multi"
-            type="danger"
-            @click="handleDeleteMulti()"
-          >
-            <i class="el-icon-delete"></i>
-          </el-button> -->
-
           <el-button class="add-new" @click="handleCreate()">
             {{ $t('Add new') }}
           </el-button>
@@ -73,11 +65,7 @@
           :label="$t('Role')"
           prop="role"
         />
-        <!-- <el-table-column class-name="text-left" :label="$t('Gender')">
-          <template slot-scope="{ row }">
-            {{ row.gender ? 'Male' : 'Female' }}
-          </template>
-        </el-table-column> -->
+      
         <el-table-column class-name="text-left" :label="$t('Group')">
           <template slot-scope="{ row }">
             {{ row.groupCompanyName }}
@@ -133,7 +121,7 @@
         <el-dialog
           :title="titlePopup"
           :visible.sync="dialogFormWithInput"
-          width="70%"
+          width="60%"
         >
           <div v-if="dialogMode === 'detail'">
             <el-col :span="12">
@@ -150,49 +138,49 @@
             </el-col>
             <el-col :span="12">
               <div class="form-group row">
-                <label class="col-sm-5 col-form-label">Account</label>
+                <label class="col-sm-4 col-form-label">Account</label>
                 <div class="col-sm-4 data-detail">
                   {{ user.username }}
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-5 col-form-label">Full Name</label>
+                <label class="col-sm-4 col-form-label">Full Name</label>
                 <div class="col-sm-4 data-detail">
                   {{ user.full_name }}
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-5 col-form-label">Email</label>
+                <label class="col-sm-4 col-form-label">Email</label>
                 <div class="col-sm-6 data-detail">
                   {{ user.email }}
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-5 col-form-label">Phone number</label>
+                <label class="col-sm-4 col-form-label">Phone number</label>
                 <div class="col-sm-4 data-detail">
                   {{ user.mobile }}
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-5 col-form-label">DOB</label>
+                <label class="col-sm-4 col-form-label">DOB</label>
                 <div class="col-sm-4 data-detail">
                   {{ user.dob ? showDateTime(user.dob, 'DD/MM/YYYY') : '' }}
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-5 col-form-label">Address</label>
+                <label class="col-sm-4 col-form-label">Address</label>
                 <div class="col-sm-4 data-detail">
                   {{ user.address }}
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-5 col-form-label">Gender</label>
+                <label class="col-sm-4 col-form-label">Gender</label>
                 <div class="col-sm-4 data-detail">
                   {{ user.gender ? 'Male' : 'Female' }}
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-5 col-form-label">Contract Date</label>
+                <label class="col-sm-4 col-form-label">Contract Date</label>
                 <div class="col-sm-6 data-detail">
                   {{
                     user.contract_date
@@ -202,27 +190,25 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-5 col-form-label">Group</label>
+                <label class="col-sm-4 col-form-label">Group</label>
                 <div class="col-sm-4 data-detail">
                   {{ user.groupCompanyName }}
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-5 col-form-label">Role</label>
+                <label class="col-sm-4 col-form-label">Role</label>
                 <div class="col-sm-4 data-detail">
                   {{ user.role }}
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-5 col-form-label">Status</label>
+                <label class="col-sm-4 col-form-label">Status</label>
                 <div class="col-sm-4 data-detail">
                   {{ user.status ? 'Active' : 'Deactive' }}
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-5 col-form-label">
-                  Number of fingers
-                </label>
+                <label class="col-sm-4 col-form-label"> #Fingers </label>
                 <div class="col-sm-4 data-detail">
                   {{ user.finger_number }}
                 </div>
@@ -274,6 +260,7 @@
                       v-model="user.role"
                       placeholder="Please select role"
                       class="itemSelect"
+                    
                     >
                       <el-option
                         v-for="item in roles"
@@ -326,7 +313,7 @@
               </el-col>
               <el-col :span="12">
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">
+                  <label class="col-sm-3 col-form-label">
                     Account <span>*</span>
                   </label>
                   <el-form-item prop="username" class="col-sm-7">
@@ -334,7 +321,7 @@
                   </el-form-item>
                 </div>
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">
+                  <label class="col-sm-3 col-form-label">
                     Email <span>*</span>
                   </label>
                   <el-form-item prop="email" class="col-sm-7">
@@ -342,7 +329,7 @@
                   </el-form-item>
                 </div>
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">
+                  <label class="col-sm-3 col-form-label">
                     DOB <span>*</span>
                   </label>
                   <el-form-item prop="dob" class="col-sm-7">
@@ -358,7 +345,7 @@
                 </div>
 
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">
+                  <label class="col-sm-3 col-form-label">
                     Group <span>*</span>
                   </label>
                   <el-form-item prop="groupCompanyName" class="col-sm-7">
@@ -379,15 +366,13 @@
                 </div>
 
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">Address</label>
+                  <label class="col-sm-3 col-form-label">Address</label>
                   <el-form-item prop="address" class="col-sm-7">
                     <el-input v-model="user.address" />
                   </el-form-item>
                 </div>
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">
-                    Number of fingers
-                  </label>
+                  <label class="col-sm-3 col-form-label"> #Fingers </label>
                   <el-form-item prop="finger_number" class="col-sm-7">
                     <el-input v-model="user.finger_number" disabled />
                   </el-form-item>
@@ -546,6 +531,9 @@
 .el-date-editor {
   width: 50%;
 }
+.form-group {
+  margin-bottom: 0px;
+}
 .data-detail {
   line-height: 35px;
 }
@@ -611,6 +599,7 @@
 }
 .input-search {
   width: 150px;
+  margin-bottom: 10px;
 }
 label {
   text-align: center;
@@ -656,19 +645,15 @@ export default {
       roles: [
         {
           value: 'ROLE_ADMIN',
-          label: 'ROLE_ADMIN',
+          label: 'ADMIN',
         },
         {
           value: 'ROLE_HR',
-          label: 'ROLE_HR',
-        },
-        {
-          value: 'ROLE_MANAGER',
-          label: 'ROLE_MANAGER',
+          label: 'HR',
         },
         {
           value: 'ROLE_STAFF',
-          label: 'ROLE_STAFF',
+          label: 'STAFF',
         },
       ],
       genders: [
@@ -711,7 +696,7 @@ export default {
         email: this.validateEmailAddress(),
         mobile: this.validatePhoneNumber(),
         fingerprint_code: this.validateRequired('finger number '),
-        full_name: this.validateRequired('Fullname'),
+        full_name: this.validateRequired('fullname'),
         groupCompanyName: this.validateRequired('group'),
         role: this.validateRequired('role'),
         dob: this.validateRequired('date of birth'),

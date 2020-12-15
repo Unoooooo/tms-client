@@ -86,13 +86,13 @@ export default [
       {
         key: 'humanresources-administration-account',
         path: '/humanresources/administration/account',
-        name: 'Manager Account',
+        name: 'Account Management',
         permission: null,
       },
       {
         key: 'humanresources-administration-group',
         path: '/humanresources/administration/group',
-        name: 'Manager Group',
+        name: 'Group Management',
         permission: null,
       },
     ],

@@ -43,6 +43,7 @@
 
 .el-menu-item.is-disabled, .el-menu-item .is-disabled {
   opacity: 0.6;
+
 }
 
 .el-menu-item .is-active, .el-menu-item.is-active {

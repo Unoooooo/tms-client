@@ -8,9 +8,11 @@ export default class AbnormalAPI extends BaseService {
 
   async getListAbnormalStaff(params, success, error) {
 
-    await this.post('abnormal-case/employee', params, success, error)
+    await this.post('abnormal-case/search', params, success, error)
   }
-
+  async getListGroupAbnormal(params, success, error) {
+    await this.get(`abnormal-case/list-group`,params, success, error)
+  }
   async getListAbnormalReceiver(success, error) {
     await this.get('explanations/create', success, error)
   }
@@ -33,18 +35,23 @@ export default class AbnormalAPI extends BaseService {
   async acceptExplanation(params, success, error) {
     await this.put('abnormal-case/accept', params, success, error)
   }
+  async detailAbnormal(accountId,explanId, success, error) {
+    await this.get(`abnormal-case/${accountId}/${explanId}`, success, error)
+  }
   async searchAbnormalRequest(params, success, error) {
-    await this.post('abnormal-case/employee', params, success, error)
+    await this.post('abnormal-case/search', params, success, error)
   }
   async searchAbnormal(
+    userName,
     startDate,
     endDate,
+    groupId,
     params,
     success,
     error
   ) {
     this.get(
-      `abnormal-case/employee?&startDate=${startDate}&endDate=${endDate}${params}`,
+      `abnormal-case/search?&groupId=${groupId}&userName=${userName}&startDate=${startDate}&endDate=${endDate}${params}`,
       success,
       error
     )
