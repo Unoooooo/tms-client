@@ -72,7 +72,7 @@ export default [
       {
         key: 'manager-request-exception',
         path: '/manager/request/exception',
-        name: 'Exception cases',
+        name: 'Exception Cases',
         permission: null,
       },
       {

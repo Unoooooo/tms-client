@@ -2,7 +2,12 @@ import BaseService from './BaseService'
 
 export default class DailyTimeSheetAPI extends BaseService {
   async getListTimeSheet(params, success, error) {
-    await this.post(`daily-timesheet/search`, params, success, error)
+    await this.post(
+      `daily-timesheet/search?${this.urlParse(params)}`,
+      params,
+      success,
+      error
+    )
   }
 
   async exportExcelDaily(success, error) {

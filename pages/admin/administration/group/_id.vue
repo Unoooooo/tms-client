@@ -1,9 +1,9 @@
 <template>
-  <section-block title="Manage Group">
+  <section-block title="View Group">
     <section class="page-content">
       <div class="content">
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="24">
             <div class="titleGroup"> Group name: {{ groupName }}</div>
           </el-col>
         </el-row>
@@ -11,7 +11,7 @@
         <section class="project-filter">
           <el-input
             v-model="fullnameSearch"
-            placeholder="Full Name"
+            placeholder="Account"
             class="input-search"
             clearable
           />
@@ -46,12 +46,29 @@
             width="50%"
           >
             <el-form ref="dataForm" :model="addMemberToGroup">
-              <hr />
+              
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label"
                   >Member <span>*</span></label
                 >
-                <el-form-item prop="checkedMembers" class="col-sm-8">
+                <el-select
+                    v-model="addMemberToGroup.checkedMembers"
+                    multiple
+                    filterable
+                    allow-create
+                    default-first-option
+                    placeholder="Select Member"
+                    class="col-sm-8"
+                  >
+                    <el-option
+                      v-for="(member, index) in members"
+                      :key="index"
+                      :label="member.username"
+                      :value="member.username"
+                    >
+                    </el-option>
+                  </el-select>
+                <!-- <el-form-item prop="checkedMembers" class="col-sm-8">
                   <el-checkbox-group
                     v-model="addMemberToGroup.checkedMembers"
                     class="list-member"
@@ -64,10 +81,10 @@
                       {{ member.username }}
                     </el-checkbox>
                   </el-checkbox-group>
-                </el-form-item>
+                </el-form-item> -->
               </div>
             </el-form>
-            <hr class="mb-0" />
+            
             <span slot="footer" class="dialog-footer">
               <el-button @click="dialogFormWithInputNew = false">
                 Cancel
@@ -460,7 +477,6 @@
 }
 .titleGroup{
     font-size: 26px;
-    margin-left: -600px;
     margin-bottom: 10px;
 }
 .form-group{
@@ -529,6 +545,7 @@ export default {
     return {
       groupName: this.$route.params.id,
       group_id: '',
+      manager_name:'',
       titlePopup: '',
       image_preview: '',
       tableData: [],
@@ -599,7 +616,7 @@ export default {
           .toLowerCase()
           .split(' ')
           .every(
-            (v) => item.full_name && item.full_name.toLowerCase().includes(v)
+            (v) => item.username && item.username.toLowerCase().includes(v)
           )
       )
     },

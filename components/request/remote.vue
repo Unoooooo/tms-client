@@ -45,7 +45,7 @@
             <i class="el-icon-refresh"></i>
           </el-button>
           <el-button
-            v-if="$authInfo.role() !== constant.Role.MANAGER"
+          
             class="gr-button"
             @click="handleCreate()"
           >
@@ -82,12 +82,15 @@
           prop="site"
           :label="$t('Site Name')"
         />
-        <el-table-column class-name="text-center" :label="$t('Check Time')">
-          <template slot-scope="{ row }">
+        <el-table-column 
+        class-name="text-center"  
+        prop="check_time" 
+        :label="$t('Check Time')">
+          <!-- <template slot-scope="{ row }">
             {{
-              row.check_time ? showDateTime(row.check_time, 'DD/MM/YYYY') : ''
+              row.check_time ? showDateTime(row.check_time, 'DD/MM/YYYY - HH:MM:SS') : ''
             }}
-          </template>
+          </template> -->
         </el-table-column>
 
         <el-table-column
@@ -104,7 +107,7 @@
           <template slot-scope="scope">
             <el-button
               v-if="
-                scope.row.status == 'Completed' &&
+                scope.row.status == 'Submited' &&
                 $authInfo.role() == constant.Role.MANAGER &&
                 $authInfo.username() != scope.row.account_sent
               "
@@ -137,19 +140,19 @@
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">Full Name</label>
                   <el-form-item prop="full_name" class="col-sm-7">
-                    <el-input v-model="checkIn.full_name" disabled />
+                    <el-input v-model="checkIn.full_name" class="widthInput" disabled />
                   </el-form-item>
                 </div>
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">Group</label>
                   <el-form-item prop="group_name" class="col-sm-7">
-                    <el-input v-model="checkIn.group_name" disabled />
+                    <el-input v-model="checkIn.group_name" class="widthInput" disabled />
                   </el-form-item>
                 </div>
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">Time</label>
                   <el-form-item class="col-sm-7">
-                    <el-input :placeholder="dataString" disabled />
+                    <el-input :placeholder="dataString" class="widthInput" disabled />
                   </el-form-item>
                 </div>
                 <div class="form-group row">
@@ -158,7 +161,7 @@
                     <el-select
                       v-model="checkIn.sitename"
                       placeholder="Select sitename"
-                      class="col-sm-12 pl-0"
+                      class="widthInput"
                     >
                       <el-option
                         v-for="(item, index) in sites"
@@ -172,7 +175,7 @@
                 </div>
               </el-col>
               <el-col :sm="24" :lg="14">
-                <div class="form-group">
+                <div class="form-group maginAVT">
                   <!-- <el-upload
                     class="avatar-uploader"
                     action=""
@@ -214,25 +217,33 @@
                   </el-col>
                   <el-col :span="12">
                     <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Time</label>
-                      <el-form-item class="col-sm-8">
+                      <label class="col-sm-4 col-form-label">Full Name</label>
+                      <el-form-item class="col-sm-5">
+                        {{ checkIn.full_name }}
+                      </el-form-item>
+                    </div>
+
+                    <div class="form-group row">
+                      <label class="col-sm-4 col-form-label">Time</label>
+                      <el-form-item class="col-sm-6">
                         {{ checkIn.check_time }}
                       </el-form-item>
                     </div>
+
                     <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Site</label>
+                      <label class="col-sm-4 col-form-label">Site</label>
                       <el-form-item prop="site" class="col-sm-5">
                         {{ checkIn.site }}
                       </el-form-item>
                     </div>
                     <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Status</label>
+                      <label class="col-sm-4 col-form-label">Status</label>
                       <el-form-item prop="status" class="col-sm-5">
                         {{ checkIn.status }}
                       </el-form-item>
                     </div>
                     <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Message</label>
+                      <label class="col-sm-4 col-form-label">Message</label>
                       <el-form-item prop="response_msg" class="col-sm-5">
                         {{ checkIn.response_msg }}
                       </el-form-item>
@@ -303,6 +314,15 @@
 <style lang="scss" scoped>
 .image-remote {
   max-width: 70%;
+}
+.form-group{
+  margin-bottom: 0px;
+}
+.maginAVT{
+  margin-left: 30px;
+}
+.widthInput{
+  width: 166px;
 }
 .avatar-uploader {
   margin: auto;
@@ -653,7 +673,7 @@ export default {
       this.multipleSelection = val
     },
     changePageData(page) {
-      this.getListAbsenceRequest(page, this.size)
+      this.getListRemoteRequest(page, this.size)
       this.page = page
       const roleValue = this.$authInfo.roleValue()
       this.$router.push({
@@ -714,9 +734,9 @@ export default {
       } else {
         this.dialogFormWithInput = true
       }
-      this.checkIn.check_time = this.checkIn.check_time
-        ? this.showDateTime(this.checkIn.check_time, 'DD/MM/YYYY HH:mm:ss')
-        : ''
+      // this.checkIn.check_time = this.checkIn.check_time
+      //   ? this.showDateTime(this.checkIn.check_time, 'DD/MM/YYYY HH:mm:ss')
+      //   : ''
       this.rowSelected = index + 1
     },
     createData() {

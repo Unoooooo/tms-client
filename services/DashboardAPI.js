@@ -8,4 +8,8 @@ export default class DashboardAPI extends BaseService {
   async dashboardStaff(id, success, error) {
     await this.get('dashboard/employee/' + id, success, error)
   }
+
+  async dashboardAdmin(success, error) {
+    await this.post('dashboard/total', {}, success, error)
+  }
 }

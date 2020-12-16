@@ -32,4 +32,13 @@ export default class SystemSettingAPI extends BaseService {
   async rejectRequest(success, error) {
     await this.get('test/jobRejectRequest', success, error)
   }
+  async jobDashBoardStaff(success, error) {
+    await this.get('test/jobDashBoardStaff', success, error)
+  }
+  async jobDashBoardGroupManager(success, error) {
+    await this.get('test/jobDashBoardGroupManager', success, error)
+  }
+  async jobDashBoardAdminHr(success, error) {
+    await this.get('test/jobDashBoardAdminHr', success, error)
+  }
 }

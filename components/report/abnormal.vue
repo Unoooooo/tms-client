@@ -60,7 +60,7 @@
         <div class="gr-button">
           <export-excel
             :data="tableData"
-            :title="titleExcel.length == 0 ? 'Account: | Group: | Start Date: | End Date:': titleExcel"
+            :title="titleExcel"
             name="AbnormalReport.xls"
             :fields="json_fields"
           >
@@ -270,7 +270,7 @@
                 </div>
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">
-                    Time <span>*</span>
+                    Date <span>*</span>
                   </label>
                   <el-form-item prop="explDate" class="col-sm-6">
                     <el-date-picker
@@ -557,8 +557,19 @@ export default {
           params,
           (response) => {
             if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
               this.tableData = response.data
               this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
               this.json_fields = {
                 'STT': 'stt',
                 'Account': 'userName',
@@ -580,8 +591,21 @@ export default {
           params,
           (response) => {
             if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
               this.tableData = response.data
               this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.tableData.length; index++) {
+                  // us += this.tableData[index].userName + ', ';
+                  // sd += this.tableData[index].userName + ', ';
+                  // ed += this.tableData[index].userName + ', ';
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }
               this.json_fields = {
                 'STT': 'stt',
                 'Account': 'userName',
@@ -658,6 +682,14 @@ export default {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
             this.totalPages = response.totalPages
+            for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }
+            this.titleExcel = '';
             if (this.userName != undefined) {
               this.titleExcel += 'Account: ' + this.userName 
             }

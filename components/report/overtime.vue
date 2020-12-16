@@ -545,17 +545,18 @@ export default {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.titleExcel = '';
             if (this.fullnameSearch != undefined) {
               this.titleExcel += 'Account: ' + this.fullnameSearch
             }
             if (this.groupSearch != undefined) {
-              this.titleExcel += '- Group: ' + this.groupSearch
+              this.titleExcel += '| Group: ' + this.groupSearch
             }
             if (this.startDate != undefined) {
-              this.titleExcel += '- Start Date: ' + this.startDate
+              this.titleExcel += '| Start Date: ' + this.startDate
             }
             if (this.endDate != undefined) {
-              this.titleExcel += '- End Date:' + this.endDate
+              this.titleExcel += '| End Date:' + this.endDate
             }
           } else {
             this.tableData = []
@@ -609,8 +610,11 @@ export default {
         params,
         (response) => {
           if (response.data && response.data.length > 0) {
+            this.titleExcel = '';
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
             this.json_fields = {
               'STT': 'stt',
               'Account': 'account',

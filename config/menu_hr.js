@@ -66,7 +66,7 @@ export default [
       {
         key: 'humanresources-request-exception',
         path: '/humanresources/request/exception',
-        name: 'Exception cases',
+        name: 'Exception Cases',
         permission: null,
       },
       {

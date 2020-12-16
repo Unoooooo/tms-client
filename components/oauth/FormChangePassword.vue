@@ -43,14 +43,15 @@
         <p class="error">{{ error }}</p>
         <el-row :gutter="20" class="mt-30">
           <el-col :span="12" :offset="8" style="margin-left: 200px">
-            <el-button type="primary" @click="submitForm('ruleForm')">
-              {{ $t('Submit') }}
-            </el-button>
+           
             <nuxt-link class="mb-3" to="/">
               <el-button>
                 {{ $t('Cancel') }}
               </el-button>
             </nuxt-link>
+             <el-button type="primary" @click="submitForm('ruleForm')">
+              {{ $t('Submit') }}
+            </el-button>
           </el-col>
         </el-row>
       </el-form>

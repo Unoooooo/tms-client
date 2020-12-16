@@ -421,6 +421,11 @@ export default {
             this.groups = response.listData.map((item) => {
               return { label: item.name, value: Number(item.group_id) }
             })
+             this.titleExcel = '';
+             
+            //  this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+            this.titleExcel += 'Account: | Group: | Start Date: | End Date: ';
+
             this.json_fields = {
               'STT' :'stt',
               'Account': 'account',
@@ -483,14 +488,18 @@ export default {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.titleExcel = '';
             if (this.fullnameSearch != undefined) {
               this.titleExcel += 'Account: ' + this.fullnameSearch
             }
             if (this.groupSearch != undefined) {
-              this.titleExcel += '- Group: ' + this.groupSearch
+              this.titleExcel += '| Group: ' + this.groupSearch
             }
-            if (this.dateMonthlyDate != undefined) {
-              this.titleExcel += '- Start Date: ' + this.dateMonthlyDate
+            if (this.startDate != undefined) {
+              this.titleExcel += '| Start Date: ' + this.startDate
+            }
+            if (this.endDate != undefined) {
+              this.titleExcel += '| Start Date: ' + this.endDate
             }
           } else {
             this.tableData = []

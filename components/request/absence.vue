@@ -200,6 +200,7 @@
                     <el-input
                       v-model="request.title"
                       :disabled="isDetailForm"
+                     
                     />
                   </el-form-item>
                 </div>
@@ -410,6 +411,7 @@
 .data-detail {
   line-height: 35px;
 }
+
 .content {
   margin: 70px 32px 20px;
   .title {
@@ -430,7 +432,7 @@
   text-align: center;
 }
 .form-group {
-  margin-bottom: 0px;
+  margin-bottom: 10px;
 }
 .demo-input-suffix .el-input {
   width: 80px;
@@ -591,12 +593,12 @@ export default {
       rules: {
         title: this.validateRequired('title'),
         groupCompany: this.validateRequired('groupCompany'),
-        start_date: this.validateRequired('start_date'),
+        start_date: this.validateRequired('start date'),
         end_date: [
           {
             required: true,
             whitespace: true,
-            message: this.$t(`Please input end_date!`),
+            message: this.$t(`Please input end date!`),
             trigger: 'change',
           },
           {
@@ -604,7 +606,7 @@ export default {
             trigger: 'change',
           },
         ],
-        account_receiver: this.validateRequired('account_receiver'),
+        account_receiver: this.validateRequired('account'),
         cc_mail_ids: this.validateEmailAddress(),
         type: { validator: typeChoose, trigger: 'blur' },
         soon_time: { validator: typeChooseSoonTime, trigger: 'blur' },

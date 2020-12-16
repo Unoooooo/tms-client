@@ -72,7 +72,7 @@ export default [
       {
         key: 'staff-request-exception',
         path: '/staff/request/exception',
-        name: 'Exception cases',
+        name: 'Exception Cases',
         permission: null,
       },
       {

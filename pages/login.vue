@@ -22,10 +22,10 @@
  .tms{
    text-align: center;
    text-transform: uppercase;
-   font-size: 60px;
+   font-size: 55px;
    font-weight: bold;
    color: #fff;
-   padding-top: 40px;
+   padding-top: 0px;
 
  }
  .design{

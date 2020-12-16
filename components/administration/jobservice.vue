@@ -19,6 +19,27 @@
           </el-button></td>
            
         </tr>
+         <tr class="tr">
+            <td class="td">Có chắc là chia tay rồi mình sẽ không đau Có chắc là ta sẽ ko nhớ thương? Có chắc khi mỗi đêm về mình lang thang phố lạnh Và đội bàn tay không vô tình ôm vào hư không</td>
+            <td class="td"><el-button type="danger" @click="jobDashBoardStaff()">
+            DashBoard Staff
+          </el-button></td>
+           
+        </tr>
+         <tr class="tr">
+            <td class="td">Có chắc là chia tay rồi mình sẽ không đau Có chắc là ta sẽ ko nhớ thương? Có chắc khi mỗi đêm về mình lang thang phố lạnh Và đội bàn tay không vô tình ôm vào hư không</td>
+            <td class="td"><el-button type="danger" @click="jobDashBoardGroupManager()">
+            DashBoard Group Manager
+          </el-button></td>
+           
+        </tr>
+        <tr class="tr">
+            <td class="td">Có chắc là chia tay rồi mình sẽ không đau Có chắc là ta sẽ ko nhớ thương? Có chắc khi mỗi đêm về mình lang thang phố lạnh Và đội bàn tay không vô tình ôm vào hư không</td>
+            <td class="td"><el-button type="danger" @click="jobDashBoardAdminHr()">
+           DashBoard Admin-Hr
+          </el-button></td>
+           
+        </tr>
         
     </table>
      </section-block>
@@ -320,6 +341,36 @@ export default {
     },
     rejectRequest() {
       this.$services.systemSetting.rejectRequest(
+        (res) => {
+          this.notifySuccess(res.message)
+        },
+        (err) => {
+          this.notifyError(err.error.error)
+        }
+      )
+    },
+    jobDashBoardGroupManager() {
+      this.$services.systemSetting.jobDashBoardGroupManager(
+        (res) => {
+          this.notifySuccess(res.message)
+        },
+        (err) => {
+          this.notifyError(err.error.error)
+        }
+      )
+    },
+        jobDashBoardStaff() {
+      this.$services.systemSetting.jobDashBoardStaff(
+        (res) => {
+          this.notifySuccess(res.message)
+        },
+        (err) => {
+          this.notifyError(err.error.error)
+        }
+      )
+    },
+      jobDashBoardAdminHr() {
+      this.$services.systemSetting.jobDashBoardAdminHr(
         (res) => {
           this.notifySuccess(res.message)
         },

@@ -1,133 +1,46 @@
 <template>
   <section-block title="Dashboard">
     <el-row :gutter="12">
-      <el-col :span="8">
+      <el-col :span="6">
         <el-card style="padding: 20px 40px" shadow="always">
           <div class="number-req">
-            <label>5</label>
+            <label>{{ dataDashboard.totalAccount }}</label>
             <i class="el-icon-folder-opened"></i>
           </div>
-          <label>Personal Request</label>
+          <label>Total Users</label>
         </el-card>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="6">
         <el-card style="padding: 20px 40px" shadow="always">
           <div class="number-req">
-            <label>5</label>
+            <label>{{ dataDashboard.totalSite }}</label>
             <i class="el-icon-timer"></i>
           </div>
-          <label>Personal OT Request</label>
-        </el-card>
-      </el-col>
-      <el-col :span="8">
-        <el-card style="padding: 20px 40px" shadow="always">
-          <div class="number-req">
-            <label>5</label>
-            <i class="el-icon-document"></i>
-          </div>
-          <label>Personal Explain</label>
+          <label>Onsite User</label>
         </el-card>
       </el-col>
     </el-row>
     <div class="table-data">
       <section class="group-filter">
         <label>Request Summary</label>
-
         <el-select
           v-if="$authInfo.role() != constant.Role.STAFF"
           v-model="group"
         />
 
-        <el-date-picker
-          v-model="startDate"
-          type="date"
-          placeholder="Start date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          class="date-picker"
-        />
-
-        <el-date-picker
-          v-model="endDate"
-          type="date"
-          placeholder="End date"
-          format="dd-MM-yyyy"
-          value-format="yyyy-MM-dd"
-          class="date-picker"
-        />
-
-        <el-button
-          class="button-delete-multi"
-          type="primary"
-          @click="searchRequest()"
-        >
+        <el-button class="button-delete-multi" type="primary">
           <i class="el-icon-search"></i>
-        </el-button>
-
-        <el-button
-          class="button-delete-multi"
-          style="margin-left: 0"
-          type="primary"
-          @click="getListRequest(page, size)"
-        >
-          <i class="el-icon-refresh"></i>
         </el-button>
       </section>
       <div class="container">
         <div class="row">
-          <div class="col-sm">
-            <label class="title">Request</label>
-            <div class="pending">
-              <label class="sub-title">Pending</label>
-              <label class="percent">0%</label>
-              <label class="value">0</label>
-            </div>
-            <div class="pending">
-              <label class="sub-title">Approved</label>
-              <label class="percent pc-approved">0%</label>
-              <label class="value">0</label>
-            </div>
-            <div class="pending">
-              <label class="sub-title">Rejected</label>
-              <label class="percent pc-rejected">0%</label>
-              <label class="value">0</label>
-            </div>
-          </div>
-          <div class="col-sm">
-            <label class="title">OT Request</label>
-            <div class="pending">
-              <label class="sub-title">Pending</label>
-              <label class="percent">0%</label>
-              <label class="value">0</label>
-            </div>
-            <div class="pending">
-              <label class="sub-title">Approved</label>
-              <label class="percent pc-approved">0%</label>
-              <label class="value">0</label>
-            </div>
-            <div class="pending">
-              <label class="sub-title">Rejected</label>
-              <label class="percent pc-rejected">0%</label>
-              <label class="value">0</label>
-            </div>
-          </div>
-          <div class="col-sm">
-            <label class="title">Explained</label>
-            <div class="pending">
-              <label class="sub-title">Pending</label>
-              <label class="percent">0%</label>
-              <label class="value">0</label>
-            </div>
-            <div class="pending">
-              <label class="sub-title">Approved</label>
-              <label class="percent pc-approved">0%</label>
-              <label class="value">0</label>
-            </div>
-            <div class="pending">
-              <label class="sub-title">Rejected</label>
-              <label class="percent pc-rejected">0%</label>
-              <label class="value">0</label>
-            </div>
+          <div class="col-md">
+            <VueApexCharts
+              type="line"
+              height="400"
+              :options="chartOptions"
+              :series="series"
+            />
           </div>
         </div>
       </div>
@@ -213,6 +126,9 @@ import validate from '@/helpers/custom-rules-validate'
 import Constant from '~/constant'
 
 export default {
+  components: {
+    VueApexCharts: () => import('vue-apexcharts'),
+  },
   mixins: [validate],
   layout: 'admin',
   middleware: 'auth',
@@ -224,67 +140,85 @@ export default {
       startDate: '',
       endDate: '',
       group: [],
-      roles: [
+      dataDashboard: {},
+      series: [
         {
-          value: 'ROLE_ADMIN',
-          label: 'ROLE_ADMIN',
-        },
-        {
-          value: 'ROLE_HR',
-          label: 'ROLE_HR',
-        },
-        {
-          value: 'ROLE_MANAGER',
-          label: 'ROLE_MANAGER',
-        },
-        {
-          value: 'ROLE_STAFF',
-          label: 'ROLE_STAFF',
+          name: 'Desktops',
+          data: [],
         },
       ],
+      chartOptions: {
+        chart: {
+          height: 400,
+          type: 'line',
+          zoom: {
+            enabled: false,
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: 'straight',
+        },
+        title: {
+          text: '',
+          align: 'left',
+        },
+        grid: {
+          row: {
+            colors: ['#f3f3f3', 'transparent'],
+            opacity: 0.5,
+          },
+        },
+        labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+        xaxis: {
+          categories: [],
+        },
+      },
     }
   },
+  created() {
+    this.getData()
+  },
   methods: {
-    async getListRequest(page, size) {
-      let params = {
-        page: page - 1,
-        size: size,
-      }
-      this.loading = true
-      await this.$services.user.getListRequest(
-        params,
+    async getData() {
+      this.startLoading()
+      this.$services.dashboard.dashboardAdmin(
         (response) => {
-          if (response.data && response.data.length > 0) {
-            this.tableData = response.data
+          if (response.data) {
+            this.dataDashboard = response.data
+            this.mappingDataChart(response.data.list)
           }
-          this.loading = false
+          this.endLoading()
         },
         (err) => {
           this.notifyError(err.error.error)
-          this.loading = false
+          this.endLoading()
         }
       )
     },
-    async searchRequest() {
-      this.loading = true
-      await this.$services.user.searchRequest(
-        this.startDate,
-        this.endDate,
-        '',
-        (response) => {
-          if (response.data && response.data.length > 0) {
-            this.tableData = response.data
-          } else {
-            this.tableData = []
-          }
-          this.loading = false
-        },
-        (err) => {
-          this.tableData = []
-          this.notifyError(err.error.error)
-          this.loading = false
-        }
+    mappingDataChart(data) {
+      const totalAccount = data.map((item) => item.totalAccount)
+      const totalAbsenceRequest = data.map((item) => item.totalAbsenceRequest)
+      const totalExceptionCaseRequest = data.map(
+        (item) => item.totalExceptionCaseRequest
       )
+
+      this.series = [
+        {
+          name: 'Total Account',
+          data: totalAccount,
+        },
+        {
+          name: 'Total AbsenceRequest',
+          data: totalAbsenceRequest,
+        },
+        {
+          name: 'Total ExceptionCaseRequest',
+          data: totalExceptionCaseRequest,
+        },
+      ]
     },
   },
 }
