@@ -63,7 +63,7 @@
         <div class="gr-button">
           <export-excel
             :data="tableData"
-            :title="titleExcel"
+            :title="titleExcel.length == 0 ? 'Account: | Group: | Start Date | End Date:': titleExcel"
             name="OverTimeReport.xls"
             :fields="json_fields"
           >

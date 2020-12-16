@@ -46,7 +46,7 @@ export default [
       {
         key: 'admin-administration-jobservice',
         path: '/admin/administration/jobservice',
-        name: 'Date Recalarlation',
+        name: 'Day Reincarnation',
         permission: null,
       },
     ],

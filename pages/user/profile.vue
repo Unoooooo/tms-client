@@ -415,8 +415,8 @@ export default {
     //     (err) => this.notifyError(err.error.error)
     //   )
     // },
-    resetUserData() {
-      this.user = this.userData
+    async resetUserData() {
+      await this.getProfile()
       this.editMode = false
     },
     getAvatar(image) {

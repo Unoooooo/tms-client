@@ -8,37 +8,37 @@ export default [
     permission: null,
   },
   {
-    key: 'manager-request-abnormal',
+    key: 'manager-report-abnormal',
     name: 'REPORT',
     icon: 'el-icon-star-on',
     permission: null,
     children: [
       // {
-      //   key: 'manager-request-abnormal',
+      //   key: 'manager-report-abnormal',
       //   path: '/manager/report/abnormal',
       //   name: 'Abnormal',
       //   permission: null,
       // },
       {
-        key: 'manager-request-checkinout',
+        key: 'manager-report-checkinout',
         path: '/manager/report/checkinout',
         name: 'TimeSheet',
         permission: null,
       },
       {
-        key: 'manager-request-actual',
+        key: 'manager-report-actual',
         path: '/manager/report/actual',
         name: 'Actual-In-Out',
         permission: null,
       },
       {
-        key: 'manager-request-overtime',
+        key: 'manager-report-overtime',
         path: '/manager/report/overtime',
         name: 'Overttime',
         permission: null,
       },
       {
-        key: 'manager-request-monthly',
+        key: 'manager-report-monthly',
         path: '/manager/report/monthly',
         name: 'Monthly Payroll',
         permission: null,

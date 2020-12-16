@@ -11,7 +11,7 @@
         <section class="project-filter">
           <el-input
             v-model="fullnameSearch"
-            placeholder="Full name"
+            placeholder="Full Name"
             class="input-search"
             clearable
           />

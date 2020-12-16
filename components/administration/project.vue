@@ -415,7 +415,7 @@ export default {
               this.notifySuccess(res.message)
             },
             (err) => {
-              this.notifyError(err.error.error)
+              // this.notifyError(err.error.error)
             }
           )
         } else {
@@ -442,7 +442,7 @@ export default {
               this.notifySuccess(res.message)
             },
             (err) => {
-              this.notifyError(err.error.error)
+              // this.notifyError(err.error.error)
             }
           )
         } else {

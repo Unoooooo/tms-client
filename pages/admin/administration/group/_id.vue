@@ -11,7 +11,7 @@
         <section class="project-filter">
           <el-input
             v-model="fullnameSearch"
-            placeholder="Full name"
+            placeholder="Full Name"
             class="input-search"
             clearable
           />
@@ -25,13 +25,13 @@
           </el-button>
 
           <div class="gr-button">
-            <el-button
+            <!-- <el-button
               class="button-delete-multi"
               type="danger"
               @click="handleDeleteMulti()"
             >
               <i class="el-icon-delete"></i>
-            </el-button>
+            </el-button> -->
 
             <el-button class="add-new" @click="handleCreate()">
               {{ $t('Add member') }}
@@ -87,16 +87,16 @@
           class="table-serenade"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column
+          <!-- <el-table-column
             type="selection"
             class-name="text-center"
             width="60px"
-          />
+          /> -->
           <el-table-column
             class-name="text-center"
             prop="full_name"
             sortable
-            :label="$t('Full name')"
+            :label="$t('Full Name')"
           />
           <el-table-column
             class-name="text-center"
@@ -106,7 +106,7 @@
           <el-table-column
             class-name="text-center"
             prop="mobile"
-            :label="$t('Phone number')"
+            :label="$t('Phone')"
           />
           <el-table-column class-name="text-center" :label="$t('DOB')">
             <template slot-scope="{ row }">
@@ -134,20 +134,20 @@
             width="110px"
           >
             <template slot-scope="scope">
-              <el-button
+              <!-- <el-button
                 class="button-action"
                 type="warning"
                 @click="handleUpdate(scope.$index, scope.row)"
               >
                 <i class="el-icon-edit-outline"></i>
-              </el-button>
-              <el-button
+              </el-button> -->
+              <!-- <el-button
                 class="button-action"
                 type="danger"
                 @click="handleDelete(scope.$index, scope.row)"
               >
                 <i class="el-icon-delete"></i>
-              </el-button>
+              </el-button> -->
               <el-button
                 class="button-action"
                 type="primary"

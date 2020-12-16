@@ -8,37 +8,37 @@ export default [
     permission: null,
   },
   {
-    key: 'staff-request-abnormal',
+    key: 'staff-report-abnormal',
     name: 'REPORT',
     icon: 'el-icon-star-on',
     permission: null,
     children: [
       {
-        key: 'staff-request-abnormal',
+        key: 'staff-report-abnormal',
         path: '/staff/report/abnormal',
         name: 'Abnormal',
         permission: null,
       },
       {
-        key: 'staff-request-checkinout',
+        key: 'staff-report-checkinout',
         path: '/staff/report/checkinout',
         name: 'TimeSheet',
         permission: null,
       },
       {
-        key: 'staff-request-actual',
+        key: 'staff-report-actual',
         path: '/staff/report/actual',
         name: 'Actual-In-Out',
         permission: null,
       },
       {
-        key: 'staff-request-overttime',
+        key: 'staff-report-overttime',
         path: '/staff/report/overtime',
         name: 'Overttime',
         permission: null,
       },
       {
-        key: 'staff-request-monthly',
+        key: 'staff-report-monthly',
         path: '/staff/report/monthly',
         name: 'Monthly Payroll',
         permission: null,

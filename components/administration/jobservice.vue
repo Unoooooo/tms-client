@@ -1,28 +1,48 @@
 <template>
   <div>
-       
-       
-
-
-    <section-block title="Date Recalarlation" style="margin-top: 30px">
-    
-      <div>
-        <section class="jobservice">
-          <el-button type="danger" @click="dailyTimesheet()">
+    <section-block title="Day Reincarnation" style="margin-top: 30px">
+       <table class="table">
+        <tr class="tr">
+            <th class="th" colspan="2">Job information </th>
+        </tr>
+        <tr class="tr">
+            <td class="td">Có chắc là chia tay rồi mình sẽ không đau Có chắc là ta sẽ ko nhớ thương? Có chắc khi mỗi đêm về mình lang thang phố lạnh Và đội bàn tay không vô tình ôm vào hư không</td>
+            <td class="td"><el-button type="danger" @click="dailyTimesheet()">
             DailyTimesheet
-          </el-button>
-          <el-button type="danger" @click="rejectRequest()">
+          </el-button></td>
+            
+        </tr>
+        <tr class="tr">
+            <td class="td">Có chắc là chia tay rồi mình sẽ không đau Có chắc là ta sẽ ko nhớ thương? Có chắc khi mỗi đêm về mình lang thang phố lạnh Và đội bàn tay không vô tình ôm vào hư không</td>
+            <td class="td"><el-button type="danger" @click="rejectRequest()">
             Reject Request
-          </el-button>
-        </section>
-      </div>
-    </section-block>
-
-   
+          </el-button></td>
+           
+        </tr>
+        
+    </table>
+     </section-block>
+    
   </div>
 </template>
 
 <style lang="scss" scoped>
+.table{
+  border: 1px solid #000;
+  .tr{
+     border: 1px solid #000;
+     .td{
+        border: 1px solid #000;
+     }
+     .th{
+        border: 1px solid #000;
+        text-align: center;
+        font-size: 20px;
+        text-transform: uppercase;
+        
+     }
+  }
+}
 .el-date-editor--time-select {
   margin-right: 15px;
   max-width: 204px;

@@ -149,26 +149,34 @@
             </h6>
             <hr />
             <div class="form-group row" style="margin-top: 1rem">
-              <label class="col-sm-3 col-form-label">Site Name <span>*</span></label>
+              <label class="col-sm-3 col-form-label">
+                Site Name <span>*</span>
+              </label>
               <el-form-item prop="name" class="col-sm-8">
                 <el-input v-model="site.name" />
               </el-form-item>
             </div>
             <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Address <span>*</span></label>
+              <label class="col-sm-3 col-form-label">
+                Address <span>*</span>
+              </label>
               <el-form-item prop="address" class="col-sm-8">
                 <el-input v-model="site.address" />
               </el-form-item>
             </div>
 
             <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Latitude <span>*</span></label>
+              <label class="col-sm-3 col-form-label">
+                Latitude <span>*</span>
+              </label>
               <el-form-item prop="latitude" class="col-sm-8">
                 <el-input v-model="site.latitude" />
               </el-form-item>
             </div>
             <div class="form-group row">
-              <label class="col-sm-3 col-form-label">Longitude <span>*</span></label>
+              <label class="col-sm-3 col-form-label">
+                Longitude <span>*</span>
+              </label>
               <el-form-item prop="longitude" class="col-sm-8">
                 <el-input v-model="site.longitude" />
               </el-form-item>
@@ -411,7 +419,7 @@ export default {
               this.notifySuccess(res.message)
             },
             (err) => {
-              this.notifyError(err.error.error)
+              // this.notifyError(err.error.error)
             }
           )
         }
@@ -429,7 +437,7 @@ export default {
               this.notifySuccess(res.message)
             },
             (err) => {
-              this.notifyError(err.error.error)
+              // this.notifyError(err.error.error)
             }
           )
         }

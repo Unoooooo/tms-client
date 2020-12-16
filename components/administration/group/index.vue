@@ -1,5 +1,5 @@
 <template>
-  <section-block  title="Manage Group">
+  <section-block  title="Group Management">
     <div>
       <section class="group-filter">
         <el-input

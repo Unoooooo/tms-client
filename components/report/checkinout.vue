@@ -61,7 +61,7 @@
         <div class="gr-button">
           <export-excel
             :data="tableData"
-            :title="titleExcel"
+            :title="titleExcel.length == 0 ? 'Account: | Group: | Start Date | End Date:': titleExcel"
             name="checkInOut.xls"
             :fields="json_fields"
           >
@@ -537,7 +537,6 @@ export default {
     async searchTimeSheetReport() {
       this.startLoading()
       let filterObj = {}
-      // console.log(this.dateDailyDate)
       if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
         filterObj.userName = this.fullnameSearch.trim()
       }
@@ -628,17 +627,16 @@ export default {
             this.tableData = response.data
             this.totalPages = response.totalPages
             this.json_fields = {
-              'STT' : 'stt',
-              'Account': 'account',
-              'Group': 'groupName',
-              'Date': 'date',
+              STT: 'stt',
+              Account: 'account',
+              Group: 'groupName',
+              Date: 'date',
               'Check In': 'check_in',
               'Check Out': 'check_out',
               'Time Offical': 'time_offical',
               'Work day': 'work_day',
               'Work time': 'work_time',
             }
-            console.log(this.json_fields)
           }
         },
         (err) => {

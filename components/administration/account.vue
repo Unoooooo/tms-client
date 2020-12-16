@@ -1,5 +1,5 @@
 <template>
-  <section-block title="Manage Account">
+  <section-block title="Account Management">
     <div>
       <section class="group-filter">
         <el-input
@@ -65,7 +65,7 @@
           :label="$t('Role')"
           prop="role"
         />
-      
+
         <el-table-column class-name="text-left" :label="$t('Group')">
           <template slot-scope="{ row }">
             {{ row.groupCompanyName }}
@@ -156,7 +156,7 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Phone number</label>
+                <label class="col-sm-4 col-form-label">Phone</label>
                 <div class="col-sm-4 data-detail">
                   {{ user.mobile }}
                 </div>
@@ -229,7 +229,7 @@
                 </div>
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">
-                    Phone number <span>*</span>
+                    Phone <span>*</span>
                   </label>
                   <el-form-item prop="mobile" class="col-sm-7">
                     <el-input v-model="user.mobile" />
@@ -260,7 +260,6 @@
                       v-model="user.role"
                       placeholder="Please select role"
                       class="itemSelect"
-                    
                     >
                       <el-option
                         v-for="item in roles"
@@ -875,7 +874,7 @@ export default {
               this.notifySuccess(res.message)
             },
             (err) => {
-              this.notifyError(err.error.error)
+              //this.notifyError(err.error.error)
             }
           )
         }
@@ -893,7 +892,7 @@ export default {
               this.notifySuccess(res.message)
             },
             (err) => {
-              this.notifyError(err.error.error)
+              // this.notifyError(err.error.error)
             }
           )
         }

@@ -173,15 +173,25 @@
               </el-col>
               <el-col :sm="24" :lg="14">
                 <div class="form-group">
-                  <el-upload
+                  <!-- <el-upload
                     class="avatar-uploader"
                     action=""
                     :show-file-list="false"
                     :on-success="handleAvatarSuccess"
-                  >
-                    <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                   @click="handleClickInputFile"
+                    
+                  > -->
+                   <input
+                      id="avatar"
+                      ref="avatar"
+                      type="file"
+                      @change="handleFileUpload()"
+                      
+                    />
+                    <img v-if="imageUrl" :src="image_url_preview" class="avatar" />
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                  </el-upload>
+                  <!-- </el-upload> -->
+                  
                 </div>
               </el-col>
             </el-row>
@@ -414,7 +424,11 @@ label {
 import SimplePagination from '~/components/pagination/SimplePagination'
 import validate from '@/helpers/custom-rules-validate'
 import Constant from '~/constant'
-
+// function getBase64(img, callback) {
+//   const reader = new FileReader();
+//   reader.addEventListener('load', () => callback(reader.result));
+//   reader.readAsDataURL(img);
+// }
 export default {
   components: { SimplePagination },
   mixins: [validate],
@@ -477,6 +491,9 @@ export default {
       new Date().toLocaleTimeString()
   },
   methods: {
+    handleClickInputFile(e){
+      this.$refs.avatar.click();
+    },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
     },
@@ -507,10 +524,28 @@ export default {
         }
       )
     },
+    // handleFileUpload() {
+    //   alert('aaa')
+    //   if (info.file.status === 'uploading') {
+    //     this.loading = true;
+    //     return;
+    //   }
+    //   if (info.file.status === 'done') {
+    //     // Get this url from response in real world.
+    //     getBase64(info.file.originFileObj, imageUrl => {
+    //       this.imageUrl = imageUrl;
+    //       this.loading = false;
+    //     });
+    //   }
+    // },
+
+  
     handleFileUpload() {
       this.imageUrl = this.$refs.avatar.files[0]
+      console.log(this.imageUrl,'a')
       if (this.imageUrl) {
         this.image_url_preview = URL.createObjectURL(this.imageUrl)
+        console.log(this.image_url_preview,'b')
       }
     },
     async getListRemoteRequest(page, size) {
@@ -546,7 +581,8 @@ export default {
           let formData = new FormData()
           formData.append('uploadfile', this.imageUrl)
           formData.append('sitename', this.checkIn.sitename)
-
+          console.log(this.imageUrl)
+          console.log(formData)
           await this.$services.request.addCheckIn(
             formData,
             (res) => {

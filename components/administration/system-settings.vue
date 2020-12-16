@@ -214,7 +214,7 @@
       </div>
     </section-block>
 
-    <section-block title="Job service" style="margin-top: 30px">
+    <!-- <section-block title="Job service" style="margin-top: 30px">
       <div>
         <section class="jobservice">
           <el-button type="danger" @click="dailyTimesheet()">
@@ -225,7 +225,7 @@
           </el-button>
         </section>
       </div>
-    </section-block>
+    </section-block> -->
 
     <section-block title="List day off" style="margin-top: 30px">
       <div>

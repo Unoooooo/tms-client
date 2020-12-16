@@ -3,13 +3,18 @@
     <div>
       <section class="group-filter">
         <el-input
-          :disabled="$authInfo.role() == 4"
           v-model="userName"
+          :disabled="$authInfo.role() == 4"
           placeholder="Account"
           class="input-search"
           clearable
         />
-        <el-select v-model="groupSearch" class="table" placeholder="Group"  :disabled="$authInfo.role() == 4">
+        <el-select
+          v-model="groupSearch"
+          class="table"
+          placeholder="Group"
+          :disabled="$authInfo.role() == 4"
+        >
           <el-option
             v-for="(item, index) in groups"
             :key="index"
@@ -55,7 +60,7 @@
         <div class="gr-button">
           <export-excel
             :data="tableData"
-            :title="titleExcel"
+            :title="titleExcel.length == 0 ? 'Account: | Group: | Start Date: | End Date:': titleExcel"
             name="AbnormalReport.xls"
             :fields="json_fields"
           >
@@ -245,11 +250,11 @@
                     <el-input v-model="request.abnormalType" disabled />
                   </el-form-item>
                 </div>
-                
+
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label"
-                    >Explain Out <span>*</span></label
-                  >
+                  <label class="col-sm-4 col-form-label">
+                    Explain Out <span>*</span>
+                  </label>
                   <el-form-item prop="explanOutTime" class="col-sm-4">
                     <el-time-select
                       v-model="request.explanOutTime"
@@ -264,9 +269,9 @@
                   </el-form-item>
                 </div>
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label"
-                    >Time <span>*</span></label
-                  >
+                  <label class="col-sm-4 col-form-label">
+                    Time <span>*</span>
+                  </label>
                   <el-form-item prop="explDate" class="col-sm-6">
                     <el-date-picker
                       v-model="request.explDate"
@@ -382,7 +387,7 @@
 .data-detail {
   line-height: 35px;
 }
-.time{
+.time {
   width: 167%;
 }
 .content {
@@ -451,7 +456,6 @@ label {
 <script>
 import SimplePagination from '~/components/pagination/SimplePagination'
 import validate from '@/helpers/custom-rules-validate'
-import { request } from 'https'
 
 import Vue from 'vue'
 import excel from 'vue-excel-export'
@@ -553,11 +557,10 @@ export default {
           params,
           (response) => {
             if (response.data && response.data.length > 0) {
-              console.log(response)
               this.tableData = response.data
               this.totalPages = response.totalPages
               this.json_fields = {
-                'STT' : 'stt',
+                'STT': 'stt',
                 'Account': 'userName',
                 'Group': 'groupName',
                 'Date': 'dateTimeSheet',
@@ -580,7 +583,7 @@ export default {
               this.tableData = response.data
               this.totalPages = response.totalPages
               this.json_fields = {
-                'STT' : 'stt',
+                'STT': 'stt',
                 'Account': 'userName',
                 'Group': 'groupName',
                 'Date': 'dateTimeSheet',
@@ -589,7 +592,6 @@ export default {
                 'Abnormal Type': 'abnormalType',
                 'Status': 'status'
               }
-              console.log(this.json_fields)
             }
           },
           (err) => {
@@ -609,7 +611,6 @@ export default {
     async getListAbnormalReceiver() {
       await this.$services.abnormal.getListAbnormalReceiver(
         (response) => {
-          console.log(response)
           if (response.listReceiver && response.listReceiver.length > 0) {
             this.account_receivers = response.listReceiver.map((item) => {
               return { label: item.username, value: item.username }
@@ -658,16 +659,16 @@ export default {
             this.tableData = response.data
             this.totalPages = response.totalPages
             if (this.userName != undefined) {
-              this.titleExcel += 'Account: ' + this.userName
+              this.titleExcel += 'Account: ' + this.userName 
             }
             if (this.groupSearch.length != undefined) {
-              this.titleExcel += '- Group: ' + this.groupSearch
+              this.titleExcel += '| Group: ' + this.groupSearch 
             }
             if (this.startDate.length != undefined) {
-              this.titleExcel += '- Start Date: ' + this.startDate
+              this.titleExcel += '| Start Date: ' + this.startDate 
             }
             if (this.endDate.length != undefined) {
-              this.titleExcel += '- End Date:' + this.endDate
+              this.titleExcel += '| End Date:' + this.endDate 
             }
           } else {
             this.tableData = []
