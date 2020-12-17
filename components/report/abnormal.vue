@@ -126,7 +126,7 @@
           width="120px"
         >
           <template slot-scope="{ row }">
-            {{ row.status ? 'Explained' : '' }}
+            {{ row.status === 'Explained' ? 'Explained' : ' ' }}
           </template>
         </el-table-column>
 
@@ -138,7 +138,7 @@
         >
           <template slot-scope="scope">
             <el-button
-              v-if="scope.row.status"
+              v-if="scope.row.status === 'Explained'"
               class="button-action"
               type="primary"
               @click="handleInfo(scope.$index, scope.row)"
@@ -146,10 +146,10 @@
               <i class="el-icon-user"></i>
             </el-button>
             <el-button
-              v-else
+              v-if="scope.row.status !== 'Explained' && user.account_id === scope.row.accountId"
               class="button-action"
               type="primary"
-              @click="handleCreate(scope.$index, scope.row, scope)"
+              @click="handleCreate(scope.$index, scope.row)"
             >
               <i class="el-icon-circle-plus"></i>
             </el-button>
@@ -533,7 +533,7 @@ export default {
       size: undefined,
     }
   },
-  created() {
+  async created() {
     const query = this.$route.query
     if (query.page) {
       this.page = query.page
@@ -541,10 +541,10 @@ export default {
     if (query.size) {
       this.size = query.size
     }
-    this.getListAbnormalStaff(this.page, this.size)
-    this.getUserInfo()
-    this.getListAbnormalReceiver()
-    this.getListGroupAbnormal()
+    await this.getUserInfo()
+    await this.getListAbnormalStaff(this.page, this.size)
+    await this.getListAbnormalReceiver()
+    await this.getListGroupAbnormal()
   },
   methods: {
     async getListAbnormalStaff(page, size) {
@@ -565,6 +565,7 @@ export default {
               for (let index = 0; index < this.tableData.length; index++) {
                   if(this.tableData[index].status === true){
                     this.tableData[index].status = 'Explained';
+                    console.log(tableData)
                   }else{
                     this.tableData[index].status = ' ';
                   }
@@ -593,13 +594,22 @@ export default {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
               this.tableData = response.data
+              // let temp = {}
+              // let count = 0
+              // this.tableData.forEach((item, index)=> {
+              //   if(item.accountId === this.user.account_Id) {
+              //     temp = item
+              //     count ++
+              //     this.tableData.splice(index, 1)
+              //   } 
+              // })
+              // for(let i=0; i<count;i++) {
+              //   this.tableData.unshift(temp)
+              // }
               this.totalPages = response.totalPages
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
 
               for (let index = 0; index < this.tableData.length; index++) {
-                  // us += this.tableData[index].userName + ', ';
-                  // sd += this.tableData[index].userName + ', ';
-                  // ed += this.tableData[index].userName + ', ';
                   if(this.tableData[index].status === true){
                     this.tableData[index].status = 'Explained';
                   }else{
@@ -628,6 +638,7 @@ export default {
       await this.$services.common.getUserInfo(
         (response) => {
           this.user = response.data
+          console.log(this.user)
         },
         (err) => this.notifyError(err.error.error)
       )
@@ -688,18 +699,25 @@ export default {
                   }else{
                     this.tableData[index].status = ' ';
                   }
-              }
-            this.titleExcel = '';
+              }                    
+             
             if (this.userName != undefined) {
               this.titleExcel += 'Account: ' + this.userName 
             }
-            if (this.groupSearch.length != undefined) {
-              this.titleExcel += '| Group: ' + this.groupSearch 
+            let groupLabel = '';
+            for (let index = 0; index < this.groups.length; index++) {
+              const element = this.groups[index];
+              if (element.value === this.groupSearch){
+                groupLabel = element.label
+              }
             }
-            if (this.startDate.length != undefined) {
+            if (this.groupSearch != undefined) {
+              this.titleExcel += '| Group: ' + groupLabel 
+            }
+            if (this.startDate != undefined) {
               this.titleExcel += '| Start Date: ' + this.startDate 
             }
-            if (this.endDate.length != undefined) {
+            if (this.endDate != undefined) {
               this.titleExcel += '| End Date:' + this.endDate 
             }
           } else {
@@ -765,8 +783,7 @@ export default {
         radio: 1,
       }
     },
-    handleCreate(index, row, scope) {
-      console.log({ scope })
+    handleCreate(index, row) {
       this.dialogMode = 'create'
       this.titlePopup = 'Create Explanation'
       this.dialogFormWithInput = true

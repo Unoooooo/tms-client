@@ -1,6 +1,6 @@
 <template>
   <section-block title="Dashboard">
-    <el-row :gutter="12">
+    <!-- <el-row :gutter="12">
       <el-col :span="6">
         <el-card style="padding: 20px 40px" shadow="always">
           <div class="number-req">
@@ -19,18 +19,58 @@
           <label>Onsite User</label>
         </el-card>
       </el-col>
+    </el-row> -->
+      <el-row :gutter="12" class="row">
+      <div class="column">
+        <el-card shadow="always">
+          <div class="number-req">
+            <label>{{ dataDashboard.totalAccount }}</label>
+            <i class="el-icon-folder-opened"></i>
+          </div>
+          <label>Total Users</label>
+        </el-card>
+      </div>
+      <div class="column">
+        <el-card shadow="always">
+          <div class="number-req">
+            <label>{{ dataDashboard.totalGroup }}</label>
+              <i class="el-icon-folder-opened"></i>
+          </div>
+          <label>Total Group</label>
+        </el-card>
+      </div>
+      <div class="column">
+        <el-card shadow="always">
+          <div class="number-req">
+            <label>{{ dataDashboard.totalSite }}</label>
+              <i class="el-icon-folder-opened"></i>
+          </div>
+          <label>Total Site</label>
+        </el-card>
+      </div>
+      <div class="column">
+        <el-card shadow="always">
+          <div class="number-req">
+            <label>{{ dataDashboard.totalProject }}</label>
+            <i class="el-icon-document"></i>
+          </div>
+          <label>Total Project</label>
+        </el-card>
+      </div>
+     
     </el-row>
+    
     <div class="table-data">
       <section class="group-filter">
         <label>Request Summary</label>
-        <el-select
+        <!-- <el-select
           v-if="$authInfo.role() != constant.Role.STAFF"
           v-model="group"
         />
 
         <el-button class="button-delete-multi" type="primary">
           <i class="el-icon-search"></i>
-        </el-button>
+        </el-button> -->
       </section>
       <div class="container">
         <div class="row">
@@ -49,6 +89,20 @@
 </template>
 
 <style lang="scss" scoped>
+.row {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  .column {
+    padding: 0px 6px;
+    width: 25%;
+    margin-bottom: 10px;
+    min-width: 200px;
+    .el-card {
+      height: 100%;
+    }
+  }
+}
 .number-req {
   label {
     font-size: 30px;
@@ -199,11 +253,28 @@ export default {
       )
     },
     mappingDataChart(data) {
-      const totalAccount = data.map((item) => item.totalAccount)
-      const totalAbsenceRequest = data.map((item) => item.totalAbsenceRequest)
-      const totalExceptionCaseRequest = data.map(
-        (item) => item.totalExceptionCaseRequest
-      )
+      let labels = []
+      let totalAccount = []
+      let totalAbsenceRequest = []
+      let totalExceptionCaseRequest = []
+      let totalExplanationRequest = []
+      let totalOtRequest = []
+
+      data.forEach((element) => {
+        labels.push(element.date)
+        totalAccount.push(element.totalAccount)
+        totalAbsenceRequest.push(element.totalAbsenceRequest)
+        totalExceptionCaseRequest.push(element.totalExceptionCaseRequest)
+        totalExplanationRequest.push(element.totalExplanationRequest)
+        totalOtRequest.push(element.totalOtRequest)
+      })
+
+      this.chartOptions = {
+        ...this.chartOptions,
+        ...{
+          labels,
+        },
+      }
 
       this.series = [
         {
@@ -217,6 +288,14 @@ export default {
         {
           name: 'Total ExceptionCaseRequest',
           data: totalExceptionCaseRequest,
+        },
+        {
+          name: 'Total ExplanationRequest',
+          data: totalExplanationRequest,
+        },
+        {
+          name: 'Total OTRequest',
+          data: totalOtRequest,
         },
       ]
     },

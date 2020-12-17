@@ -285,6 +285,9 @@ import SimplePagination from '~/components/pagination/SimplePagination'
 import validate from '@/helpers/custom-rules-validate'
 import Constant from '~/constant'
 
+import Vue from 'vue'
+import excel from 'vue-excel-export'
+Vue.use(excel)
 export default {
   components: { SimplePagination },
   mixins: [validate],
@@ -492,8 +495,15 @@ export default {
             if (this.fullnameSearch != undefined) {
               this.titleExcel += 'Account: ' + this.fullnameSearch
             }
+            let groupLabel = '';
+            for (let index = 0; index < this.groups.length; index++) {
+              const element = this.groups[index];
+              if (element.value === this.groupSearch){
+                groupLabel = element.label
+              }
+            }
             if (this.groupSearch != undefined) {
-              this.titleExcel += '| Group: ' + this.groupSearch
+              this.titleExcel += '| Group: ' + groupLabel
             }
             if (this.startDate != undefined) {
               this.titleExcel += '| Start Date: ' + this.startDate
