@@ -96,6 +96,12 @@
           </template>
         </el-table-column> -->
         <el-table-column
+          class-name="text-center"
+          prop="stt"
+          :label="$t('STT')"
+          width="80px"
+        />
+        <el-table-column
           class-name="text-left"
           prop="title"
           sortable
@@ -260,7 +266,7 @@
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">Message</label>
                   <el-form-item prop="response_msg" class="col-sm-6">
-                    <el-input v-model="exception.response_msg" disabled />
+                    <el-input v-model="exception.response_msg" type="textarea" disabled />
                   </el-form-item>
                 </div>
               </el-col>

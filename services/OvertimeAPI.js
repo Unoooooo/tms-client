@@ -2,9 +2,8 @@ import BaseService from './BaseService'
 
 export default class OvertimeAPI extends BaseService {
   async getListOvertime(params, success, error) {
-    await this.post(
+    await this.get(
       `overtimes-report/search?${this.urlParse(params)}`,
-      params,
       success,
       error
     )
@@ -17,7 +16,11 @@ export default class OvertimeAPI extends BaseService {
     await this.get(`overtimes-report/list-group`, params, success, error)
   }
   async searchOvertimeReport(params, success, error) {
-    await this.post('overtimes-report/search', params, success, error)
+    await this.get(
+      `overtimes-report/search?${this.urlParse(params)}`,
+      success,
+      error
+    )
   }
   async searchOvertime(
     groupId,

@@ -2,17 +2,17 @@ import BaseService from './BaseService'
 
 export default class AbnormalAPI extends BaseService {
   async getListAbnormal(params, success, error) {
-    await this.get(`abnormal-case?${this.urlParse(params)}`, success, error)
+    await this.get(`abnormal-case/search?${this.urlParse(params)}`, success, error)
   }
 
-  async getListAbnormalStaff(params, success, error) {
-    await this.post(
-      `abnormal-case/search?${this.urlParse(params)}`,
-      params,
-      success,
-      error
-    )
-  }
+  // async getListAbnormalStaff(params, success, error) {
+  //   await this.post(
+  //     `abnormal-case/search`,
+  //     params,
+  //     success,
+  //     error
+  //   )
+  // }
   async getListGroupAbnormal(params, success, error) {
     await this.get(`abnormal-case/list-group`, params, success, error)
   }
@@ -42,21 +42,21 @@ export default class AbnormalAPI extends BaseService {
     await this.get(`abnormal-case/${accountId}/${explanId}`, success, error)
   }
   async searchAbnormalRequest(params, success, error) {
-    await this.post('abnormal-case/search', params, success, error)
+    await this.get(`abnormal-case/search?${this.urlParse(params)}`, success, error)
   }
-  async searchAbnormal(
-    userName,
-    startDate,
-    endDate,
-    groupId,
-    params,
-    success,
-    error
-  ) {
-    this.get(
-      `abnormal-case/search?&groupId=${groupId}&userName=${userName}&startDate=${startDate}&endDate=${endDate}${params}`,
-      success,
-      error
-    )
-  }
+  // async getListAbnormal(
+  //   userName,
+  //   startDate,
+  //   endDate,
+  //   groupId,
+  //   params,
+  //   success,
+  //   error
+  // ) {
+  //   this.get(
+  //     `abnormal-case/search?&groupId=&userName=&startDate=&endDate=`,params,
+  //     success,
+  //     error
+  //   )
+  // }
 }

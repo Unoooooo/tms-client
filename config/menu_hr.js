@@ -8,44 +8,6 @@ export default [
     permission: null,
   },
   {
-    key: 'humanresources-report-abnormal',
-    name: 'REPORT',
-    icon: 'el-icon-star-on',
-    permission: null,
-    children: [
-      {
-        key: 'humanresources-report-abnormal',
-        path: '/humanresources/report/abnormal',
-        name: 'Abnormal',
-        permission: null,
-      },
-      {
-        key: 'humanresources-report-checkinout',
-        path: '/humanresources/report/checkinout',
-        name: 'TimeSheet',
-        permission: null,
-      },
-      {
-        key: 'humanresources-report-actual',
-        path: '/humanresources/report/actual',
-        name: 'Actual-In-Out',
-        permission: null,
-      },
-      {
-        key: 'humanresources-report-overtime',
-        path: '/humanresources/report/overtime',
-        name: 'Overtime',
-        permission: null,
-      },
-      {
-        key: 'humanresources-report-monthly',
-        path: '/humanresources/report/monthly',
-        name: 'Monthly Payroll',
-        permission: null,
-      },
-    ],
-  },
-  {
     key: 'humanresources-request-absence',
     name: 'REQUEST',
     icon: 'el-icon-star-on',
@@ -77,6 +39,47 @@ export default [
       },
     ],
   },
+  {
+    key: 'humanresources-report-abnormal',
+    name: 'REPORT',
+    icon: 'el-icon-star-on',
+    permission: null,
+    children: [
+      {
+        key: 'humanresources-report-actual',
+        path: '/humanresources/report/actual',
+        name: 'Actual-In-Out',
+        permission: null,
+      },
+      {
+        key: 'humanresources-report-checkinout',
+        path: '/humanresources/report/checkinout',
+        name: 'TimeSheet',
+        permission: null,
+      },
+      {
+        key: 'humanresources-report-abnormal',
+        path: '/humanresources/report/abnormal',
+        name: 'Abnormal',
+        permission: null,
+      },
+      {
+        key: 'humanresources-report-monthly',
+        path: '/humanresources/report/monthly',
+        name: 'Monthly Payroll',
+        permission: null,
+      },
+     
+      {
+        key: 'humanresources-report-overtime',
+        path: '/humanresources/report/overtime',
+        name: 'OverTime',
+        permission: null,
+      },
+      
+    ],
+  },
+  
   {
     key: 'humanresources-administration-account',
     name: 'ADMINISTRATION',

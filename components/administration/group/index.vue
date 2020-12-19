@@ -49,11 +49,12 @@
         class="table-serenade"
         @selection-change="handleSelectionChange"
       >
-        <!-- <el-table-column
-          type="selection"
+     <el-table-column
           class-name="text-center"
-          width="60px"
-        /> -->
+          prop="stt"
+          :label="$t('STT')"
+          width="80px"
+        />
         <el-table-column
           class-name="text-left"
           prop="name"

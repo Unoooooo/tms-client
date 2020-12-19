@@ -3,8 +3,8 @@
     <div>
       <section class="group-filter">
         <el-input
-          v-model="fullnameSearch"
-          :disabled="$authInfo.role() == constant.Role.STAFF"
+          v-model="userName"
+          :disabled="$authInfo.role() == 4"
           placeholder="Account"
           class="input-search"
           clearable
@@ -13,10 +13,7 @@
           v-model="groupSearch"
           class="table"
           placeholder="Group"
-          :disabled="
-            $authInfo.role() == constant.Role.STAFF ||
-            $authInfo.role() == constant.Role.MANAGER
-          "
+          :disabled="$authInfo.role() == 4"
         >
           <el-option
             v-for="(item, index) in groups"
@@ -44,6 +41,7 @@
           value-format="yyyy-MM-dd"
           class="date-picker"
         />
+
         <el-button
           class="button-delete-multi"
           type="primary"
@@ -62,8 +60,8 @@
         <div class="gr-button">
           <export-excel
             :data="tableData"
-            :title="titleExcel.length == 0 ? 'Account: | Group: | Start Date | End Date:': titleExcel"
-            name="ActualIn/Out.xls"
+            :title="titleExcel"
+            name="AbnormalReport.xls"
             :fields="json_fields"
           >
             <el-button class="add-new">
@@ -88,8 +86,9 @@
           width="80px"
         />
         <el-table-column
-          class-name="text-left"
+          class-name="text-center"
           prop="userName"
+          sortable
           :label="$t('Account')"
         />
         <el-table-column
@@ -97,16 +96,19 @@
           prop="groupName"
           :label="$t('Group')"
         />
-        <el-table-column
-          class-name="text-left"
-          prop="date"
+        <!-- <el-table-column
+          class-name="text-center"
+          prop="dateTimeSheet"
+          sortable
           :label="$t('Date')"
-        />
-        <!-- <el-table-column class-name="text-center" :label="$t('Date')">
+          width="100px"
+        /> -->
+        <el-table-column class-name="text-center" :label="$t('Date')">
           <template slot-scope="{ row }">
-            {{ row.date ? showDateTime(row.date, 'DD/MM/YYYY') : '' }}
+            {{ row.date }}
           </template>
-        </el-table-column> -->
+        </el-table-column>
+       
         <el-table-column
           class-name="text-center"
           prop="check_time"
@@ -117,10 +119,10 @@
           prop="type"
           :label="$t('Type')"
         />
-        <el-table-column
-          class-name="text-right"
+          <el-table-column
+          class-name="text-left"
           prop="checkPosition"
-          :label="$t('Location')"
+          :label="$t('Loccation')"
         />
       </el-table>
 
@@ -139,6 +141,9 @@
 <style lang="scss" scoped>
 .data-detail {
   line-height: 35px;
+}
+.time {
+  width: 167%;
 }
 .content {
   margin: 70px 32px 20px;
@@ -167,8 +172,14 @@
 .el-form-item__label {
   text-align: left;
 }
+.itemSelec {
+  width: 100%;
+}
 .line {
   margin-top: -30px;
+}
+.table {
+  width: 150px;
 }
 label {
   text-align: center;
@@ -183,9 +194,6 @@ label {
     margin-bottom: 20px;
     margin-bottom: -41px;
   }
-}
-.table {
-  width: 150px;
 }
 .button-action {
   padding: 5px;
@@ -203,11 +211,11 @@ label {
 <script>
 import SimplePagination from '~/components/pagination/SimplePagination'
 import validate from '@/helpers/custom-rules-validate'
-import Constant from '~/constant'
 
 import Vue from 'vue'
 import excel from 'vue-excel-export'
 Vue.use(excel)
+
 export default {
   components: { SimplePagination },
   mixins: [validate],
@@ -217,47 +225,53 @@ export default {
     return {
       json_fields: null,
       titleExcel: '',
-      constant: Constant,
       tableData: [],
-      groupSearch: '',
+      userName: '',
       fullnameSearch: '',
-      actualDate: '',
-      endDate: '',
+      groupSearch: '',
+      groupID: '',
       startDate: '',
-      dateActualInOut: '',
+      endDate: '',
       dialogFormWithInput: false,
       showFormMessage: false,
       dataReject: {},
+      abnormal: {},
+
       titlePopup: '',
       dialogMode: '',
-      // account: '',
+      account_receivers: [],
       groups: [],
       projects: [],
       message: {
         response_msg: '',
       },
-
+      abnormal_types: [
+        'Parttime working',
+        'Late working',
+        'Sooner working',
+        'No check IN/OUT',
+      ],
       user: {
-        account: '',
-        group: '',
-        project: '',
+        account_sent: '',
+        account_receiver: '',
+        groupCompany: '',
       },
-      totalTimeOt: '',
       request: {
-        account: this.$authInfo.name(),
+        account_sent: this.$authInfo.name(),
         title: '',
         reason: '',
         groupCompany: '',
         late_time: '',
         soon_time: '',
+
         start_date: '',
         end_date: '',
+        account_receiver: '',
         cc_mail_ids: '',
         content: '',
         response_msg: '',
         status: '',
         radio: 1,
-        list: [],
       },
       rules: {
         title: this.validateRequired('title'),
@@ -273,10 +287,10 @@ export default {
       totalPages: 1,
       page: 1,
       size: undefined,
-      monthly: {},
     }
   },
   async created() {
+    //http://localhost:3000/humanresources/report/abnormal?page=1&size=2
     const query = this.$route.query
     if (query.page) {
       this.page = query.page
@@ -284,27 +298,28 @@ export default {
     if (query.size) {
       this.size = query.size
     }
-    await this.getListActual(this.page, this.size)
     await this.getUserInfo()
+    await this.getListActual(this.page, this.size)
     await this.getListGroupActual()
+    // await this.getListGroupAbnormal()
   },
   methods: {
-    // async refreshSearch() {
-    //   this.startLoading()
-    //   this.fullnameSearch = ""
-    //   this.startDate = ""
-    //   this.endDate = ""
-    //   this.groupSearch = ""
-    //   this.getListMonthly(0, 20)
-    //   setTimeout(()=> {
-    //     this.endLoading()
-    //   }, 300)
-    // },
     async getListActual(page, size) {
-      this.startLoading()
       let params = {
         page: page - 1,
-        size: size,
+        size: size
+      }
+      if(this.userName.trim() !== '') {
+        params.userName = this.userName
+      }
+      if(this.groupSearch && this.groupSearch.trim() !== '') {
+        params.groupId = this.groupSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
       }
       if (this.$authInfo.roleValue() === 'staff') {
         await this.$services.actual.getListActual(
@@ -316,14 +331,24 @@ export default {
               this.totalPages = response.totalPages
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
 
+              for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                    console.log(this.tableData[index].status)
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }
+              
               this.json_fields = {
                 'STT': 'stt',
                 'Account': 'userName',
                 'Group': 'groupName',
-                'Date': 'date',
-                'Check Time': 'check_time',
-                'Type': 'type',
-                'Location': 'checkPosition'
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
               }
             }
           },
@@ -338,19 +363,38 @@ export default {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
               this.tableData = response.data
+              // let temp = {}
+              // let count = 0
+              // this.tableData.forEach((item, index)=> {
+              //   if(item.accountId === this.user.account_Id) {
+              //     temp = item
+              //     count ++
+              //     this.tableData.splice(index, 1)
+              //   } 
+              // })
+              // for(let i=0; i<count;i++) {
+              //   this.tableData.unshift(temp)
+              // }
               this.totalPages = response.totalPages
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
 
+              for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }
               this.json_fields = {
                 'STT': 'stt',
                 'Account': 'userName',
                 'Group': 'groupName',
-                'Date': 'date',
-                'Check Time': 'check_time',
-                'Type': 'type',
-                'Location': 'checkPosition'
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
               }
-               console.log(this.json_fields)
             }
           },
           (err) => {
@@ -358,15 +402,21 @@ export default {
           }
         )
       }
-      setTimeout(() => {
-        this.endLoading()
-      }, 300)
+    },
+    async getUserInfo() {
+      await this.$services.common.getUserInfo(
+        (response) => {
+          this.user = response.data
+          console.log(this.user)
+        },
+        (err) => this.notifyError(err.error.error)
+      )
     },
     async getListGroupActual() {
       await this.$services.actual.getListGroupActual(
         (response) => {
-          if (response.listData && response.listData.length > 0) {
-            this.groups = response.listData.map((item) => {
+          if (response.listReceiver && response.listReceiver.length > 0) {
+            this.account_receivers = response.listReceiver.map((item) => {
               return { label: item.name, value: Number(item.group_id) }
             })
           }
@@ -374,22 +424,25 @@ export default {
         (err) => this.notifyError(err.error.error)
       )
     },
-    async getUserInfo() {
-      await this.$services.common.getUserInfo(
-        (response) => {
-          this.user = response.data
-          console.log(response.data)
-        },
-        (err) => this.notifyError(err.error.error)
-      )
-    },
-    async getListUser() {
-      await this.$services.user.getListUser(
+    // async getListAbnormal() {
+    //   await this.$services.abnormal.getListAbnormal(
+    //     (response) => {
+    //       if (response.listData && response.listData.length > 0) {
+    //         this.groups = response.listData.map((item) => {
+    //           return { label: item.name, value: Number(item.group_id) }
+    //         })
+    //       }
+    //     },
+    //     (err) => this.notifyError(err.error.error)
+    //   )
+    // },
+    async getListGroup() {
+      await this.$services.group.getListGroup(
         {},
         (response) => {
           if (response.data && response.data.length > 0) {
-            this.account = response.data.map((item) => {
-              return { label: item.username, value: item.username }
+            this.groups = response.data.map((item) => {
+              return { label: item.name, value: Number(item.group_id) }
             })
           }
         },
@@ -398,33 +451,41 @@ export default {
     },
     async searchActualReport() {
       this.startLoading()
-      let filterObj = {}
-      console.log(this.dateDailyDate)
-      if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
-        filterObj.userName = this.fullnameSearch.trim()
+      let params = {
+        page: 0,
+        size: this.size
       }
-       if (this.groupSearch !== '') {
-        filterObj.groupId = this.groupSearch
+      if(this.userName.trim() !== '') {
+        params.userName = this.userName
       }
-      if (
-        this.startDate &&
-        (!this.startDate.length == 0 || this.startDate.trim())
-      ) {
-        filterObj.startDate = this.startDate
+      if(this.groupSearch && this.groupSearch.trim() !== '') {
+        params.groupId = this.groupSearch
       }
-      if (this.endDate && (!this.endDate.length == 0 || this.endDate.trim())) {
-        filterObj.endDate = this.endDate
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
       }
-
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
+      }
       await this.$services.actual.searchActualReport(
-        filterObj,
+        params,
         (response) => {
+          console.log(0)
           if (response.data && response.data.length > 0) {
+            console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
             this.titleExcel = '';
-            if (this.fullnameSearch != undefined) {
-              this.titleExcel += 'Account: ' + this.fullnameSearch
+            for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }                    
+             
+            if (this.userName != undefined) {
+              this.titleExcel += 'Account: ' + this.userName 
             }
             let groupLabel = '';
             for (let index = 0; index < this.groups.length; index++) {
@@ -434,28 +495,30 @@ export default {
               }
             }
             if (this.groupSearch != undefined) {
-              this.titleExcel += '| Group: ' + groupLabel
+              this.titleExcel += '| Group: ' + groupLabel 
             }
             if (this.startDate != undefined) {
-              this.titleExcel += '| Start Date: ' + this.startDate
+              this.titleExcel += '| Start Date: ' + this.startDate 
             }
             if (this.endDate != undefined) {
-              this.titleExcel += '| End Date:' + this.endDate
+              this.titleExcel += '| End Date:' + this.endDate 
             }
           } else {
+            console.log(2)
             this.tableData = []
             this.totalPages = 0
           }
         },
         (err) => {
+          console.log(3)
           this.tableData = []
           this.totalPages = 0
-          this.endLoading()
           this.notifyError(err.error.error)
         }
       )
       this.endLoading()
     },
+
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
@@ -470,13 +533,14 @@ export default {
     },
     resetUserData() {
       this.request = {
-        account: this.$authInfo.username(),
+        account_sent: this.$authInfo.username(),
         title: '',
         reason: '',
         groupCompany: '',
         late_time: '',
         start_date: '',
         end_date: '',
+        account_receiver: '',
         cc_mail_ids: '',
         content: '',
         response_msg: '',
@@ -484,85 +548,6 @@ export default {
         radio: 1,
       }
     },
-
-    async getListTimeSheet(page, size) {
-      let params = {
-        page: page - 1,
-        size: size,
-      }
-      await this.$services.dailytimesheet.getListTimeSheet(
-        params,
-        (response) => {
-          if (response.data && response.data.length > 0) {
-            this.tableData = response.data
-            this.totalPages = response.totalPages
-          }
-        },
-        (err) => {
-          this.notifyError(err.error.error)
-        }
-      )
-    },
-
-    getListTimesheetDetail(dataRequest) {
-      this.startLoading()
-      this.$services.dailytimesheet.getListTimesheetDetail(
-        dataRequest,
-        (res) => {
-          this.dailytimesheet = res.data
-          this.dialogFormWithInput = true
-          this.endLoading()
-        },
-        (err) => {
-          this.dialogFormWithInput = true
-          this.endLoading()
-          this.dailytimesheet = {}
-          this.notifyError(err.error.error)
-        }
-      )
-    },
-    handleInfo(index, row) {
-      this.titlePopup = 'Detail'
-      this.dialogMode = 'detail'
-      const data = Object.assign({}, row)
-      const dataRequest = {
-        accountId: data.account_id,
-        dateDailyReport: data.date,
-      }
-      this.dailytimesheet = Object.assign({}, row)
-      this.getListTimesheetDetail(dataRequest)
-    },
   },
-
-  // exportExcelDaily() {
-  //   this.$confirm('Export danh sách?', 'Xác Thực', {
-  //     confirmButtonText: 'Đồng ý',
-  //     cancelButtonText: 'Hủy bỏ',
-  //   }).then(() => {
-  //     this.$services.dailytimesheet.getExportExcel(
-  //       (res) => {
-  //         var blob = res
-  //         if (window.navigator.msSaveOrOpenBlob) {
-  //           window.navigator.msSaveBlob(blob)
-  //         } else {
-  //           var downloadLink = window.document.createElement('a')
-  //           downloadLink.href = window.URL.createObjectURL(
-  //             new Blob([blob], {
-  //               type:
-  //                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  //             })
-  //           )
-  //           downloadLink.download = 'excel.xlsx'
-  //           document.body.appendChild(downloadLink)
-  //           downloadLink.click()
-  //           document.body.removeChild(downloadLink)
-  //         }
-  //       },
-  //       (err) => {
-  //         this.notifyError(err.error.error)
-  //       }
-  //     )
-  //   })
-  // },
 }
 </script>

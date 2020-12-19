@@ -167,7 +167,9 @@
                 <template slot-scope="{ row }">
                   <i v-if="row.paidLeave" class="el-icon-time"></i>
                   <span style="margin-left: 10px">
-                    {{ row.paidLeave }}
+                    {{ 
+                      ow.paidLeave ? showDateTime(row.paidLeave, 'DD/MM/YYYY') : ''
+                    }} 
                   </span>
                 </template>
               </el-table-column>
@@ -175,7 +177,9 @@
                 <template slot-scope="{ row }">
                   <i v-if="row.nonPaidLeave" class="el-icon-time"></i>
                   <span style="margin-left: 10px">
-                    {{ row.nonPaidLeave }}
+                    {{
+                       row.nonPaidLeave ? showDateTime(row.nonPaidLeave, 'DD/MM/YYYY') : '' 
+                    }}
                   </span>
                 </template>
               </el-table-column>
@@ -299,8 +303,10 @@ export default {
       titleExcel: '',
       constant: Constant,
       tableData: [],
+      userName: '',
       fullnameSearch: '',
       groupSearch: '',
+      groupID: '',
       endDate: '',
       startDate: '',
       dateMonthlyDate: '',
@@ -385,6 +391,10 @@ export default {
       let params = {
         page: page - 1,
         size: size,
+        startDate:this.startDate,
+        endDate: this.endDate,
+        groupId:this.groupID,
+        userName: this.userName
       }
       if (this.$authInfo.roleValue() === 'staff') {
         await this.$services.monthly.getListMonthly(

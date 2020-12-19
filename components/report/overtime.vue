@@ -199,10 +199,13 @@
                 <template slot-scope="{ row }">
                   <i v-if="row.dateOt" class="el-icon-time"></i>
                   <span style="margin-left: 10px">
-                    {{ row.dateOt }}
+                    {{ 
+                      row.dateOt ? showDateTime(row.dateOt, 'DD/MM/YYYY') : ''
+                    }}
                   </span>
                 </template>
               </el-table-column>
+             
               <el-table-column
                 prop="timeOt"
                 label="Time"
@@ -374,8 +377,10 @@ export default {
       titleExcel: '',
       constant: Constant,
       tableData: [],
+      userName: '',
       fullnameSearch: '',
       groupSearch: '',
+      groupID: '',
       startDate: '',
       endDate: '',
       dialogFormWithInput: false,
@@ -454,9 +459,13 @@ export default {
     // },
     async getListOvertime(page, size) {
       this.startLoading()
-      let params = {
+       let params = {
         page: page - 1,
         size: size,
+        startDate:this.startDate,
+        endDate: this.endDate,
+        groupId:this.groupID,
+        userName: this.userName
       }
       if (this.$authInfo.roleValue() === 'staff') {
         await this.$services.overtime.getListOvertime(
@@ -611,36 +620,36 @@ export default {
       }
     },
 
-    async getListOvertime(page, size) {
-      let params = {
-        page: page - 1,
-        size: size,
-      }
-      await this.$services.overtime.getListOvertime(
-        params,
-        (response) => {
-          if (response.data && response.data.length > 0) {
-            this.titleExcel = '';
-            this.tableData = response.data
-            this.totalPages = response.totalPages
-            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+    // async getListOvertime(page, size) {
+    //   let params = {
+    //     page: page - 1,
+    //     size: size,
+    //   }
+    //   await this.$services.overtime.getListOvertime(
+    //     params,
+    //     (response) => {
+    //       if (response.data && response.data.length > 0) {
+    //         this.titleExcel = '';
+    //         this.tableData = response.data
+    //         this.totalPages = response.totalPages
+    //         this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
 
-            this.json_fields = {
-              'STT': 'stt',
-              'Account': 'account',
-              'Group': 'group',
-              'Time Normal OT': 'totalTimeOtNormal',
-              'Total Weekend OT': 'totalTimeOtWeekend',
-              'Total Holiday OT': 'totalTimeOtHoliday',
-            }
-            console.log(this.json_fields)
-          }
-        },
-        (err) => {
-          this.notifyError(err.error.error)
-        }
-      )
-    },
+    //         this.json_fields = {
+    //           'STT': 'stt',
+    //           'Account': 'account',
+    //           'Group': 'group',
+    //           'Time Normal OT': 'totalTimeOtNormal',
+    //           'Total Weekend OT': 'totalTimeOtWeekend',
+    //           'Total Holiday OT': 'totalTimeOtHoliday',
+    //         }
+    //         console.log(this.json_fields)
+    //       }
+    //     },
+    //     (err) => {
+    //       this.notifyError(err.error.error)
+    //     }
+    //   )
+    // },
 
     getListOvertimeDetail(dataRequest) {
       this.startLoading()

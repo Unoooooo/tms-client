@@ -48,6 +48,12 @@
         class="table-serenade"
         @selection-change="handleSelectionChange"
       >
+       <el-table-column
+          class-name="text-center"
+          prop="stt"
+          :label="$t('STT')"
+          width="80px"
+        />
         <el-table-column
           class-name="text-left"
           prop="username"

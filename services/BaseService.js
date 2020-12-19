@@ -37,7 +37,6 @@ export default class BaseService {
       }
     }
   }
-
   async get(endpoint, success, error) {
     await this.api
       .get(this.prefix + endpoint)

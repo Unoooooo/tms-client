@@ -54,6 +54,12 @@
         class="table-serenade"
         @selection-change="handleSelectionChange"
       >
+      <el-table-column
+          class-name="text-center"
+          prop="stt"
+          :label="$t('STT')"
+          width="80px"
+        />
         <el-table-column
           class-name="text-left"
           prop="account_sent"
@@ -66,12 +72,12 @@
           sortable
           :label="$t('Title')"
         />
-        <el-table-column
-          class-name="text-center"
-          prop="abnormal_date"
-          :label="$t('Date')"
-          width="100px"
-        />
+    
+        <el-table-column class-name="text-center" :label="$t('Date')">
+          <template slot-scope="{ row }">
+            {{ row.abnormal_date ? showDateTime(row.abnormal_date, 'DD/MM/YYYY') : '' }}
+          </template>
+        </el-table-column>
         <el-table-column
           class-name="text-center"
           prop="explanInTime"
@@ -122,6 +128,19 @@
             >
               <i class="el-icon-close"></i>
             </el-button>
+
+            <el-button
+              v-if="
+                $authInfo.role() !== constant.Role.MANAGER &&
+                scope.row.status == 'Pending' &&
+                scope.row.account_sent === user.username
+              "
+              class="button-action"
+              type="warning"
+              @click="handleUpdate(scope.$index, scope.row)"
+            >
+              <i class="el-icon-edit-outline"></i>
+            </el-button>
             <el-button
               v-if="
                 $authInfo.role() !== constant.Role.MANAGER &&
@@ -151,6 +170,7 @@
           :visible.sync="dialogFormWithInput"
           width="50%"
         >
+        
           <div v-if="dialogMode === 'detail'">
             <div class="form-group row">
               <label class="col-sm-3 col-form-label">Title</label>
@@ -201,6 +221,104 @@
               </div>
             </div>
           </div>
+ <el-form v-else ref="dataForm" :rules="rules" :model="request">
+            <el-row :gutter="20">
+              <el-col :span="24">
+                <div class="form-group row">
+                  <label class="col-sm-2 col-form-label">Title</label>
+                  <el-form-item prop="title" class="col-sm-9">
+                    <el-input v-model="explanation.title" />
+                  </el-form-item>
+                </div>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Fullname</label>
+                  <el-form-item prop="full_name" class="col-sm-6">
+                    <el-input v-model="user.full_name" disabled />
+                  </el-form-item>
+                </div>
+                
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Request type</label>
+                  <el-form-item prop="abnormalType" class="col-sm-6">
+                    <el-input v-model="explanation.type" disabled />
+                  </el-form-item>
+                </div>
+
+                
+                 <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">
+                    Explain In <span>*</span>
+                  </label>
+                  <el-form-item prop="explanInTime" class="col-sm-4">
+                    <el-time-select
+                      v-model="explanation.explanInTime"
+                      placeholder="Explain In"
+                      class="time"
+                      :picker-options="{
+                        start: '06:00',
+                        step: '00:15',
+                        end: '23:45',
+                      }"
+                    />
+                  </el-form-item>
+                </div>
+              </el-col>
+              <el-col :span="12">
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Group</label>
+                  <el-form-item prop="groupCompanyName" class="col-sm-6">
+                    <el-input v-model="user.groupCompanyName" disabled />
+                  </el-form-item>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Receiver</label>
+                  <el-form-item prop="account_receiver" class="col-sm-6">
+                    <el-select
+                      v-model="explanation.account_receiver"
+                      placeholder="account receiver"
+                    >
+                      <el-option
+                        v-for="(item, index) in account_receivers"
+                        :key="index"
+                        :label="item.label"
+                        :value="item.value"
+                      ></el-option>
+                    </el-select>
+                  </el-form-item>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">
+                    Explain Out <span>*</span>
+                  </label>
+                  <el-form-item prop="explanOutTime" class="col-sm-4">
+                    <el-time-select
+                      v-model="explanation.explanOutTime"
+                      placeholder="Explain Out"
+                      class="time"
+                      :picker-options="{
+                        start: '06:00',
+                        step: '00:15',
+                        end: '23:45',
+                      }"
+                    />
+                  </el-form-item>
+                </div>
+               
+              </el-col>
+            </el-row>
+
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Reason</label>
+              <el-form-item prop="title" class="col-sm-9">
+                <el-input v-model="explanation.content" type="textarea" />
+              </el-form-item>
+            </div>
+          </el-form>
 
           <hr class="mb-0" />
           <span slot="footer" class="dialog-footer">
@@ -274,7 +392,9 @@
   width: 45px;
   text-align: center;
 }
-
+.time {
+  width: 167%;
+}
 .demo-input-suffix .el-input {
   width: 80px;
 }
@@ -395,6 +515,8 @@ export default {
         project: this.validateRequired('project'),
         type: this.validateRequired('type'),
         mail_with: this.validateEmailAddress(),
+        explanInTime: this.validateRequired('explan in time'),
+        explanOutTime: this.validateRequired('explan out time'),
       },
       rowSelected: null,
       multipleSelection: [],

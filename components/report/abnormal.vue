@@ -45,14 +45,14 @@
         <el-button
           class="button-delete-multi"
           type="primary"
-          @click="searchAbnormalRequest()"
+          @click="getListAbnormal()"
         >
           <i class="el-icon-search"></i>
         </el-button>
         <el-button
           class="button-delete-multi"
           type="primary"
-          @click="getListAbnormalStaff(page, size)"
+          @click="getListAbnormal(page, size)"
         >
           <i class="el-icon-refresh"></i>
         </el-button>
@@ -96,13 +96,20 @@
           prop="groupName"
           :label="$t('Group')"
         />
-        <el-table-column
+        <!-- <el-table-column
           class-name="text-center"
           prop="dateTimeSheet"
           sortable
           :label="$t('Date')"
           width="100px"
-        />
+        /> -->
+        <el-table-column class-name="text-center" :label="$t('Date')">
+          <template slot-scope="{ row }">
+            {{
+              row.dateTimeSheet ? showDateTime(row.dateTimeSheet, 'DD/MM/YYYY') : ''
+            }}
+          </template>
+        </el-table-column>
         <el-table-column
           class-name="text-center"
           prop="checkInTime"
@@ -251,35 +258,21 @@
                   </el-form-item>
                 </div>
 
-                <div class="form-group row">
+                
+                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">
-                    Explain Out <span>*</span>
+                    Explain In <span>*</span>
                   </label>
-                  <el-form-item prop="explanOutTime" class="col-sm-4">
+                  <el-form-item prop="explanInTime" class="col-sm-4">
                     <el-time-select
-                      v-model="request.explanOutTime"
-                      placeholder="Explain Out"
+                      v-model="request.explanInTime"
+                      placeholder="Explain In"
                       class="time"
                       :picker-options="{
                         start: '06:00',
                         step: '00:15',
                         end: '23:45',
                       }"
-                    />
-                  </el-form-item>
-                </div>
-                <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">
-                    Date <span>*</span>
-                  </label>
-                  <el-form-item prop="explDate" class="col-sm-6">
-                    <el-date-picker
-                      v-model="request.explDate"
-                      type="date"
-                      placeholder="Pick a day"
-                      format="dd-MM-yyyy"
-                      value-format="yyyy-MM-dd"
-                      class="itemSelec"
                     />
                   </el-form-item>
                 </div>
@@ -310,12 +303,12 @@
                 </div>
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">
-                    Explain In <span>*</span>
+                    Explain Out <span>*</span>
                   </label>
-                  <el-form-item prop="explanInTime" class="col-sm-4">
+                  <el-form-item prop="explanOutTime" class="col-sm-4">
                     <el-time-select
-                      v-model="request.explanInTime"
-                      placeholder="Explain In"
+                      v-model="request.explanOutTime"
+                      placeholder="Explain Out"
                       class="time"
                       :picker-options="{
                         start: '06:00',
@@ -325,12 +318,13 @@
                     />
                   </el-form-item>
                 </div>
+               
               </el-col>
             </el-row>
 
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Reason</label>
-              <el-form-item prop="title" class="col-sm-9">
+              <el-form-item prop="content" class="col-sm-9">
                 <el-input v-model="request.content" type="textarea" />
               </el-form-item>
             </div>
@@ -508,6 +502,7 @@ export default {
         groupCompany: '',
         late_time: '',
         soon_time: '',
+
         start_date: '',
         end_date: '',
         account_receiver: '',
@@ -525,6 +520,8 @@ export default {
         start_date: this.validateRequired('start_date'),
         end_date: this.validateRequired('end_date'),
         account_receiver: this.validateRequired('account_receiver'),
+        explanInTime: this.validateRequired('explan in time'),
+        explanOutTime: this.validateRequired('explan out time'),
       },
       rowSelected: null,
       multipleSelection: [],
@@ -534,6 +531,7 @@ export default {
     }
   },
   async created() {
+    //http://localhost:3000/humanresources/report/abnormal?page=1&size=2
     const query = this.$route.query
     if (query.page) {
       this.page = query.page
@@ -542,18 +540,22 @@ export default {
       this.size = query.size
     }
     await this.getUserInfo()
-    await this.getListAbnormalStaff(this.page, this.size)
+    await this.getListAbnormal(this.page, this.size)
     await this.getListAbnormalReceiver()
-    await this.getListGroupAbnormal()
+    // await this.getListGroupAbnormal()
   },
   methods: {
-    async getListAbnormalStaff(page, size) {
+    async getListAbnormal(page, size) {
       let params = {
         page: page - 1,
         size: size,
+        startDate:this.startDate,
+        endDate: this.endDate,
+        groupId:this.groupID,
+        userName: this.userName
       }
       if (this.$authInfo.roleValue() === 'staff') {
-        await this.$services.abnormal.getListAbnormalStaff(
+        await this.$services.abnormal.getListAbnormal(
           params,
           (response) => {
             if (response.data && response.data.length > 0) {
@@ -565,12 +567,12 @@ export default {
               for (let index = 0; index < this.tableData.length; index++) {
                   if(this.tableData[index].status === true){
                     this.tableData[index].status = 'Explained';
-                    console.log(tableData)
+                    console.log(this.tableData[index].status)
                   }else{
                     this.tableData[index].status = ' ';
                   }
               }
-              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+              
               this.json_fields = {
                 'STT': 'stt',
                 'Account': 'userName',
@@ -588,7 +590,7 @@ export default {
           }
         )
       } else {
-        await this.$services.abnormal.getListAbnormalStaff(
+        await this.$services.abnormal.getListAbnormal(
           params,
           (response) => {
             if (response.data && response.data.length > 0) {
@@ -655,18 +657,18 @@ export default {
         (err) => this.notifyError(err.error.error)
       )
     },
-    async getListGroupAbnormal() {
-      await this.$services.abnormal.getListGroupAbnormal(
-        (response) => {
-          if (response.listData && response.listData.length > 0) {
-            this.groups = response.listData.map((item) => {
-              return { label: item.name, value: Number(item.group_id) }
-            })
-          }
-        },
-        (err) => this.notifyError(err.error.error)
-      )
-    },
+    // async getListAbnormal() {
+    //   await this.$services.abnormal.getListAbnormal(
+    //     (response) => {
+    //       if (response.listData && response.listData.length > 0) {
+    //         this.groups = response.listData.map((item) => {
+    //           return { label: item.name, value: Number(item.group_id) }
+    //         })
+    //       }
+    //     },
+    //     (err) => this.notifyError(err.error.error)
+    //   )
+    // },
     async getListGroup() {
       await this.$services.group.getListGroup(
         {},
@@ -693,6 +695,7 @@ export default {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.titleExcel = '';
             for (let index = 0; index < this.tableData.length; index++) {
                   if(this.tableData[index].status === true){
                     this.tableData[index].status = 'Explained';
@@ -758,7 +761,7 @@ export default {
       this.multipleSelection = val
     },
     changePageData(page) {
-      this.getListAbnormalStaff(page, this.size)
+      this.getListAbnormal(page, this.size)
       this.page = page
       const roleValue = this.$authInfo.roleValue()
       this.$router.push({

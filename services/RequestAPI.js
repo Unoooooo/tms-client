@@ -86,7 +86,12 @@ export default class RequestAPI extends BaseService {
 
   // Remote request
   async getListRemoteRequest(params, success, error) {
-    await this.post('remote/search', params, success, error)
+    await this.post(
+      `remote/search?${this.urlParse(params)}`,
+      params,
+      success,
+      error
+    )
   }
 
   async searchRemoteRequest(params, success, error) {

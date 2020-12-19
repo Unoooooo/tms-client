@@ -44,11 +44,7 @@
           >
             <i class="el-icon-refresh"></i>
           </el-button>
-          <el-button
-          
-            class="gr-button"
-            @click="handleCreate()"
-          >
+          <el-button class="gr-button" @click="handleCreate()">
             {{ $t('Add request') }}
           </el-button>
         </div>
@@ -72,6 +68,12 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column
+          class-name="text-center"
+          prop="stt"
+          :label="$t('STT')"
+          width="80px"
+        />
+        <el-table-column
           class-name="text-left"
           prop="account_sent"
           sortable
@@ -79,13 +81,20 @@
         />
         <el-table-column
           class-name="text-left"
+          prop="groupName"
+          sortable
+          :label="$t('Group')"
+        />
+        <el-table-column
+          class-name="text-left"
           prop="site"
           :label="$t('Site Name')"
         />
-        <el-table-column 
-        class-name="text-center"  
-        prop="check_time" 
-        :label="$t('Check Time')">
+        <el-table-column
+          class-name="text-center"
+          prop="check_time"
+          :label="$t('Check Time')"
+        >
           <!-- <template slot-scope="{ row }">
             {{
               row.check_time ? showDateTime(row.check_time, 'DD/MM/YYYY - HH:MM:SS') : ''
@@ -132,7 +141,7 @@
         <el-dialog
           :title="titlePopup"
           :visible.sync="dialogFormWithInput"
-          width="47%"
+          width="60%"
         >
           <el-form ref="dataForm" :rules="rules" :model="checkIn">
             <el-row v-if="dialogMode !== 'detail'" :gutter="20">
@@ -140,19 +149,32 @@
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">Full Name</label>
                   <el-form-item prop="full_name" class="col-sm-7">
-                    <el-input v-model="checkIn.full_name" class="widthInput" disabled />
+                    <el-input
+                      v-model="checkIn.full_name"
+                      class="widthInput"
+                      disabled
+                    />
                   </el-form-item>
                 </div>
+
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">Group</label>
                   <el-form-item prop="group_name" class="col-sm-7">
-                    <el-input v-model="checkIn.group_name" class="widthInput" disabled />
+                    <el-input
+                      v-model="checkIn.group_name"
+                      class="widthInput"
+                      disabled
+                    />
                   </el-form-item>
                 </div>
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">Time</label>
                   <el-form-item class="col-sm-7">
-                    <el-input :placeholder="dataString" class="widthInput" disabled />
+                    <el-input
+                      :placeholder="dataString"
+                      class="widthInput"
+                      disabled
+                    />
                   </el-form-item>
                 </div>
                 <div class="form-group row">
@@ -184,17 +206,19 @@
                    @click="handleClickInputFile"
                     
                   > -->
-                   <input
-                      id="avatar"
-                      ref="avatar"
-                      type="file"
-                      @change="handleFileUpload()"
-                      
-                    />
-                    <img v-if="imageUrl" :src="image_url_preview" class="avatar" />
-                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  <input
+                    id="avatar"
+                    ref="avatar"
+                    type="file"
+                    @change="handleFileUpload()"
+                  />
+                  <img
+                    v-if="imageUrl"
+                    :src="image_url_preview"
+                    class="avatar"
+                  />
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   <!-- </el-upload> -->
-                  
                 </div>
               </el-col>
             </el-row>
@@ -218,8 +242,14 @@
                   <el-col :span="12">
                     <div class="form-group row">
                       <label class="col-sm-4 col-form-label">Full Name</label>
-                      <el-form-item class="col-sm-5">
+                      <el-form-item class="col-sm-7">
                         {{ checkIn.full_name }}
+                      </el-form-item>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-4 col-form-label">Group</label>
+                      <el-form-item class="col-sm-7">
+                        {{ checkIn.groupName }}
                       </el-form-item>
                     </div>
 
@@ -265,14 +295,14 @@
               OK
             </el-button>
 
-            <el-button
+            <!-- <el-button
               v-else
               class="mr-auto"
               type="primary"
               @click="dialogFormWithInput = false"
             >
               OK
-            </el-button>
+            </el-button> -->
           </span>
         </el-dialog>
       </section>
@@ -315,14 +345,14 @@
 .image-remote {
   max-width: 70%;
 }
-.form-group{
+.form-group {
   margin-bottom: 0px;
 }
-.maginAVT{
+.maginAVT {
   margin-left: 30px;
 }
-.widthInput{
-  width: 166px;
+.widthInput {
+  width: 210px;
 }
 .avatar-uploader {
   margin: auto;
@@ -426,7 +456,7 @@ label {
 }
 .date-picker {
   width: 150px;
-   margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 @media screen and (max-width: 1370px) {
   .input-search {
@@ -435,7 +465,7 @@ label {
   }
   .date-picker {
     width: 140px;
-     margin-bottom: 10px;
+    margin-bottom: 10px;
   }
 }
 </style>
@@ -511,8 +541,8 @@ export default {
       new Date().toLocaleTimeString()
   },
   methods: {
-    handleClickInputFile(e){
-      this.$refs.avatar.click();
+    handleClickInputFile(e) {
+      this.$refs.avatar.click()
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
@@ -559,13 +589,12 @@ export default {
     //   }
     // },
 
-  
     handleFileUpload() {
       this.imageUrl = this.$refs.avatar.files[0]
-      console.log(this.imageUrl,'a')
+      console.log(this.imageUrl, 'a')
       if (this.imageUrl) {
         this.image_url_preview = URL.createObjectURL(this.imageUrl)
-        console.log(this.image_url_preview,'b')
+        console.log(this.image_url_preview, 'b')
       }
     },
     async getListRemoteRequest(page, size) {

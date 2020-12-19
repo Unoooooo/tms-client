@@ -8,44 +8,6 @@ export default [
     permission: null,
   },
   {
-    key: 'staff-report-abnormal',
-    name: 'REPORT',
-    icon: 'el-icon-star-on',
-    permission: null,
-    children: [
-      {
-        key: 'staff-report-abnormal',
-        path: '/staff/report/abnormal',
-        name: 'Abnormal',
-        permission: null,
-      },
-      {
-        key: 'staff-report-checkinout',
-        path: '/staff/report/checkinout',
-        name: 'TimeSheet',
-        permission: null,
-      },
-      {
-        key: 'staff-report-actual',
-        path: '/staff/report/actual',
-        name: 'Actual-In-Out',
-        permission: null,
-      },
-      {
-        key: 'staff-report-overttime',
-        path: '/staff/report/overtime',
-        name: 'Overttime',
-        permission: null,
-      },
-      {
-        key: 'staff-report-monthly',
-        path: '/staff/report/monthly',
-        name: 'Monthly Payroll',
-        permission: null,
-      },
-    ],
-  },
-  {
     key: 'staff-request-absence',
     name: 'REQUEST',
     icon: 'el-icon-star-on',
@@ -60,7 +22,7 @@ export default [
       {
         key: 'staff-request-overtime',
         path: '/staff/request/overtime',
-        name: 'Overtime',
+        name: 'OverTime',
         permission: null,
       },
       {
@@ -83,4 +45,45 @@ export default [
       },
     ],
   },
+  {
+    key: 'staff-report-abnormal',
+    name: 'REPORT',
+    icon: 'el-icon-star-on',
+    permission: null,
+    children: [
+      {
+        key: 'staff-report-actual',
+        path: '/staff/report/actual',
+        name: 'Actual-In-Out',
+        permission: null,
+      },
+      {
+        key: 'staff-report-checkinout',
+        path: '/staff/report/checkinout',
+        name: 'TimeSheet',
+        permission: null,
+      },
+      {
+        key: 'staff-report-abnormal',
+        path: '/staff/report/abnormal',
+        name: 'Abnormal',
+        permission: null,
+      },
+      {
+        key: 'staff-report-monthly',
+        path: '/staff/report/monthly',
+        name: 'Monthly Payroll',
+        permission: null,
+      },
+     
+      {
+        key: 'staff-report-overttime',
+        path: '/staff/report/overtime',
+        name: 'OverTime',
+        permission: null,
+      },
+      
+    ],
+  },
+ 
 ]

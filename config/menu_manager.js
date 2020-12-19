@@ -8,44 +8,6 @@ export default [
     permission: null,
   },
   {
-    key: 'manager-report-abnormal',
-    name: 'REPORT',
-    icon: 'el-icon-star-on',
-    permission: null,
-    children: [
-      // {
-      //   key: 'manager-report-abnormal',
-      //   path: '/manager/report/abnormal',
-      //   name: 'Abnormal',
-      //   permission: null,
-      // },
-      {
-        key: 'manager-report-checkinout',
-        path: '/manager/report/checkinout',
-        name: 'TimeSheet',
-        permission: null,
-      },
-      {
-        key: 'manager-report-actual',
-        path: '/manager/report/actual',
-        name: 'Actual-In-Out',
-        permission: null,
-      },
-      {
-        key: 'manager-report-overtime',
-        path: '/manager/report/overtime',
-        name: 'Overttime',
-        permission: null,
-      },
-      {
-        key: 'manager-report-monthly',
-        path: '/manager/report/monthly',
-        name: 'Monthly Payroll',
-        permission: null,
-      },
-    ],
-  },
-  {
     key: 'manager-request-absence',
     name: 'REQUEST',
     icon: 'el-icon-star-on',
@@ -60,7 +22,7 @@ export default [
       {
         key: 'manager-request-overtime',
         path: '/manager/request/overtime',
-        name: 'Overtime',
+        name: 'OverTime',
         permission: null,
       },
       {
@@ -84,6 +46,40 @@ export default [
     ],
   },
   {
+    key: 'manager-report-abnormal',
+    name: 'REPORT',
+    icon: 'el-icon-star-on',
+    permission: null,
+    children: [
+      {
+        key: 'manager-report-actual',
+        path: '/manager/report/actual',
+        name: 'Actual-In-Out',
+        permission: null,
+      },
+      {
+        key: 'manager-report-checkinout',
+        path: '/manager/report/checkinout',
+        name: 'TimeSheet',
+        permission: null,
+      },
+      {
+        key: 'manager-report-monthly',
+        path: '/manager/report/monthly',
+        name: 'Monthly Payroll',
+        permission: null,
+      },
+      {
+        key: 'manager-report-overtime',
+        path: '/manager/report/overtime',
+        name: 'OverTime',
+        permission: null,
+      },
+      
+    ],
+  },
+  
+  {
     key: 'manager-administration-account',
     name: 'ADMINISTRATION',
     icon: 'el-icon-s-custom',
@@ -99,6 +95,12 @@ export default [
         key: 'manager-administration-site',
         path: '/manager/administration/site',
         name: 'Site Management',
+        permission: null,
+      },
+      {
+        key: 'manager-administration-group',
+        path: '/manager/administration/group',
+        name: 'Group Management',
         permission: null,
       },
     ],

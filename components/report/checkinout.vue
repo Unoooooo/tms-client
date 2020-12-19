@@ -384,6 +384,8 @@ export default {
       tableData: [],
       fullnameSearch: '',
       groupSearch: '',
+      groupID: '',
+      userName: '',
       startDate: '',
       endDate: '',
       dateDailyDate: '',
@@ -452,54 +454,43 @@ export default {
     await this.getListGroupTimesheet()
   },
   methods: {
-    // async refreshSearch() {
-    //   this.startLoading()
-    //   this.fullnameSearch = ""
-    //   this.startDate = ""
-    //   this.endDate = ""
-    //   this.groupSearch = ""
-    //   this.getListMonthly(0, 20)
-    //   setTimeout(()=> {
-    //     this.endLoading()
-    //   }, 300)
-    // },
-    async getListTimeSheet(page, size) {
-      this.startLoading()
-      let params = {
+   async getListTimeSheet(page, size) {
+        let params = {
         page: page - 1,
         size: size,
+        startDate:this.startDate,
+        endDate: this.endDate,
+        groupId: this.groupID,
+        userName: this.userName
       }
-      if (this.$authInfo.roleValue() === 'staff') {
-        await this.$services.dailytimesheet.getListTimeSheet(
-          params,
-          (response) => {
-            if (response.data && response.data.length > 0) {
-              this.tableData = response.data
-              this.totalPages = response.totalPages
+      await this.$services.dailytimesheet.getListTimeSheet(
+        params,
+        (response) => {
+          if (response.data && response.data.length > 0) {
+            this.titleExcel = '';
+            this.tableData = response.data
+            this.totalPages = response.totalPages
+            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+            this.json_fields = {
+              'STT': 'stt',
+              'Account': 'account',
+              'Group': 'groupName',
+              'Date': 'date',
+              'Check In': 'check_in',
+              'Check Out': 'check_out',
+              'Time Offical': 'time_offical',
+              'Work day': 'work_day',
+              'Work time': 'work_time',
             }
-          },
-          (err) => {
-            this.notifyError(err.error.error)
           }
-        )
-      } else {
-        await this.$services.dailytimesheet.getListTimeSheet(
-          params,
-          (response) => {
-            if (response.data && response.data.length > 0) {
-              this.tableData = response.data
-              this.totalPages = response.totalPages
-            }
-          },
-          (err) => {
-            this.notifyError(err.error.error)
-          }
-        )
-      }
-      setTimeout(() => {
-        this.endLoading()
-      }, 300)
+        },
+        (err) => {
+          this.notifyError(err.error.error)
+        }
+      )
     },
+    
     async getListGroupTimesheet() {
       await this.$services.dailytimesheet.getListGroupTimesheet(
         (response) => {
@@ -535,33 +526,29 @@ export default {
       )
     },
     async searchTimeSheetReport() {
-      this.startLoading()
-      let filterObj = {}
-      if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
-        filterObj.userName = this.fullnameSearch.trim()
-      }
-      if (this.groupSearch !== '') {
-        filterObj.groupId = this.groupSearch
-      }
-      if (
-        this.startDate &&
-        (!this.startDate.length == 0 || this.startDate.trim())
-      ) {
-        filterObj.startDate = this.startDate
-      }
-      if (this.endDate && (!this.endDate.length == 0 || this.endDate.trim())) {
-        filterObj.endDate = this.endDate
-      }
-
+       this.startLoading()
       await this.$services.dailytimesheet.searchTimeSheetReport(
-        filterObj,
+        {
+          userName: this.userName,
+          groupSearch: this.groupSearch,
+          startDate: this.startDate,
+          endDate: this.endDate,
+        },
         (response) => {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
             this.totalPages = response.totalPages
             this.titleExcel = '';
-            if (this.fullnameSearch != undefined) {
-              this.titleExcel += 'Account: ' + this.fullnameSearch
+            for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }                    
+             
+            if (this.userName != undefined) {
+              this.titleExcel += 'Account: ' + this.userName 
             }
             let groupLabel = '';
             for (let index = 0; index < this.groups.length; index++) {
@@ -571,19 +558,19 @@ export default {
               }
             }
             if (this.groupSearch != undefined) {
-              this.titleExcel += '| Group: ' + groupLabel
+              this.titleExcel += '| Group: ' + groupLabel 
             }
             if (this.startDate != undefined) {
-              this.titleExcel += '| Start Date: ' + this.startDate
+              this.titleExcel += '| Start Date: ' + this.startDate 
             }
             if (this.endDate != undefined) {
-              this.titleExcel += '| End Date:' + this.endDate
+              this.titleExcel += '| End Date:' + this.endDate 
             }
-            // console.log(this.titleExcel)
           } else {
             this.tableData = []
             this.totalPages = 0
           }
+          this.endLoading()
         },
         (err) => {
           this.tableData = []
@@ -592,7 +579,6 @@ export default {
           this.notifyError(err.error.error)
         }
       )
-      this.endLoading()
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -623,38 +609,7 @@ export default {
       }
     },
 
-    async getListTimeSheet(page, size) {
-      let params = {
-        page: page - 1,
-        size: size,
-      }
-      await this.$services.dailytimesheet.getListTimeSheet(
-        params,
-        (response) => {
-          if (response.data && response.data.length > 0) {
-            this.titleExcel = '';
-            this.tableData = response.data
-            this.totalPages = response.totalPages
-            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
-
-            this.json_fields = {
-              'STT': 'stt',
-              'Account': 'account',
-              'Group': 'groupName',
-              'Date': 'date',
-              'Check In': 'check_in',
-              'Check Out': 'check_out',
-              'Time Offical': 'time_offical',
-              'Work day': 'work_day',
-              'Work time': 'work_time',
-            }
-          }
-        },
-        (err) => {
-          this.notifyError(err.error.error)
-        }
-      )
-    },
+   
 
     getListTimesheetDetail(dataRequest) {
       this.startLoading()
