@@ -480,11 +480,11 @@ export default {
       this.startLoading()
       let filterObj = {}
       console.log(this.groupSearch)
-      if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
-        filterObj.userName = this.fullnameSearch.trim()
+      if(this.userName.trim() !== '') {
+        params.userName = this.userName
       }
-      if (this.groupSearch !== '') {
-        filterObj.groupId = this.groupSearch
+       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
+        params.groupId = this.groupSearch
       }
       if (
         this.startDate &&

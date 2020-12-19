@@ -457,10 +457,10 @@ export default {
         page: page - 1,
         size: size
       }
-      if(this.userName.trim() !== '') {
-        params.userName = this.userName
+     if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
+        filterObj.userName = this.fullnameSearch.trim()
       }
-      if(this.groupSearch && this.groupSearch.trim() !== '') {
+      if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
         params.groupId = this.groupSearch
       }
       if(this.startDate && this.startDate.trim() !== '') {
@@ -592,10 +592,10 @@ export default {
         page: 0,
         size: this.size
       }
-      if(this.userName.trim() !== '') {
+       if(this.userName.trim() !== '') {
         params.userName = this.userName
       }
-      if(this.groupSearch && this.groupSearch.trim() !== '') {
+       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
         params.groupId = this.groupSearch
       }
       if(this.startDate && this.startDate.trim() !== '') {
