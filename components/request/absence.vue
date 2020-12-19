@@ -10,16 +10,23 @@
             class="input-search"
             clearable
           />
-          <el-input
+          <el-select
             v-model="groupSearch"
+            class="table"
+            placeholder="Group"
             :disabled="
               $authInfo.role() == constant.Role.STAFF ||
               $authInfo.role() == constant.Role.MANAGER
             "
-            placeholder="Group"
-            class="input-search"
-            clearable
-          />
+          >
+            <el-option
+              v-for="(item, index) in groups"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
 
           <el-date-picker
             v-model="startDate"
@@ -72,7 +79,7 @@
         class="table-serenade"
         @selection-change="handleSelectionChange"
       >
-      <el-table-column
+        <el-table-column
           class-name="text-center"
           prop="stt"
           :label="$t('STT')"
@@ -206,7 +213,6 @@
                     <el-input
                       v-model="request.title"
                       :disabled="isDetailForm"
-                     
                     />
                   </el-form-item>
                 </div>
@@ -300,7 +306,11 @@
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label">Message</label>
                   <el-form-item prop="response_msg" class="col-sm-6">
-                    <el-input v-model="request.response_msg" type="textarea" disabled />
+                    <el-input
+                      v-model="request.response_msg"
+                      type="textarea"
+                      disabled
+                    />
                   </el-form-item>
                 </div>
               </el-col>
@@ -451,6 +461,9 @@
 .line {
   margin-top: -30px;
 }
+.table {
+  width: 150px;
+}
 
 .group-filter {
   margin-bottom: 20px;
@@ -481,7 +494,7 @@
 }
 .date-picker {
   width: 150px;
-   margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 label {
   text-align: center;
@@ -494,7 +507,7 @@ label {
   }
   .date-picker {
     width: 140px;
-     margin-bottom: 10px;
+    margin-bottom: 10px;
   }
 }
 </style>
@@ -555,6 +568,9 @@ export default {
       fullnameSearch: '',
       startDate: '',
       endDate: '',
+      groupID: '',
+      userName: '',
+      projectName: '',
       dialogFormWithInput: false,
       showFormMessage: false,
       dataReject: {},
@@ -658,30 +674,153 @@ export default {
     }
     this.getListAbsenceRequest(this.page, this.size)
     this.getTypeAbsenceRequest()
+    this.getListGroupAbsence()
     this.getUserInfo()
   },
   methods: {
-    canSelectRow(row) {
-      return row.account_sent === this.user.username && row.status == 'Pending'
-    },
-    async getListAbsenceRequest(page, size) {
+     async getListAbsenceRequest(page, size) {
       let params = {
         page: page - 1,
-        size: size,
+        size: size
       }
-      await this.$services.request.getListAbsenceRequest(
-        params,
-        (response) => {
-          if (response.data && response.data.length > 0) {
-            this.tableData = response.data
-            this.totalPages = response.totalPages
+      if(this.userName.trim() !== '') {
+        params.userName = this.userName
+      }
+      if(this.groupSearch && this.groupSearch.trim() !== '') {
+        params.groupId = this.groupSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
+      }
+      if (this.$authInfo.roleValue() === 'staff') {
+        await this.$services.request.getListAbsenceRequest(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
+              this.tableData = response.data
+              this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                    console.log(this.tableData[index].status)
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }
+              
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
+              }
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
           }
-        },
-        (err) => {
-          this.notifyError(err.error.error)
-        }
-      )
+        )
+      } else {
+        await this.$services.request.getListAbsenceRequest(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
+              this.tableData = response.data
+              // let temp = {}
+              // let count = 0
+              // this.tableData.forEach((item, index)=> {
+              //   if(item.accountId === this.user.account_Id) {
+              //     temp = item
+              //     count ++
+              //     this.tableData.splice(index, 1)
+              //   } 
+              // })
+              // for(let i=0; i<count;i++) {
+              //   this.tableData.unshift(temp)
+              // }
+              this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
+              }
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+      }
     },
+    // canSelectRow(row) {
+    //   return row.account_sent === this.user.username && row.status == 'Pending'
+    // },
+    // async getListAbsenceRequest(page, size) {
+    //   this.startLoading()
+    //   let params = {
+    //     page: page - 1,
+    //     size: size,
+    //     startDate: this.startDate,
+    //     endDate: this.endDate,
+    //     groupId: this.groupID,
+    //     userName: this.userName,
+    //   }
+    //   if (this.$authInfo.roleValue() === 'staff') {
+    //     await this.$services.request.getListAbsenceRequest(
+    //       params,
+    //       (response) => {
+    //         if (response.data && response.data.length > 0) {
+    //           this.tableData = response.data
+    //           this.totalPages = response.totalPages
+    //         }
+    //       },
+    //       (err) => {
+    //         this.notifyError(err.error.error)
+    //       }
+    //     )
+    //   } else {
+    //     await this.$services.request.getListAbsenceRequest(
+    //       params,
+    //       (response) => {
+    //         if (response.data && response.data.length > 0) {
+    //           this.tableData = response.data
+    //           this.totalPages = response.totalPages
+    //         }
+    //       },
+    //       (err) => {
+    //         this.notifyError(err.error.error)
+    //       }
+    //     )
+    //   }
+    //   setTimeout(() => {
+    //     this.endLoading()
+    //   }, 300)
+    // },
     async getUserInfo() {
       await this.$services.common.getUserInfo(
         (response) => {
@@ -701,24 +840,67 @@ export default {
         (err) => this.notifyError(err.error.error)
       )
     },
+    async getListGroupAbsence() {
+      await this.$services.request.getListGroupAbsence(
+        (response) => {
+          if (response.listData && response.listData.length > 0) {
+            this.groups = response.listData.map((item) => {
+              return { label: item.name, value: Number(item.group_id) }
+            })
+          }
+        },
+        (err) => this.notifyError(err.error.error)
+      )
+    },
     async searchAbsenceRequest() {
       this.startLoading()
+      let filterObj = {}
+      if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
+        filterObj.userName = this.fullnameSearch.trim()
+      }
+      if (this.groupSearch !== '') {
+        filterObj.groupId = this.groupSearch
+      }
+      if (
+        this.startDate &&
+        (!this.startDate.length == 0 || this.startDate.trim())
+      ) {
+        filterObj.startDate = this.startDate
+      }
+      if (this.endDate && (!this.endDate.length == 0 || this.endDate.trim())) {
+        filterObj.endDate = this.endDate
+      }
+
       await this.$services.request.searchAbsenceRequest(
-        {
-          userName: this.fullnameSearch,
-          groupName: this.groupSearch,
-          startDate: this.startDate,
-          endDate: this.endDate,
-        },
+        filterObj,
         (response) => {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.titleExcel = ''
+            if (this.fullnameSearch != undefined) {
+              this.titleExcel += 'Account: ' + this.fullnameSearch
+            }
+            let groupLabel = ''
+            for (let index = 0; index < this.groups.length; index++) {
+              const element = this.groups[index]
+              if (element.value === this.groupSearch) {
+                groupLabel = element.label
+              }
+            }
+            if (this.groupSearch != undefined) {
+              this.titleExcel += '| Group: ' + groupLabel
+            }
+            if (this.startDate != undefined) {
+              this.titleExcel += '| Start Date: ' + this.startDate
+            }
+            if (this.endDate != undefined) {
+              this.titleExcel += '| Start Date: ' + this.endDate
+            }
           } else {
             this.tableData = []
             this.totalPages = 0
           }
-          this.endLoading()
         },
         (err) => {
           this.tableData = []
@@ -727,6 +909,7 @@ export default {
           this.notifyError(err.error.error)
         }
       )
+      this.endLoading()
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -866,7 +1049,6 @@ export default {
           )
         }
       })
-      
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {

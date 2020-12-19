@@ -2,9 +2,11 @@ import BaseService from './BaseService'
 
 export default class RequestAPI extends BaseService {
   async getListAbsenceRequest(params, success, error) {
-    await this.get(`absences?${this.urlParse(params)}`, success, error)
+    await this.get(`absences/search?${this.urlParse(params)}`, success, error)
   }
-
+  async getListGroupAbsence(params, success, error) {
+    await this.get(`absences/list-group`, params, success, error)
+  }
   async getListAccountReceiver(success, error) {
     await this.get('absences/get-account-receiver', success, error)
   }
@@ -30,24 +32,25 @@ export default class RequestAPI extends BaseService {
   }
 
   async searchAbsenceRequest(params, success, error) {
-    await this.post('absences/search', params, success, error)
+    await this.get(`absences/search?${this.urlParse(params)}`, success, error)
   }
 
-  async searchRequest(
-    groupName,
-    userName,
-    startDate,
-    endDate,
-    params,
-    success,
-    error
-  ) {
-    this.get(
-      `absences/search?groupName=${groupName}&userName=${userName}&startDate=${startDate}&endDate=${endDate}${params}`,
-      success,
-      error
-    )
-  }
+  // async searchAbsenceRequest(
+  //   groupId,
+  //   userName,
+  //   startDate,
+  //   endDate,
+  //   projectName,
+  //   params,
+  //   success,
+  //   error
+  // ) {
+  //   this.get(
+  //     `absences/search?groupId=${groupId}&userName=${userName}&startDate=${startDate}&endDate=${endDate}${params}`,
+  //     success,
+  //     error
+  //   )
+  // }
   async deleteRequest(id, success, error) {
     this.delete(`absences/delete/` + id, {}, success, error)
   }

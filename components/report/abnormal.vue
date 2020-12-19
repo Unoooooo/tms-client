@@ -59,7 +59,7 @@
 
         <div class="gr-button">
           <export-excel
-            :data="tableData"
+            :data="excelData"
             :title="titleExcel"
             name="AbnormalReport.xls"
             :fields="json_fields"
@@ -106,7 +106,9 @@
         <el-table-column class-name="text-center" :label="$t('Date')">
           <template slot-scope="{ row }">
             {{
-              row.dateTimeSheet ? showDateTime(row.dateTimeSheet, 'DD/MM/YYYY') : ''
+              row.dateTimeSheet
+                ? showDateTime(row.dateTimeSheet, 'DD/MM/YYYY')
+                : ''
             }}
           </template>
         </el-table-column>
@@ -153,7 +155,10 @@
               <i class="el-icon-user"></i>
             </el-button>
             <el-button
-              v-if="scope.row.status !== 'Explained' && user.account_id === scope.row.accountId"
+              v-if="
+                scope.row.status !== 'Explained' &&
+                user.account_id === scope.row.accountId
+              "
               class="button-action"
               type="primary"
               @click="handleCreate(scope.$index, scope.row)"
@@ -258,8 +263,7 @@
                   </el-form-item>
                 </div>
 
-                
-                 <div class="form-group row">
+                <div class="form-group row">
                   <label class="col-sm-4 col-form-label">
                     Explain In <span>*</span>
                   </label>
@@ -318,7 +322,6 @@
                     />
                   </el-form-item>
                 </div>
-               
               </el-col>
             </el-row>
 
@@ -465,6 +468,7 @@ export default {
       json_fields: null,
       titleExcel: '',
       tableData: [],
+      excelData: [],
       userName: '',
       fullnameSearch: '',
       groupSearch: '',
@@ -542,17 +546,25 @@ export default {
     await this.getUserInfo()
     await this.getListAbnormal(this.page, this.size)
     await this.getListAbnormalReceiver()
-    // await this.getListGroupAbnormal()
+    await this.getListGroupAbnormal()
   },
   methods: {
-    async getListAbnormal(page, size) {
+     async getListAbnormal(page, size) {
       let params = {
         page: page - 1,
-        size: size,
-        startDate:this.startDate,
-        endDate: this.endDate,
-        groupId:this.groupID,
-        userName: this.userName
+        size: size
+      }
+      if(this.userName.trim() !== '') {
+        params.userName = this.userName
+      }
+      if(this.groupSearch && this.groupSearch.trim() !== '') {
+        params.groupId = this.groupSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
       }
       if (this.$authInfo.roleValue() === 'staff') {
         await this.$services.abnormal.getListAbnormal(
@@ -657,18 +669,18 @@ export default {
         (err) => this.notifyError(err.error.error)
       )
     },
-    // async getListAbnormal() {
-    //   await this.$services.abnormal.getListAbnormal(
-    //     (response) => {
-    //       if (response.listData && response.listData.length > 0) {
-    //         this.groups = response.listData.map((item) => {
-    //           return { label: item.name, value: Number(item.group_id) }
-    //         })
-    //       }
-    //     },
-    //     (err) => this.notifyError(err.error.error)
-    //   )
-    // },
+    async getListGroupAbnormal() {
+      await this.$services.abnormal.getListGroupAbnormal(
+        (response) => {
+          if (response.listData && response.listData.length > 0) {
+            this.groups = response.listData.map((item) => {
+              return { label: item.name, value: Number(item.group_id) }
+            })
+          }
+        },
+        (err) => this.notifyError(err.error.error)
+      )
+    },
     async getListGroup() {
       await this.$services.group.getListGroup(
         {},
@@ -684,15 +696,28 @@ export default {
     },
     async searchAbnormalRequest() {
       this.startLoading()
+      let params = {
+        page: 0,
+        size: this.size
+      }
+      if(this.userName.trim() !== '') {
+        params.userName = this.userName
+      }
+      if(this.groupSearch && this.groupSearch.trim() !== '') {
+        params.groupId = this.groupSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
+      }
       await this.$services.abnormal.searchAbnormalRequest(
-        {
-          userName: this.userName,
-          groupSearch: this.groupSearch,
-          startDate: this.startDate,
-          endDate: this.endDate,
-        },
+        params,
         (response) => {
+          console.log(0)
           if (response.data && response.data.length > 0) {
+            console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
             this.titleExcel = '';
@@ -724,18 +749,19 @@ export default {
               this.titleExcel += '| End Date:' + this.endDate 
             }
           } else {
+            console.log(2)
             this.tableData = []
             this.totalPages = 0
           }
-          this.endLoading()
         },
         (err) => {
+          console.log(3)
           this.tableData = []
           this.totalPages = 0
-          this.endLoading()
           this.notifyError(err.error.error)
         }
       )
+      this.endLoading()
     },
     async getInfo(accountId, explanId) {
       this.startLoading()

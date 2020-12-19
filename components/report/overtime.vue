@@ -62,8 +62,12 @@
 
         <div class="gr-button">
           <export-excel
-            :data="tableData"
-            :title="titleExcel.length == 0 ? 'Account: | Group: | Start Date | End Date:': titleExcel"
+            :data="excelDate"
+            :title="
+              titleExcel.length == 0
+                ? 'Account: | Group: | Start Date | End Date:'
+                : titleExcel
+            "
             name="OverTimeReport.xls"
             :fields="json_fields"
           >
@@ -199,13 +203,13 @@
                 <template slot-scope="{ row }">
                   <i v-if="row.dateOt" class="el-icon-time"></i>
                   <span style="margin-left: 10px">
-                    {{ 
+                    {{
                       row.dateOt ? showDateTime(row.dateOt, 'DD/MM/YYYY') : ''
                     }}
                   </span>
                 </template>
               </el-table-column>
-             
+
               <el-table-column
                 prop="timeOt"
                 label="Time"
@@ -377,6 +381,7 @@ export default {
       titleExcel: '',
       constant: Constant,
       tableData: [],
+      excelDate: [],
       userName: '',
       fullnameSearch: '',
       groupSearch: '',
@@ -446,34 +451,53 @@ export default {
     this.getListGroupOvertime()
   },
   methods: {
-    // async refreshSearch() {
-    //   this.startLoading()
-    //   this.fullnameSearch = ""
-    //   this.startDate = ""
-    //   this.endDate = ""
-    //   this.groupSearch = ""
-    //   this.getListOvertime(0, 20)
-    //   setTimeout(()=> {
-    //     this.endLoading()
-    //   }, 300)
-    // },
+  
     async getListOvertime(page, size) {
-      this.startLoading()
        let params = {
         page: page - 1,
-        size: size,
-        startDate:this.startDate,
-        endDate: this.endDate,
-        groupId:this.groupID,
-        userName: this.userName
+        size: size
+      }
+      if(this.userName.trim() !== '') {
+        params.userName = this.userName
+      }
+      if(this.groupSearch && this.groupSearch.trim() !== '') {
+        params.groupId = this.groupSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
       }
       if (this.$authInfo.roleValue() === 'staff') {
         await this.$services.overtime.getListOvertime(
           params,
           (response) => {
             if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
               this.tableData = response.data
               this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                    console.log(this.tableData[index].status)
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }
+              
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
+              }
             }
           },
           (err) => {
@@ -485,8 +509,40 @@ export default {
           params,
           (response) => {
             if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
               this.tableData = response.data
+              // let temp = {}
+              // let count = 0
+              // this.tableData.forEach((item, index)=> {
+              //   if(item.accountId === this.user.account_Id) {
+              //     temp = item
+              //     count ++
+              //     this.tableData.splice(index, 1)
+              //   } 
+              // })
+              // for(let i=0; i<count;i++) {
+              //   this.tableData.unshift(temp)
+              // }
               this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
+              }
             }
           },
           (err) => {
@@ -494,10 +550,8 @@ export default {
           }
         )
       }
-      setTimeout(() => {
-        this.endLoading()
-      }, 300)
     },
+
     async getListGroupOvertime() {
       await this.$services.overtime.getListGroupOvertime(
         (response) => {
@@ -533,59 +587,71 @@ export default {
       )
     },
     async searchOvertimeReport() {
-      this.startLoading()
-      let filterObj = {}
-      console.log(this.groupSearch)
-      if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
-        filterObj.userName = this.fullnameSearch.trim()
+     this.startLoading()
+      let params = {
+        page: 0,
+        size: this.size
       }
-      if (this.groupSearch !== '') {
-        filterObj.groupId = this.groupSearch
+      if(this.userName.trim() !== '') {
+        params.userName = this.userName
       }
-      if (
-        this.startDate &&
-        (!this.startDate.length == 0 || this.startDate.trim())
-      ) {
-        filterObj.startDate = this.startDate
+      if(this.groupSearch && this.groupSearch.trim() !== '') {
+        params.groupId = this.groupSearch
       }
-      if (this.endtDate && (!this.endDate.length == 0 || this.endDate.trim())) {
-        filterObj.endDate = this.endDate
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
       }
       await this.$services.overtime.searchOvertimeReport(
-        filterObj,
+        params,
         (response) => {
+          console.log(0)
           if (response.data && response.data.length > 0) {
+            console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
+
             this.titleExcel = '';
-            if (this.fullnameSearch != undefined) {
-              this.titleExcel += 'Account: ' + this.fullnameSearch
+            for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }                    
+             
+            if (this.userName != undefined) {
+              this.titleExcel += 'Account: ' + this.userName 
+
             }
-            let groupLabel = '';
+            let groupLabel = ''
             for (let index = 0; index < this.groups.length; index++) {
-              const element = this.groups[index];
-              if (element.value === this.groupSearch){
+              const element = this.groups[index]
+              if (element.value === this.groupSearch) {
                 groupLabel = element.label
               }
             }
             if (this.groupSearch != undefined) {
-              this.titleExcel += '| Group: ' + groupLabel
+              this.titleExcel += '| Group: ' + groupLabel 
             }
             if (this.startDate != undefined) {
-              this.titleExcel += '| Start Date: ' + this.startDate
+              this.titleExcel += '| Start Date: ' + this.startDate 
             }
             if (this.endDate != undefined) {
-              this.titleExcel += '| End Date:' + this.endDate
+              this.titleExcel += '| End Date:' + this.endDate 
             }
           } else {
+            console.log(2)
             this.tableData = []
             this.totalPages = 0
           }
         },
         (err) => {
+          console.log(3)
           this.tableData = []
           this.totalPages = 0
-          this.endLoading()
           this.notifyError(err.error.error)
         }
       )
@@ -619,7 +685,6 @@ export default {
         radio: 1,
       }
     },
-
     // async getListOvertime(page, size) {
     //   let params = {
     //     page: page - 1,

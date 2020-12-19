@@ -63,7 +63,7 @@
 
         <div class="gr-button">
           <export-excel
-            :data="tableData"
+            :data="excelData"
             :title="titleExcel.length == 0 ? 'Account: | Group: | Start Date | End Date:': titleExcel"
             name="MonthlyPayrollReport.xls"
             :fields="json_fields"
@@ -303,6 +303,7 @@ export default {
       titleExcel: '',
       constant: Constant,
       tableData: [],
+      excelData: [],
       userName: '',
       fullnameSearch: '',
       groupSearch: '',
@@ -565,6 +566,41 @@ export default {
     },
 
     async getListMonthly(page, size) {
+      //excel
+
+
+      await this.$services.monthly.getListMonthly(
+        {
+        page: 0,
+        size: 1000,
+        startDate:this.startDate,
+        endDate: this.endDate,
+        groupId:this.groupID,
+        userName: this.userName
+        },
+        (response) => {
+          if (response.data && response.data.length > 0) {
+            this.titleExcel = '';
+            this.excelData = response.data
+            this.totalPages = response.totalPages
+            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+            this.json_fields = {
+              'STT' :'stt',
+              'Account': 'account',
+              'Group': 'group_name',
+              'Total Work Day': 'total_work_day',
+              'Total Leave': 'totalLeave',
+              'Unpermitted Leave': 'unpermittedLeave',
+            }
+          }
+        },
+        (err) => {
+          this.notifyError(err.error.error)
+        }
+      )
+
+      //list
       let params = {
         page: page - 1,
         size: size,

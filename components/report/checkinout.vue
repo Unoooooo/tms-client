@@ -60,7 +60,7 @@
         </el-button>
         <div class="gr-button">
           <export-excel
-            :data="tableData"
+            :data="excelData"
             :title="titleExcel.length == 0 ? 'Account: | Group: | Start Date | End Date:': titleExcel"
             name="checkInOut.xls"
             :fields="json_fields"
@@ -138,72 +138,7 @@
           prop="work_time"
           :label="$t('Work time')"
         />
-        <!-- <el-table-column
-          class-name="text-center"
-          prop="number_fines"
-          :label="$t('Number Of Fines')"
-        /> -->
-        <!-- <el-table-column
-          class-name="text-center"
-          prop="action"
-          :label="$t('Action')"
-          width="110px"
-        >
-          <template slot-scope="scope">
-            <el-button
-              v-if="
-                scope.row.status == 'Pending' &&
-                scope.row.account_sent !== user.username
-              "
-              class="button-action"
-              type="warning"
-              @click="handleAccept(scope.$index, scope.row)"
-            >
-              <i class="el-icon-check"></i>
-            </el-button>
-            <el-button
-              v-if="
-                scope.row.status == 'Pending' &&
-                scope.row.account_sent !== user.username
-              "
-              class="button-action"
-              type="danger"
-              @click="handleReject(scope.$index, scope.row)"
-            >
-              <i class="el-icon-close"></i>
-            </el-button>
-            <el-button
-              v-if="
-                scope.row.status == 'Pending' &&
-                scope.row.account_sent === user.username
-              "
-              class="button-action"
-              type="warning"
-              @click="handleUpdate(scope.$index, scope.row)"
-            >
-              <i class="el-icon-edit-outline"></i>
-            </el-button>
-            <el-button
-              v-if="
-                scope.row.status == 'Pending' &&
-                scope.row.account_sent === user.username
-              "
-              class="button-action"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-            >
-              <i class="el-icon-delete"></i>
-            </el-button>
-
-            <el-button
-              class="button-action"
-              type="primary"
-              @click="handleInfo(scope.$index, scope.row)"
-            >
-              <i class="el-icon-user"></i>
-            </el-button>
-          </template>
-        </el-table-column> -->
+      
       </el-table>
       <section>
         <el-dialog
@@ -381,6 +316,7 @@ export default {
       json_fields: null,
       titleExcel: '',
       constant: Constant,
+      excelData: [],
       tableData: [],
       fullnameSearch: '',
       groupSearch: '',
@@ -454,41 +390,95 @@ export default {
     await this.getListGroupTimesheet()
   },
   methods: {
-   async getListTimeSheet(page, size) {
-        let params = {
-        page: page - 1,
-        size: size,
-        startDate:this.startDate,
-        endDate: this.endDate,
-        groupId: this.groupID,
-        userName: this.userName
-      }
-      await this.$services.dailytimesheet.getListTimeSheet(
-        params,
-        (response) => {
-          if (response.data && response.data.length > 0) {
-            this.titleExcel = '';
-            this.tableData = response.data
-            this.totalPages = response.totalPages
-            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
 
-            this.json_fields = {
-              'STT': 'stt',
-              'Account': 'account',
-              'Group': 'groupName',
-              'Date': 'date',
-              'Check In': 'check_in',
-              'Check Out': 'check_out',
-              'Time Offical': 'time_offical',
-              'Work day': 'work_day',
-              'Work time': 'work_time',
+async getListTimeSheet(page, size) {
+      let params = {
+
+        page: page - 1,
+        size: size
+      }
+      if(this.userName.trim() !== '') {
+        params.userName = this.userName
+      }
+      if(this.groupSearch && this.groupSearch.trim() !== '') {
+        params.groupId = this.groupSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
+      }
+      if (this.$authInfo.roleValue() === 'staff') {
+        await this.$services.dailytimesheet.getListTimeSheet(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
+              this.tableData = response.data
+              this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                    console.log(this.tableData[index].status)
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }
+              
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
+              }
             }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
           }
-        },
-        (err) => {
-          this.notifyError(err.error.error)
-        }
-      )
+        )
+      } else {
+        await this.$services.dailytimesheet.getListTimeSheet(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
+              this.tableData = response.data
+           
+              this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
+              }
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+      }  
     },
     
     async getListGroupTimesheet() {
@@ -526,16 +516,29 @@ export default {
       )
     },
     async searchTimeSheetReport() {
-       this.startLoading()
+      this.startLoading()
+      let params = {
+        page: 0,
+        size: this.size
+      }
+      if(this.userName.trim() !== '') {
+        params.userName = this.userName
+      }
+      if(this.groupSearch && this.groupSearch.trim() !== '') {
+        params.groupId = this.groupSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
+      }
       await this.$services.dailytimesheet.searchTimeSheetReport(
-        {
-          userName: this.userName,
-          groupSearch: this.groupSearch,
-          startDate: this.startDate,
-          endDate: this.endDate,
-        },
+        params,
         (response) => {
+          console.log(0)
           if (response.data && response.data.length > 0) {
+            console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
             this.titleExcel = '';
@@ -567,18 +570,19 @@ export default {
               this.titleExcel += '| End Date:' + this.endDate 
             }
           } else {
+            console.log(2)
             this.tableData = []
             this.totalPages = 0
           }
-          this.endLoading()
         },
         (err) => {
+          console.log(3)
           this.tableData = []
           this.totalPages = 0
-          this.endLoading()
           this.notifyError(err.error.error)
         }
       )
+      this.endLoading()
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

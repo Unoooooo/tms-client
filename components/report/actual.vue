@@ -412,23 +412,11 @@ export default {
         (err) => this.notifyError(err.error.error)
       )
     },
-    async getListGroupActual() {
-      await this.$services.actual.getListGroupActual(
-        (response) => {
-          if (response.listReceiver && response.listReceiver.length > 0) {
-            this.account_receivers = response.listReceiver.map((item) => {
-              return { label: item.name, value: Number(item.group_id) }
-            })
-          }
-        },
-        (err) => this.notifyError(err.error.error)
-      )
-    },
-    // async getListAbnormal() {
-    //   await this.$services.abnormal.getListAbnormal(
+    // async getListGroupActual() {
+    //   await this.$services.actual.getListGroupActual(
     //     (response) => {
-    //       if (response.listData && response.listData.length > 0) {
-    //         this.groups = response.listData.map((item) => {
+    //       if (response.listReceiver && response.listReceiver.length > 0) {
+    //         this.account_receivers = response.listReceiver.map((item) => {
     //           return { label: item.name, value: Number(item.group_id) }
     //         })
     //       }
@@ -436,6 +424,18 @@ export default {
     //     (err) => this.notifyError(err.error.error)
     //   )
     // },
+    async getListGroupActual() {
+      await this.$services.actual.getListGroupActual(
+        (response) => {
+          if (response.listData && response.listData.length > 0) {
+            this.groups = response.listData.map((item) => {
+              return { label: item.name, value: Number(item.group_id) }
+            })
+          }
+        },
+        (err) => this.notifyError(err.error.error)
+      )
+    },
     async getListGroup() {
       await this.$services.group.getListGroup(
         {},
