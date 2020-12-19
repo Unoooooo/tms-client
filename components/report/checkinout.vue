@@ -84,19 +84,21 @@
           class-name="text-center"
           prop="stt"
           :label="$t('STT')"
-          width="80px"
+          width="60px"
         />
         <el-table-column
           class-name="text-left"
           prop="account"
           :label="$t('Account')"
+           width="100px"
         />
         <el-table-column
           class-name="text-left"
           prop="groupName"
           :label="$t('Group')"
+          width="100px"
         />
-        <el-table-column class-name="text-center" :label="$t('Date')">
+        <el-table-column class-name="text-center" :label="$t('Date')"  width="100px">
           <template slot-scope="{ row }">
             {{ row.date ? showDateTime(row.date, 'DD/MM/YYYY') : '' }}
           </template>
@@ -106,14 +108,16 @@
           class-name="text-center"
           prop="check_in"
           :label="$t('Check In')"
+           width="110px"
         />
 
         <el-table-column
           class-name="text-center"
           prop="check_out"
           :label="$t('Check Out')"
+           width="115px"
         />
-        <!-- <el-table-column
+        <el-table-column
           class-name="text-center"
           prop="explan_in"
           :label="$t('Explan In')"
@@ -122,7 +126,7 @@
           class-name="text-center"
           prop="explan_out"
           :label="$t('Explan Out')"
-        /> -->
+        />
         <el-table-column
           class-name="text-center"
           prop="time_offical"
@@ -132,11 +136,13 @@
           class-name="text-center"
           prop="work_day"
           :label="$t('Work day')"
+          width="110px"
         />
         <el-table-column
           class-name="text-center"
           prop="work_time"
           :label="$t('Work time')"
+          width="110px"
         />
       
       </el-table>

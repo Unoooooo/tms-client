@@ -168,7 +168,7 @@
                   <i v-if="row.paidLeave" class="el-icon-time"></i>
                   <span style="margin-left: 10px">
                     {{ 
-                      ow.paidLeave ? showDateTime(row.paidLeave, 'DD/MM/YYYY') : ''
+                      row.paidLeave ? showDateTime(row.paidLeave, 'DD/MM/YYYY') : ''
                     }} 
                   </span>
                 </template>
