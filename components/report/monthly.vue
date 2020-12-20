@@ -383,17 +383,7 @@ export default {
         this.endDate = ''
         this.getListAbnormal(1, this.size)
       },
-    // async refreshSearch() {
-    //   this.startLoading()
-    //   this.fullnameSearch = ""
-    //   this.startDate = ""
-    //   this.endDate = ""
-    //   this.groupSearch = ""
-    //   this.getListMonthly(0, 20)
-    //   setTimeout(()=> {
-    //     this.endLoading()
-    //   }, 300)
-    // },
+ 
     async getListMonthly(page, size) {
        let params = {
         page: page - 1,
@@ -537,18 +527,7 @@ export default {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
               this.tableData = response.data
-              // let temp = {}
-              // let count = 0
-              // this.tableData.forEach((item, index)=> {
-              //   if(item.accountId === this.user.account_Id) {
-              //     temp = item
-              //     count ++
-              //     this.tableData.splice(index, 1)
-              //   } 
-              // })
-              // for(let i=0; i<count;i++) {
-              //   this.tableData.unshift(temp)
-              // }
+            
               this.totalPages = response.totalPages
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
 
@@ -787,59 +766,59 @@ export default {
       }
     },
 
-    async getListMonthly(page, size) {
-      //excel
+    // async getListMonthly(page, size) {
+    //   //excel
 
 
-      await this.$services.monthly.getListMonthly(
-        {
-        page: 0,
-        size: 1000,
-        startDate:this.startDate,
-        endDate: this.endDate,
-        groupId:this.groupID,
-        userName: this.userName
-        },
-        (response) => {
-          if (response.data && response.data.length > 0) {
-            this.titleExcel = '';
-            this.excelData = response.data
-            this.totalPages = response.totalPages
-            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+    //   await this.$services.monthly.getListMonthly(
+    //     {
+    //     page: 0,
+    //     size: 1000,
+    //     startDate:this.startDate,
+    //     endDate: this.endDate,
+    //     groupId:this.groupID,
+    //     userName: this.userName
+    //     },
+    //     (response) => {
+    //       if (response.data && response.data.length > 0) {
+    //         this.titleExcel = '';
+    //         this.excelData = response.data
+    //         this.totalPages = response.totalPages
+    //         this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
 
-            this.json_fields = {
-              'STT' :'stt',
-              'Account': 'account',
-              'Group': 'group_name',
-              'Total Work Day': 'total_work_day',
-              'Total Leave': 'totalLeave',
-              'Unpermitted Leave': 'unpermittedLeave',
-            }
-          }
-        },
-        (err) => {
-          this.notifyError(err.error.error)
-        }
-      )
+    //         this.json_fields = {
+    //           'STT' :'stt',
+    //           'Account': 'account',
+    //           'Group': 'group_name',
+    //           'Total Work Day': 'total_work_day',
+    //           'Total Leave': 'totalLeave',
+    //           'Unpermitted Leave': 'unpermittedLeave',
+    //         }
+    //       }
+    //     },
+    //     (err) => {
+    //       this.notifyError(err.error.error)
+    //     }
+    //   )
 
-      //list
-      let params = {
-        page: page - 1,
-        size: size,
-      }
-      await this.$services.monthly.getListMonthly(
-        params,
-        (response) => {
-          if (response.data && response.data.length > 0) {
-            this.tableData = response.data
-            this.totalPages = response.totalPages
-          }
-        },
-        (err) => {
-          this.notifyError(err.error.error)
-        }
-      )
-    },
+    //   //list
+    //   let params = {
+    //     page: page - 1,
+    //     size: size,
+    //   }
+    //   await this.$services.monthly.getListMonthly(
+    //     params,
+    //     (response) => {
+    //       if (response.data && response.data.length > 0) {
+    //         this.tableData = response.data
+    //         this.totalPages = response.totalPages
+    //       }
+    //     },
+    //     (err) => {
+    //       this.notifyError(err.error.error)
+    //     }
+    //   )
+    // },
 
    
     getListMonthlyDetail(dataRequest) {
