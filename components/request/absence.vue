@@ -118,16 +118,21 @@
             {{ row.end_date ? showDateTime(row.end_date, 'DD/MM/YYYY') : '' }}
           </template>
         </el-table-column>
+        <!-- <el-table-column class-name="text-center" :label="$t('Status')">
+          <template slot-scope="{ row }">
+            {{ row.stt ? row.stt == 1 ? 'Oke' :'ko oke': '' }}
+          </template>
+        </el-table-column> -->
         <el-table-column
           class-name="text-left"
           prop="status"
           sortable
           :label="$t('Status')"
-        >
-          <template slot-scope="{ row }">
+        />
+          <!-- <template slot-scope="{ row }">
             {{ row.status !== null ? row.status : '' }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <!-- <el-table-column
           class-name="text-left"
           prop="response_msg"
@@ -638,7 +643,7 @@ export default {
       multipleSelection: [],
       totalPages: 1,
       page: 1,
-      size: undefined,
+      size: 20,
     }
   },
   watch: {
@@ -678,15 +683,16 @@ export default {
     this.getUserInfo()
   },
   methods: {
+    
      async getListAbsenceRequest(page, size) {
-      let params = {
+       let params = {
         page: page - 1,
         size: size
       }
-      if(this.userName.trim() !== '') {
-        params.userName = this.userName
+      if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
+        filterObj.userName = this.fullnameSearch.trim()
       }
-      if(this.groupSearch && this.groupSearch.trim() !== '') {
+       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
         params.groupId = this.groupSearch
       }
       if(this.startDate && this.startDate.trim() !== '') {
@@ -700,30 +706,8 @@ export default {
           params,
           (response) => {
             if (response.data && response.data.length > 0) {
-              this.titleExcel = '';
               this.tableData = response.data
               this.totalPages = response.totalPages
-              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
-
-              for (let index = 0; index < this.tableData.length; index++) {
-                  if(this.tableData[index].status === true){
-                    this.tableData[index].status = 'Explained';
-                    console.log(this.tableData[index].status)
-                  }else{
-                    this.tableData[index].status = ' ';
-                  }
-              }
-              
-              this.json_fields = {
-                'STT': 'stt',
-                'Account': 'userName',
-                'Group': 'groupName',
-                'Date': 'dateTimeSheet',
-                'Check In': 'checkInTime',
-                'Check Out': 'checkOutTime',
-                'Abnormal Type': 'abnormalType',
-                'Status': 'status'
-              }
             }
           },
           (err) => {
@@ -735,40 +719,8 @@ export default {
           params,
           (response) => {
             if (response.data && response.data.length > 0) {
-              this.titleExcel = '';
               this.tableData = response.data
-              // let temp = {}
-              // let count = 0
-              // this.tableData.forEach((item, index)=> {
-              //   if(item.accountId === this.user.account_Id) {
-              //     temp = item
-              //     count ++
-              //     this.tableData.splice(index, 1)
-              //   } 
-              // })
-              // for(let i=0; i<count;i++) {
-              //   this.tableData.unshift(temp)
-              // }
               this.totalPages = response.totalPages
-              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
-
-              for (let index = 0; index < this.tableData.length; index++) {
-                  if(this.tableData[index].status === true){
-                    this.tableData[index].status = 'Explained';
-                  }else{
-                    this.tableData[index].status = ' ';
-                  }
-              }
-              this.json_fields = {
-                'STT': 'stt',
-                'Account': 'userName',
-                'Group': 'groupName',
-                'Date': 'dateTimeSheet',
-                'Check In': 'checkInTime',
-                'Check Out': 'checkOutTime',
-                'Abnormal Type': 'abnormalType',
-                'Status': 'status'
-              }
             }
           },
           (err) => {
@@ -777,50 +729,6 @@ export default {
         )
       }
     },
-    // canSelectRow(row) {
-    //   return row.account_sent === this.user.username && row.status == 'Pending'
-    // },
-    // async getListAbsenceRequest(page, size) {
-    //   this.startLoading()
-    //   let params = {
-    //     page: page - 1,
-    //     size: size,
-    //     startDate: this.startDate,
-    //     endDate: this.endDate,
-    //     groupId: this.groupID,
-    //     userName: this.userName,
-    //   }
-    //   if (this.$authInfo.roleValue() === 'staff') {
-    //     await this.$services.request.getListAbsenceRequest(
-    //       params,
-    //       (response) => {
-    //         if (response.data && response.data.length > 0) {
-    //           this.tableData = response.data
-    //           this.totalPages = response.totalPages
-    //         }
-    //       },
-    //       (err) => {
-    //         this.notifyError(err.error.error)
-    //       }
-    //     )
-    //   } else {
-    //     await this.$services.request.getListAbsenceRequest(
-    //       params,
-    //       (response) => {
-    //         if (response.data && response.data.length > 0) {
-    //           this.tableData = response.data
-    //           this.totalPages = response.totalPages
-    //         }
-    //       },
-    //       (err) => {
-    //         this.notifyError(err.error.error)
-    //       }
-    //     )
-    //   }
-    //   setTimeout(() => {
-    //     this.endLoading()
-    //   }, 300)
-    // },
     async getUserInfo() {
       await this.$services.common.getUserInfo(
         (response) => {
@@ -854,58 +762,40 @@ export default {
     },
     async searchAbsenceRequest() {
       this.startLoading()
-      let filterObj = {}
-      if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
-        filterObj.userName = this.fullnameSearch.trim()
+      let params = {
+        page: 0,
+        size: this.size
       }
-      if (this.groupSearch !== '') {
-        filterObj.groupId = this.groupSearch
+     if(this.fullnameSearch.trim() !== '') {
+        params.userName = this.fullnameSearch
       }
-      if (
-        this.startDate &&
-        (!this.startDate.length == 0 || this.startDate.trim())
-      ) {
-        filterObj.startDate = this.startDate
+      if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
+        params.groupId = this.groupSearch
       }
-      if (this.endDate && (!this.endDate.length == 0 || this.endDate.trim())) {
-        filterObj.endDate = this.endDate
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
       }
-
-      await this.$services.request.searchAbsenceRequest(
-        filterObj,
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
+      }
+      await this.$services.request.getListAbsenceRequest(
+        params,
         (response) => {
+          console.log(0)
           if (response.data && response.data.length > 0) {
+            console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
-            this.titleExcel = ''
-            if (this.fullnameSearch != undefined) {
-              this.titleExcel += 'Account: ' + this.fullnameSearch
-            }
-            let groupLabel = ''
-            for (let index = 0; index < this.groups.length; index++) {
-              const element = this.groups[index]
-              if (element.value === this.groupSearch) {
-                groupLabel = element.label
-              }
-            }
-            if (this.groupSearch != undefined) {
-              this.titleExcel += '| Group: ' + groupLabel
-            }
-            if (this.startDate != undefined) {
-              this.titleExcel += '| Start Date: ' + this.startDate
-            }
-            if (this.endDate != undefined) {
-              this.titleExcel += '| Start Date: ' + this.endDate
-            }
           } else {
+            console.log(2)
             this.tableData = []
             this.totalPages = 0
           }
         },
         (err) => {
+          console.log(3)
           this.tableData = []
           this.totalPages = 0
-          this.endLoading()
           this.notifyError(err.error.error)
         }
       )

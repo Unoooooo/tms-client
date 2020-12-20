@@ -45,14 +45,14 @@
         <el-button
           class="button-delete-multi"
           type="primary"
-          @click="getListAbnormal()"
+          @click="searchAbnormalRequest()"
         >
           <i class="el-icon-search"></i>
         </el-button>
         <el-button
           class="button-delete-multi"
           type="primary"
-          @click="getListAbnormal(page, size)"
+          @click="fetch()"
         >
           <i class="el-icon-refresh"></i>
         </el-button>
@@ -549,6 +549,13 @@ export default {
     await this.getListGroupAbnormal()
   },
   methods: {
+      fetch() {
+        this.userName = ''
+        this.groupSearch = ''
+        this.startDate = ''
+        this.endDate = ''
+        this.getListAbnormal(1, this.size)
+      },
      async getListAbnormal(page, size) {
       let params = {
         page: page - 1,
@@ -567,6 +574,49 @@ export default {
         params.endDate = this.endDate
       }
       if (this.$authInfo.roleValue() === 'staff') {
+        //excel
+        await this.$services.abnormal.getListAbnormal(
+          {
+            page: 0,
+            size: 1000,
+            startDate: this.startDate,
+            endDate: this.endDate,
+            groupId: this.groupID,
+            userName: this.userName,
+          },
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
+              this.excelData = response.data
+              this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.excelData.length; index++) {
+                  if(this.excelData[index].status === true){
+                    this.excelData[index].status = 'Explained';
+                    console.log(this.excelData[index].status)
+                  }else{
+                    this.excelData[index].status = ' ';
+                  }
+              }
+              
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
+              }
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+        //list
         await this.$services.abnormal.getListAbnormal(
           params,
           (response) => {
@@ -602,6 +652,47 @@ export default {
           }
         )
       } else {
+        //excel
+        await this.$services.abnormal.getListAbnormal(
+          {
+            page: 0,
+            size: 1000,
+            startDate: this.startDate,
+            endDate: this.endDate,
+            groupId: this.groupID,
+            userName: this.userName,
+          },
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
+              this.excelData = response.data
+              this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.excelData.length; index++) {
+                  if(this.excelData[index].status === true){
+                    this.excelData[index].status = 'Explained';
+                  }else{
+                    this.excelData[index].status = ' ';
+                  }
+              }
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
+              }
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+        //list
         await this.$services.abnormal.getListAbnormal(
           params,
           (response) => {
@@ -713,6 +804,66 @@ export default {
         params.endDate = this.endDate
       }
       await this.$services.abnormal.searchAbnormalRequest(
+        {
+            page: 0,
+            size: 1000,
+            startDate: this.startDate,
+            endDate: this.endDate,
+            groupId: this.groupID,
+            userName: this.userName,
+        },
+        (response) => {
+          console.log(0)
+          if (response.data && response.data.length > 0) {
+            console.log(1)
+            this.excelData = response.data
+            this.totalPages = response.totalPages
+            this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
+            this.titleExcel = '';
+            for (let index = 0; index < this.excelData.length; index++) {
+                  if(this.excelData[index].status === true){
+                    this.excelData[index].status = 'Explained';
+                  }else{
+                    this.excelData[index].status = ' ';
+                  }
+              }                    
+             
+            if (this.userName != undefined) {
+              this.titleExcel += 'Account: ' + this.userName 
+            }
+            let groupLabel = '';
+            for (let index = 0; index < this.groups.length; index++) {
+              const element = this.groups[index];
+              if (element.value === this.groupSearch){
+                groupLabel = element.label
+              }
+            }
+            if (this.groupSearch != undefined) {
+              this.titleExcel += '| Group: ' + groupLabel 
+            }
+            if (this.startDate != undefined) {
+              this.titleExcel += '| Start Date: ' + this.startDate 
+            }
+            if (this.endDate != undefined) {
+              this.titleExcel += '| End Date:' + this.endDate 
+            }
+          } else {
+            console.log(2)
+            this.tableData = []
+            this.totalPages = 0
+          }
+        },
+        (err) => {
+          console.log(3)
+          this.tableData = []
+          this.totalPages = 0
+          this.notifyError(err.error.error)
+        }
+      )
+      await this.$services.abnormal.searchAbnormalRequest(
         params,
         (response) => {
           console.log(0)
@@ -720,6 +871,10 @@ export default {
             console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
             this.titleExcel = '';
             for (let index = 0; index < this.tableData.length; index++) {
                   if(this.tableData[index].status === true){

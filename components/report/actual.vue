@@ -52,14 +52,14 @@
         <el-button
           class="button-delete-multi"
           type="primary"
-          @click="getListActual(page, size)"
+          @click="fetch()"
         >
           <i class="el-icon-refresh"></i>
         </el-button>
 
         <div class="gr-button">
           <export-excel
-            :data="tableData"
+            :data="excelData"
             :title="titleExcel"
             name="AbnormalReport.xls"
             :fields="json_fields"
@@ -226,6 +226,7 @@ export default {
       json_fields: null,
       titleExcel: '',
       tableData: [],
+      excelData: [],
       userName: '',
       fullnameSearch: '',
       groupSearch: '',
@@ -304,12 +305,19 @@ export default {
     // await this.getListGroupAbnormal()
   },
   methods: {
+    fetch() {
+        this.userName = ''
+        this.groupSearch = ''
+        this.startDate = ''
+        this.endDate = ''
+        this.getListAbnormal(1, this.size)
+      },
     async getListActual(page, size) {
       let params = {
         page: page - 1,
         size: size
       }
-        if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
+      if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
         filterObj.userName = this.fullnameSearch.trim()
       }
       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
@@ -322,6 +330,47 @@ export default {
         params.endDate = this.endDate
       }
       if (this.$authInfo.roleValue() === 'staff') {
+        //excel
+        await this.$services.actual.getListActual(
+          {
+            page: 0,
+            size: 1000,
+            startDate: this.startDate,
+            endDate: this.endDate,
+            groupId: this.groupID,
+            userName: this.userName,
+          },
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
+              this.excelData = response.data
+              this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.excelData.length; index++) {
+                  if(this.excelData[index].status === true){
+                    this.excelData[index].status = 'Explained';
+                    console.log(this.excelData[index].status)
+                  }else{
+                    this.excelData[index].status = ' ';
+                  }
+              }
+              
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Check Time': 'check_time',
+                'Type': 'type',
+                'Loccation': 'checkPosition',
+              }
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+        //list
         await this.$services.actual.getListActual(
           params,
           (response) => {
@@ -344,11 +393,9 @@ export default {
                 'STT': 'stt',
                 'Account': 'userName',
                 'Group': 'groupName',
-                'Date': 'dateTimeSheet',
-                'Check In': 'checkInTime',
-                'Check Out': 'checkOutTime',
-                'Abnormal Type': 'abnormalType',
-                'Status': 'status'
+                'Check Time': 'check_time',
+                'Type': 'type',
+                'Loccation': 'checkPosition',
               }
             }
           },
@@ -357,6 +404,45 @@ export default {
           }
         )
       } else {
+        //excel
+        await this.$services.actual.getListActual(
+          {
+            page: 0,
+            size: 1000,
+            startDate: this.startDate,
+            endDate: this.endDate,
+            groupId: this.groupID,
+            userName: this.userName,
+          },
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
+              this.excelData = response.data
+              this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.excelData.length; index++) {
+                  if(this.excelData[index].status === true){
+                    this.excelData[index].status = 'Explained';
+                  }else{
+                    this.excelData[index].status = ' ';
+                  }
+              }
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Check Time': 'check_time',
+                'Type': 'type',
+                'Loccation': 'checkPosition',
+              }
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+        //list
         await this.$services.actual.getListActual(
           params,
           (response) => {
@@ -389,11 +475,9 @@ export default {
                 'STT': 'stt',
                 'Account': 'userName',
                 'Group': 'groupName',
-                'Date': 'dateTimeSheet',
-                'Check In': 'checkInTime',
-                'Check Out': 'checkOutTime',
-                'Abnormal Type': 'abnormalType',
-                'Status': 'status'
+                'Check Time': 'check_time',
+                'Type': 'type',
+                'Loccation': 'checkPosition',
               }
             }
           },
@@ -475,6 +559,10 @@ export default {
             console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
             this.titleExcel = '';
             for (let index = 0; index < this.tableData.length; index++) {
                   if(this.tableData[index].status === true){

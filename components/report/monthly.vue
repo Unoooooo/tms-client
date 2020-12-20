@@ -56,7 +56,7 @@
         <el-button
           class="button-delete-multi"
           type="primary"
-          @click="getListMonthly(page, size)"
+          @click="fetch()"
         >
           <i class="el-icon-refresh"></i>
         </el-button>
@@ -376,6 +376,13 @@ export default {
     this.getListGroupMonthly()
   },
   methods: {
+    fetch() {
+        this.userName = ''
+        this.groupSearch = ''
+        this.startDate = ''
+        this.endDate = ''
+        this.getListAbnormal(1, this.size)
+      },
     // async refreshSearch() {
     //   this.startLoading()
     //   this.fullnameSearch = ""
@@ -477,34 +484,53 @@ export default {
       )
     },
     async searchMonthlyReport() {
-      this.startLoading()
-      let filterObj = {}
-      console.log(this.groupSearch)
-      if(this.userName.trim() !== '') {
+       this.startLoading()
+      let params = {
+        page: 0,
+        size: this.size
+      }
+     if(this.userName.trim() !== '') {
         params.userName = this.userName
       }
-       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
+      if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
         params.groupId = this.groupSearch
       }
-      if (
-        this.startDate &&
-        (!this.startDate.length == 0 || this.startDate.trim())
-      ) {
-        filterObj.startDate = this.startDate
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
       }
-      if (this.endDate && (!this.endDate.length == 0 || this.endDate.trim())) {
-        filterObj.endDate = this.endDate
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
       }
-
       await this.$services.monthly.searchMonthlyReport(
-        filterObj,
+        {
+            page: 0,
+            size: 1000,
+            startDate: this.startDate,
+            endDate: this.endDate,
+            groupId: this.groupID,
+            userName: this.userName,
+        },
         (response) => {
+          console.log(0)
           if (response.data && response.data.length > 0) {
-            this.tableData = response.data
+            console.log(1)
+            this.excelData = response.data
             this.totalPages = response.totalPages
+            this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
             this.titleExcel = '';
-            if (this.fullnameSearch != undefined) {
-              this.titleExcel += 'Account: ' + this.fullnameSearch
+            for (let index = 0; index < this.excelData.length; index++) {
+                  if(this.excelData[index].status === true){
+                    this.excelData[index].status = 'Explained';
+                  }else{
+                    this.excelData[index].status = ' ';
+                  }
+              }                    
+             
+            if (this.userName != undefined) {
+              this.titleExcel += 'Account: ' + this.userName 
             }
             let groupLabel = '';
             for (let index = 0; index < this.groups.length; index++) {
@@ -514,23 +540,77 @@ export default {
               }
             }
             if (this.groupSearch != undefined) {
-              this.titleExcel += '| Group: ' + groupLabel
+              this.titleExcel += '| Group: ' + groupLabel 
             }
             if (this.startDate != undefined) {
-              this.titleExcel += '| Start Date: ' + this.startDate
+              this.titleExcel += '| Start Date: ' + this.startDate 
             }
             if (this.endDate != undefined) {
-              this.titleExcel += '| Start Date: ' + this.endDate
+              this.titleExcel += '| End Date:' + this.endDate 
             }
           } else {
+            console.log(2)
             this.tableData = []
             this.totalPages = 0
           }
         },
         (err) => {
+          console.log(3)
           this.tableData = []
           this.totalPages = 0
-          this.endLoading()
+          this.notifyError(err.error.error)
+        }
+      )
+      await this.$services.monthly.searchMonthlyReport(
+        params,
+        (response) => {
+          console.log(0)
+          if (response.data && response.data.length > 0) {
+            console.log(1)
+            this.tableData = response.data
+            this.totalPages = response.totalPages
+            this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
+            this.titleExcel = '';
+            for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }                    
+             
+            if (this.userName != undefined) {
+              this.titleExcel += 'Account: ' + this.userName 
+            }
+            let groupLabel = '';
+            for (let index = 0; index < this.groups.length; index++) {
+              const element = this.groups[index];
+              if (element.value === this.groupSearch){
+                groupLabel = element.label
+              }
+            }
+            if (this.groupSearch != undefined) {
+              this.titleExcel += '| Group: ' + groupLabel 
+            }
+            if (this.startDate != undefined) {
+              this.titleExcel += '| Start Date: ' + this.startDate 
+            }
+            if (this.endDate != undefined) {
+              this.titleExcel += '| End Date:' + this.endDate 
+            }
+          } else {
+            console.log(2)
+            this.tableData = []
+            this.totalPages = 0
+          }
+        },
+        (err) => {
+          console.log(3)
+          this.tableData = []
+          this.totalPages = 0
           this.notifyError(err.error.error)
         }
       )
@@ -619,40 +699,7 @@ export default {
       )
     },
 
-    // getListMonthlyDetail(dataRequest) {
-    //   this.startLoading()
-    //   this.$services.monthly.getListMonthlyDetail(
-    //     dataRequest,
-    //     (res) => {
-    //       this.request.list = []
-    //       let length = res.listPaidLeaveDay.length
-    //       if (res.listNonPaidLeaveDay.length >= res.listPaidLeaveDay.length) {
-    //         length = res.listNonPaidLeaveDay.length
-    //       }
-    //       for (let i = 0; i < length; i++) {
-    //         let element = {
-    //           nonPaidLeave: null,
-    //           paidLeave: null,
-    //         }
-    //         if (res.listNonPaidLeaveDay[i]) {
-    //           element.nonPaidLeave = res.listNonPaidLeaveDay[i]
-    //         }
-    //         if (res.listPaidLeaveDay[i]) {
-    //           element.paidLeave = res.listPaidLeaveDay[i]
-    //         }
-    //         this.request.list.push(element)
-    //       }
-    //       console.log(length)
-    //       console.log('res', this.request.list)
-    //       this.dialogFormWithInput = true
-    //       this.endLoading()
-    //     },
-    //     (err) => {
-    //       this.endLoading()
-    //       this.notifyError(err.error.error)
-    //     }
-    //   )
-    // },
+   
     getListMonthlyDetail(dataRequest) {
       this.startLoading()
       console.log('a', dataRequest)

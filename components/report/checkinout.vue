@@ -54,7 +54,7 @@
         <el-button
           class="button-delete-multi"
           type="primary"
-          @click="getListTimeSheet(page, size)"
+          @click="fetch()"
         >
           <i class="el-icon-refresh"></i>
         </el-button>
@@ -396,7 +396,13 @@ export default {
     await this.getListGroupTimesheet()
   },
   methods: {
-
+fetch() {
+        this.userName = ''
+        this.groupSearch = ''
+        this.startDate = ''
+        this.endDate = ''
+        this.getListAbnormal(1, this.size)
+      },
 async getListTimeSheet(page, size) {
       let params = {
 
@@ -416,6 +422,50 @@ async getListTimeSheet(page, size) {
         params.endDate = this.endDate
       }
       if (this.$authInfo.roleValue() === 'staff') {
+        //excel
+        await this.$services.dailytimesheet.getListTimeSheet(
+          {
+            page: 0,
+            size: 1000,
+            startDate:this.startDate,
+            endDate: this.endDate,
+            groupId: this.groupID,
+            userName: this.userName
+          },
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
+              this.excelData = response.data
+              this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.excelData.length; index++) {
+                  if(this.excelData[index].status === true){
+                    this.excelData[index].status = 'Explained';
+                    console.log(this.excelData[index].status)
+                  }else{
+                    this.excelData[index].status = ' ';
+                  }
+              }
+              
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'account',
+                'Group': 'groupName',
+                'Date': 'date',
+                'Check In': 'check_in',
+                'Check Out': 'check_out',
+                'Time Offical': 'time_offical',
+                'Work day': 'work_day',
+                'Work time': 'work_time',
+              }
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+        //list
         await this.$services.dailytimesheet.getListTimeSheet(
           params,
           (response) => {
@@ -436,13 +486,14 @@ async getListTimeSheet(page, size) {
               
               this.json_fields = {
                 'STT': 'stt',
-                'Account': 'userName',
+                'Account': 'account',
                 'Group': 'groupName',
-                'Date': 'dateTimeSheet',
-                'Check In': 'checkInTime',
-                'Check Out': 'checkOutTime',
-                'Abnormal Type': 'abnormalType',
-                'Status': 'status'
+                'Date': 'date',
+                'Check In': 'check_in',
+                'Check Out': 'check_out',
+                'Time Offical': 'time_offical',
+                'Work day': 'work_day',
+                'Work time': 'work_time',
               }
             }
           },
@@ -451,6 +502,49 @@ async getListTimeSheet(page, size) {
           }
         )
       } else {
+        //excel
+        await this.$services.dailytimesheet.getListTimeSheet(
+          {
+            page: 0,
+            size: 1000,
+            startDate: this.startDate,
+            endDate: this.endDate,
+            groupId: this.groupID,
+            userName: this.userName,
+          },
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
+              this.excelData = response.data
+           
+              this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.excelData.length; index++) {
+                  if(this.excelData[index].status === true){
+                    this.excelData[index].status = 'Explained';
+                  }else{
+                    this.excelData[index].status = ' ';
+                  }
+              }
+              this.json_fields = {
+              'STT': 'stt',
+              'Account': 'account',
+              'Group': 'groupName',
+              'Date': 'date',
+              'Check In': 'check_in',
+              'Check Out': 'check_out',
+              'Time Offical': 'time_offical',
+              'Work day': 'work_day',
+              'Work time': 'work_time',
+              }
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+        //list
         await this.$services.dailytimesheet.getListTimeSheet(
           params,
           (response) => {
@@ -470,13 +564,14 @@ async getListTimeSheet(page, size) {
               }
               this.json_fields = {
                 'STT': 'stt',
-                'Account': 'userName',
+                'Account': 'account',
                 'Group': 'groupName',
-                'Date': 'dateTimeSheet',
-                'Check In': 'checkInTime',
-                'Check Out': 'checkOutTime',
-                'Abnormal Type': 'abnormalType',
-                'Status': 'status'
+                'Date': 'date',
+                'Check In': 'check_in',
+                'Check Out': 'check_out',
+                'Time Offical': 'time_offical',
+                'Work day': 'work_day',
+                'Work time': 'work_time',
               }
             }
           },
@@ -547,6 +642,10 @@ async getListTimeSheet(page, size) {
             console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
             this.titleExcel = '';
             for (let index = 0; index < this.tableData.length; index++) {
                   if(this.tableData[index].status === true){
