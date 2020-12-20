@@ -37,7 +37,7 @@ export default {
       required: true,
     },
     value: {
-      type: Number,
+      type: String,
       required: true,
     },
   },
@@ -49,7 +49,7 @@ export default {
   computed: {
     page: {
       get: function () {
-        return this.value || this.innerValue
+        return Number(this.value) || this.innerValue
       },
       set: function (newValue) {
         this.innerValue = newValue

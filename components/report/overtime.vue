@@ -3,7 +3,7 @@
     <div>
       <section class="group-filter">
         <el-input
-          v-model="fullnameSearch"
+          v-model="userName"
           :disabled="$authInfo.role() == constant.Role.STAFF"
           placeholder="Account"
           class="input-search"
@@ -456,15 +456,15 @@ export default {
         this.groupSearch = ''
         this.startDate = ''
         this.endDate = ''
-        this.getListAbnormal(1, this.size)
+        this.getListOvertime(1, this.size)
       },
     async getListOvertime(page, size) {
        let params = {
         page: page - 1,
         size: size
       }
-     if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
-        filterObj.userName = this.fullnameSearch.trim()
+     if (!this.userName.length == 0 || this.userName.trim()) {
+        filterObj.userName = this.userName.trim()
       }
       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
         params.groupId = this.groupSearch
@@ -477,30 +477,16 @@ export default {
       }
       if (this.$authInfo.roleValue() === 'staff') {
         //excel
+        let excelParam = {...params};
+        excelParam.page = 0;
+        excelParam.size = 1000;
         await this.$services.overtime.getListOvertime(
-          {
-            page: 0,
-            size: 1000,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            groupId: this.groupID,
-            userName: this.userName,
-          },
+         excelParam,
           (response) => {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
               this.excelData = response.data
-              this.totalPages = response.totalPages
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
-
-              for (let index = 0; index < this.excelData.length; index++) {
-                  if(this.excelData[index].status === true){
-                    this.excelData[index].status = 'Explained';
-                    console.log(this.excelData[index].status)
-                  }else{
-                    this.excelData[index].status = ' ';
-                  }
-              }
               
               this.json_fields = {
                 'STT': 'stt',
@@ -523,7 +509,6 @@ export default {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
               this.tableData = response.data
-              this.totalPages = response.totalPages
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
 
               for (let index = 0; index < this.tableData.length; index++) {
@@ -551,30 +536,16 @@ export default {
         )
       } else {
         //excel
+        let excelParam = {...params};
+        excelParam.page = 0;
+        excelParam.size = 1000;
         await this.$services.overtime.getListOvertime(
-          {
-            page: 0,
-            size: 1000,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            groupId: this.groupID,
-            userName: this.userName,
-          },
+         params,
           (response) => {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
-              this.excelData = response.data
-              
-              this.totalPages = response.totalPages
+              this.excelData = response.data              
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
-
-              for (let index = 0; index < this.excelData.length; index++) {
-                  if(this.excelData[index].status === true){
-                    this.excelData[index].status = 'Explained';
-                  }else{
-                    this.excelData[index].status = ' ';
-                  }
-              }
               this.json_fields = {
                 'STT': 'stt',
                 'Account': 'account',
@@ -687,6 +658,52 @@ export default {
       if(this.endDate && this.endDate.trim() !== '') {
         params.endDate = this.endDate
       }
+      //search excel
+      let excelParam = {...params};
+        excelParam.page = 0;
+        excelParam.size = 1000;
+      await this.$services.overtime.searchOvertimeReport(
+        excelParam,
+        (response) => {
+          console.log(0)
+          if (response.data && response.data.length > 0) {
+            console.log(1)
+            this.excelData = response.data 
+            this.titleExcel = '';                   
+             
+            if (this.userName != undefined) {
+              this.titleExcel += 'Account: ' + this.userName 
+            }
+            let groupLabel = ''
+            for (let index = 0; index < this.groups.length; index++) {
+              const element = this.groups[index]
+              if (element.value === this.groupSearch) {
+                groupLabel = element.label
+              }
+            }
+            if (this.groupSearch != undefined) {
+              this.titleExcel += '| Group: ' + groupLabel 
+            }
+            if (this.startDate != undefined) {
+              this.titleExcel += '| Start Date: ' + this.startDate 
+            }
+            if (this.endDate != undefined) {
+              this.titleExcel += '| End Date:' + this.endDate 
+            }
+          } else {
+            console.log(2)
+            this.excelData = []
+            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+          }
+        },
+        (err) => {
+          console.log(3)
+          this.excelData = []
+          this.totalPages = 0
+          this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+        }
+      )
+      //search List
       await this.$services.overtime.searchOvertimeReport(
         params,
         (response) => {

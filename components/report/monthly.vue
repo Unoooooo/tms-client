@@ -3,7 +3,7 @@
     <div>
       <section class="group-filter">
         <el-input
-          v-model="fullnameSearch"
+          v-model="userName"
           :disabled="$authInfo.role() == constant.Role.STAFF"
           placeholder="Account"
           class="input-search"
@@ -381,7 +381,7 @@ export default {
         this.groupSearch = ''
         this.startDate = ''
         this.endDate = ''
-        this.getListAbnormal(1, this.size)
+        this.getListMonthly(1, this.size)
       },
  
     async getListMonthly(page, size) {
@@ -389,8 +389,8 @@ export default {
         page: page - 1,
         size: size
       }
-      if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
-        filterObj.userName = this.fullnameSearch.trim()
+      if (!this.userName.length == 0 || this.userName.trim()) {
+        filterObj.userName = this.userName.trim()
       }
        if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
         params.groupId = this.groupSearch
@@ -403,40 +403,25 @@ export default {
       }
       if (this.$authInfo.roleValue() === 'staff') {
         //excel
+
+        let excelParam = {...params};
+        excelParam.page = 0;
+        excelParam.size = 1000;
         await this.$services.monthly.getListMonthly(
-          {
-            page: 0,
-            size: 1000,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            groupId: this.groupID,
-            userName: this.userName,
-          },
+          excelParam,
           (response) => {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
               this.excelData = response.data
-              this.totalPages = response.totalPages
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
-
-              for (let index = 0; index < this.excelData.length; index++) {
-                  if(this.excelData[index].status === true){
-                    this.excelData[index].status = 'Explained';
-                    console.log(this.excelData[index].status)
-                  }else{
-                    this.excelData[index].status = ' ';
-                  }
-              }
               
               this.json_fields = {
                 'STT': 'stt',
-                'Account': 'userName',
-                'Group': 'groupName',
-                'Date': 'dateTimeSheet',
-                'Check In': 'checkInTime',
-                'Check Out': 'checkOutTime',
-                'Abnormal Type': 'abnormalType',
-                'Status': 'status'
+                'Account': 'account',
+                'Group': 'group_name',
+                'Total Work Day': 'total_work_day',
+                'Total Leave': 'totalLeave',
+                'Unpermitted Leave': 'unpermittedLeave',
               }
             }
           },
@@ -465,13 +450,11 @@ export default {
               
               this.json_fields = {
                 'STT': 'stt',
-                'Account': 'userName',
-                'Group': 'groupName',
-                'Date': 'dateTimeSheet',
-                'Check In': 'checkInTime',
-                'Check Out': 'checkOutTime',
-                'Abnormal Type': 'abnormalType',
-                'Status': 'status'
+                'Account': 'account',
+                'Group': 'group_name',
+                'Total Work Day': 'total_work_day',
+                'Total Leave': 'totalLeave',
+                'Unpermitted Leave': 'unpermittedLeave',
               }
             }
           },
@@ -481,38 +464,24 @@ export default {
         )
       } else {
         //excel
+        let excelParam = {...params};
+        excelParam.page = 0;
+        excelParam.size = 1000;
         await this.$services.monthly.getListMonthly(
-          {
-            page: 0,
-            size: 1000,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            groupId: this.groupID,
-            userName: this.userName,
-          },
+          excelParam,
           (response) => {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
               this.excelData = response.data
-              this.totalPages = response.totalPages
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
 
-              for (let index = 0; index < this.excelData.length; index++) {
-                  if(this.excelData[index].status === true){
-                    this.excelData[index].status = 'Explained';
-                  }else{
-                    this.excelData[index].status = ' ';
-                  }
-              }
               this.json_fields = {
                 'STT': 'stt',
-                'Account': 'userName',
-                'Group': 'groupName',
-                'Date': 'dateTimeSheet',
-                'Check In': 'checkInTime',
-                'Check Out': 'checkOutTime',
-                'Abnormal Type': 'abnormalType',
-                'Status': 'status'
+                'Account': 'account',
+                'Group': 'group_name',
+                'Total Work Day': 'total_work_day',
+                'Total Leave': 'totalLeave',
+                'Unpermitted Leave': 'unpermittedLeave',
               }
             }
           },
@@ -540,13 +509,12 @@ export default {
               }
               this.json_fields = {
                 'STT': 'stt',
-                'Account': 'userName',
-                'Group': 'groupName',
-                'Date': 'dateTimeSheet',
-                'Check In': 'checkInTime',
-                'Check Out': 'checkOutTime',
-                'Abnormal Type': 'abnormalType',
-                'Status': 'status'
+                'Account': 'account',
+                'Group': 'group_name',
+                'Total Work Day': 'total_work_day',
+                'Total Leave': 'totalLeave',
+                'Unpermitted Leave': 'unpermittedLeave',
+               
               }
             }
           },
@@ -622,33 +590,18 @@ export default {
       if(this.endDate && this.endDate.trim() !== '') {
         params.endDate = this.endDate
       }
+      //search excel
+      let excelParam = {...params}
+      excelParam.size = 1000;
+      excelParam.page = 0;
       await this.$services.monthly.searchMonthlyReport(
-        {
-            page: 0,
-            size: 1000,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            groupId: this.groupID,
-            userName: this.userName,
-        },
+        excelParam,
         (response) => {
           console.log(0)
           if (response.data && response.data.length > 0) {
-            console.log(1)
+            console.log(response)
             this.excelData = response.data
-            this.totalPages = response.totalPages
-            this.page = 1
-            this.$router.push({name: this.$route.name, query: {
-              page: 1
-            }})
-            this.titleExcel = '';
-            for (let index = 0; index < this.excelData.length; index++) {
-                  if(this.excelData[index].status === true){
-                    this.excelData[index].status = 'Explained';
-                  }else{
-                    this.excelData[index].status = ' ';
-                  }
-              }                    
+            this.titleExcel = '';                   
              
             if (this.userName != undefined) {
               this.titleExcel += 'Account: ' + this.userName 
@@ -671,17 +624,18 @@ export default {
             }
           } else {
             console.log(2)
-            this.tableData = []
-            this.totalPages = 0
+            this.excelData = []
+            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
           }
         },
         (err) => {
           console.log(3)
-          this.tableData = []
-          this.totalPages = 0
+          this.excelData = []
+          this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
           this.notifyError(err.error.error)
         }
       )
+      //search list
       await this.$services.monthly.searchMonthlyReport(
         params,
         (response) => {

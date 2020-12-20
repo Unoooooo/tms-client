@@ -4,7 +4,7 @@
       <section class="group-filter">
         <div class="pc-hidden">
           <el-input
-            v-model="fullnameSearch"
+            v-model="userName"
             :disabled="$authInfo.role() == constant.Role.STAFF"
             placeholder="Account"
             class="input-search"
@@ -57,7 +57,7 @@
           <el-button
             class="button-delete-multi"
             type="primary"
-            @click="getListAbsenceRequest(page, size)"
+            @@click="fetch()"
           >
             <i class="el-icon-refresh"></i>
           </el-button>
@@ -148,7 +148,8 @@
             <el-button
               v-if="
                 scope.row.status == 'Pending' &&
-                scope.row.account_sent !== user.username
+                scope.row.account_sent !== user.username && 
+                $authInfo.role() !== constant.Role.HR
               "
               class="button-action"
               type="warning"
@@ -159,7 +160,8 @@
             <el-button
               v-if="
                 scope.row.status == 'Pending' &&
-                scope.row.account_sent !== user.username
+                scope.row.account_sent !== user.username&& 
+                $authInfo.role() !== constant.Role.HR
               "
               class="button-action"
               type="danger"
@@ -643,7 +645,7 @@ export default {
       multipleSelection: [],
       totalPages: 1,
       page: 1,
-      size: 20,
+      size: undefined,
     }
   },
   watch: {
@@ -683,14 +685,20 @@ export default {
     this.getUserInfo()
   },
   methods: {
-    
+    fetch() {
+        this.userName = ''
+        this.groupSearch = ''
+        this.startDate = ''
+        this.endDate = ''
+        this.getListAbsenceRequest(1, this.size)
+      },
      async getListAbsenceRequest(page, size) {
        let params = {
         page: page - 1,
         size: size
       }
-      if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
-        filterObj.userName = this.fullnameSearch.trim()
+      if (!this.userName.length == 0 || this.userName.trim()) {
+        filterObj.userName = this.userName.trim()
       }
        if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
         params.groupId = this.groupSearch
@@ -766,8 +774,8 @@ export default {
         page: 0,
         size: this.size
       }
-     if(this.fullnameSearch.trim() !== '') {
-        params.userName = this.fullnameSearch
+     if(this.userName.trim() !== '') {
+        params.userName = this.userName
       }
       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
         params.groupId = this.groupSearch
@@ -786,6 +794,11 @@ export default {
             console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
+             this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
+
           } else {
             console.log(2)
             this.tableData = []

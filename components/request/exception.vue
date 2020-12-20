@@ -4,14 +4,14 @@
       <section class="group-filter">
         <div class="pc-hidden">
           <el-input
-            v-model="fullnameSearch"
+            v-model="userName"
             :disabled="$authInfo.role() == constant.Role.STAFF"
             placeholder="Account"
             class="input-search"
             clearable
           />
 
-          <el-input
+          <!-- <el-input
             v-model="groupSearch"
             :disabled="
               $authInfo.role() == constant.Role.STAFF ||
@@ -20,7 +20,7 @@
             placeholder="Group"
             class="input-search"
             clearable
-          />
+          /> -->
 
           <el-date-picker
             v-model="startDate"
@@ -51,7 +51,7 @@
           <el-button
             class="button-delete-multi"
             type="primary"
-            @click="getListException(page, size)"
+            @click="fetch()"
           >
             <i class="el-icon-refresh"></i>
           </el-button>
@@ -544,7 +544,7 @@ export default {
       checkList: [],
       tableData: [],
       groupSearch: '',
-      fullnameSearch: '',
+      userName: '',
       startDate: '',
       endDate: '',
       dialogFormWithInput: false,
@@ -624,24 +624,60 @@ export default {
     this.getListExceptionalCaseType()
   },
   methods: {
+     fetch() {
+        this.userName = ''
+        this.groupSearch = ''
+        this.startDate = ''
+        this.endDate = ''
+        this.getListException(1, this.size)
+      },
     canSelectRow(row) {
       return row.account_sent === this.user.username && row.status == 'Pending'
     },
     async getListException(page, size) {
-      let params = {
+       let params = {
         page: page - 1,
-        size: size,
+        size: size
       }
-      await this.$services.exception.getListException(
-        params,
-        (response) => {
-          this.tableData = response.data
-          this.totalPages = response.totalPages
-        },
-        (err) => {
-          this.notifyError(err.error.error)
-        }
-      )
+      if (!this.userName.length == 0 || this.userName.trim()) {
+        filterObj.userName = this.userName.trim()
+      }
+       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
+        params.groupId = this.groupSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
+      }
+      if (this.$authInfo.roleValue() === 'staff') {
+        await this.$services.exception.getListException(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.tableData = response.data
+              this.totalPages = response.totalPages
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+      } else {
+        await this.$services.exception.getListException(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.tableData = response.data
+              this.totalPages = response.totalPages
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+      }
     },
     async getListExceptionalCaseType() {
       await this.$services.exception.getListExceptionalCaseType(
@@ -691,30 +727,49 @@ export default {
     },
     async searchException() {
       this.startLoading()
-      await this.$services.exception.searchException(
-        {
-          userName: this.fullnameSearch,
-          groupName: this.groupSearch,
-          startDate: this.startDate,
-          endDate: this.endDate,
-        },
+      let params = {
+        page: 0,
+        size: this.size
+      }
+     if(this.userName.trim() !== '') {
+        params.userName = this.userName
+      }
+      if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
+        params.groupId = this.groupSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
+      }
+      await this.$services.exception.getListException(
+        params,
         (response) => {
+          console.log(0)
           if (response.data && response.data.length > 0) {
+            console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
+
           } else {
+            console.log(2)
             this.tableData = []
             this.totalPages = 0
           }
-          this.endLoading()
         },
         (err) => {
+          console.log(3)
           this.tableData = []
           this.totalPages = 0
-          this.endLoading()
           this.notifyError(err.error.error)
         }
       )
+      this.endLoading()
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

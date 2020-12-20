@@ -4,7 +4,7 @@
       <section class="group-filter">
         <div class="pc-hidden">
           <el-input
-            v-model="fullnameSearch"
+            v-model="userName"
             :disabled="$authInfo.role() == constant.Role.STAFF"
             placeholder="Account"
             class="input-search"
@@ -39,7 +39,7 @@
           <el-button
             class="button-delete-multi"
             type="primary"
-            @click="getListExplanation(page, size)"
+            @click="fetch()"
           >
             <i class="el-icon-refresh"></i>
           </el-button>
@@ -221,7 +221,7 @@
               </div>
             </div>
           </div>
- <el-form v-else ref="dataForm" :rules="rules" :model="request">
+        <el-form v-else ref="dataForm" :rules="rules" :model="request">
             <el-row :gutter="20">
               <el-col :span="24">
                 <div class="form-group row">
@@ -468,7 +468,7 @@ export default {
       constant: Constant,
       tableData: [],
       groupSearch: '',
-      fullnameSearch: '',
+      userName: '',
       startDate: '',
       endDate: '',
       dialogFormWithInput: false,
@@ -538,24 +538,60 @@ export default {
     this.getUserInfo()
   },
   methods: {
+    fetch() {
+        this.userName = ''
+        this.groupSearch = ''
+        this.startDate = ''
+        this.endDate = ''
+        this.getListExplanation(1, this.size)
+      },
     canSelectRow(row) {
       return row.account_sent === this.user.username && row.status == 'Pending'
     },
     async getListExplanation(page, size) {
       let params = {
         page: page - 1,
-        size: size,
+        size: size
       }
-      await this.$services.explanation.getListExplanation(
-        params,
-        (response) => {
-          this.tableData = response.data
-          this.totalPages = response.totalPages
-        },
-        (err) => {
-          this.notifyError(err.error.error)
-        }
-      )
+       if (!this.userName.length == 0 || this.userName.trim()) {
+        filterObj.userName = this.userName.trim()
+      }
+       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
+        params.groupId = this.groupSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
+      }
+      if (this.$authInfo.roleValue() === 'staff') {
+        await this.$services.explanation.getListExplanation(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.tableData = response.data
+              this.totalPages = response.totalPages
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+      } else {
+        await this.$services.explanation.getListExplanation(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.tableData = response.data
+              this.totalPages = response.totalPages
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+      }
     },
     async getUserInfo() {
       await this.$services.common.getUserInfo(
@@ -593,31 +629,50 @@ export default {
       }
     },
     async searchExplanation() {
-      this.startLoading()
-      await this.$services.explanation.searchExplanation(
-        {
-          userName: this.fullnameSearch,
-          groupName: this.groupSearch,
-          startDate: this.startDate,
-          endDate: this.endDate,
-        },
+     this.startLoading()
+      let params = {
+        page: 0,
+        size: this.size
+      }
+     if(this.userName.trim() !== '') {
+        params.userName = this.userName
+      }
+      if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
+        params.groupId = this.groupSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
+      }
+      await this.$services.explanation.getListExplanation(
+        params,
         (response) => {
+          console.log(0)
           if (response.data && response.data.length > 0) {
+            console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
+
           } else {
+            console.log(2)
             this.tableData = []
             this.totalPages = 0
           }
-          this.endLoading()
         },
         (err) => {
+          console.log(3)
           this.tableData = []
           this.totalPages = 0
           this.notifyError(err.error.error)
-          this.endLoading()
         }
       )
+      this.endLoading()
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

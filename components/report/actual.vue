@@ -52,7 +52,7 @@
         <el-button
           class="button-delete-multi"
           type="primary"
-          @click="fetch()"
+         @click="fetch()"
         >
           <i class="el-icon-refresh"></i>
         </el-button>
@@ -310,14 +310,14 @@ export default {
         this.groupSearch = ''
         this.startDate = ''
         this.endDate = ''
-        this.getListAbnormal(1, this.size)
+        this.getListActual(1, this.size)
       },
     async getListActual(page, size) {
       let params = {
         page: page - 1,
         size: size
       }
-      if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
+      if (!this.userName.length == 0 || this.userName.trim()) {
         filterObj.userName = this.fullnameSearch.trim()
       }
       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {

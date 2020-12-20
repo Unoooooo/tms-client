@@ -4,7 +4,7 @@
       <section class="group-filter">
         <div class="pc-hidden">
           <el-input
-            v-model="fullnameSearch"
+            v-model="userName"
             :disabled="$authInfo.role() == constant.Role.STAFF"
             placeholder="Account"
             class="input-search"
@@ -40,7 +40,7 @@
           <el-button
             class="button-delete-multi"
             type="primary"
-            @click="getListRemoteRequest(page, size)"
+             @click="fetch()"
           >
             <i class="el-icon-refresh"></i>
           </el-button>
@@ -492,6 +492,7 @@ export default {
       groupSearch: '',
       user_name: '',
       fullnameSearch: '',
+      userName: '',
       start_date: '',
       end_date: '',
       dialogFormWithInput: false,
@@ -541,6 +542,13 @@ export default {
       new Date().toLocaleTimeString()
   },
   methods: {
+    fetch() {
+        this.userName = ''
+        this.groupSearch = ''
+        this.end_date = ''
+        this.start_date = ''
+        this.getListRemoteRequest(1, this.size)
+      },
     handleClickInputFile(e) {
       this.$refs.avatar.click()
     },
@@ -659,7 +667,7 @@ export default {
       this.startLoading()
       await this.$services.request.searchRemoteRequest(
         {
-          user_name: this.fullnameSearch,
+          user_name: this.userName,
           siteName: this.groupSearch,
           start_date: this.start_date,
           end_date: this.end_date,
@@ -668,6 +676,10 @@ export default {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
           } else {
             this.tableData = []
             this.totalPages = 0

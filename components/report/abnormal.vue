@@ -561,8 +561,8 @@ export default {
         page: page - 1,
         size: size
       }
-      if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
-        filterObj.userName = this.fullnameSearch.trim()
+      if (!this.userName.length == 0 || this.userName.trim()) {
+        filterObj.userName = this.userName.trim()
       }
        if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
         params.groupId = this.groupSearch
@@ -804,66 +804,6 @@ export default {
         params.endDate = this.endDate
       }
       await this.$services.abnormal.searchAbnormalRequest(
-        {
-            page: 0,
-            size: 1000,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            groupId: this.groupID,
-            userName: this.userName,
-        },
-        (response) => {
-          console.log(0)
-          if (response.data && response.data.length > 0) {
-            console.log(1)
-            this.excelData = response.data
-            this.totalPages = response.totalPages
-            this.page = 1
-            this.$router.push({name: this.$route.name, query: {
-              page: 1
-            }})
-            this.titleExcel = '';
-            for (let index = 0; index < this.excelData.length; index++) {
-                  if(this.excelData[index].status === true){
-                    this.excelData[index].status = 'Explained';
-                  }else{
-                    this.excelData[index].status = ' ';
-                  }
-              }                    
-             
-            if (this.userName != undefined) {
-              this.titleExcel += 'Account: ' + this.userName 
-            }
-            let groupLabel = '';
-            for (let index = 0; index < this.groups.length; index++) {
-              const element = this.groups[index];
-              if (element.value === this.groupSearch){
-                groupLabel = element.label
-              }
-            }
-            if (this.groupSearch != undefined) {
-              this.titleExcel += '| Group: ' + groupLabel 
-            }
-            if (this.startDate != undefined) {
-              this.titleExcel += '| Start Date: ' + this.startDate 
-            }
-            if (this.endDate != undefined) {
-              this.titleExcel += '| End Date:' + this.endDate 
-            }
-          } else {
-            console.log(2)
-            this.tableData = []
-            this.totalPages = 0
-          }
-        },
-        (err) => {
-          console.log(3)
-          this.tableData = []
-          this.totalPages = 0
-          this.notifyError(err.error.error)
-        }
-      )
-      await this.$services.abnormal.searchAbnormalRequest(
         params,
         (response) => {
           console.log(0)
@@ -875,34 +815,7 @@ export default {
             this.$router.push({name: this.$route.name, query: {
               page: 1
             }})
-            this.titleExcel = '';
-            for (let index = 0; index < this.tableData.length; index++) {
-                  if(this.tableData[index].status === true){
-                    this.tableData[index].status = 'Explained';
-                  }else{
-                    this.tableData[index].status = ' ';
-                  }
-              }                    
-             
-            if (this.userName != undefined) {
-              this.titleExcel += 'Account: ' + this.userName 
-            }
-            let groupLabel = '';
-            for (let index = 0; index < this.groups.length; index++) {
-              const element = this.groups[index];
-              if (element.value === this.groupSearch){
-                groupLabel = element.label
-              }
-            }
-            if (this.groupSearch != undefined) {
-              this.titleExcel += '| Group: ' + groupLabel 
-            }
-            if (this.startDate != undefined) {
-              this.titleExcel += '| Start Date: ' + this.startDate 
-            }
-            if (this.endDate != undefined) {
-              this.titleExcel += '| End Date:' + this.endDate 
-            }
+
           } else {
             console.log(2)
             this.tableData = []
