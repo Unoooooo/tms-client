@@ -395,22 +395,94 @@ export default {
     //   }, 300)
     // },
     async getListMonthly(page, size) {
-      this.startLoading()
-      let params = {
+       let params = {
         page: page - 1,
-        size: size,
-        startDate:this.startDate,
-        endDate: this.endDate,
-        groupId:this.groupID,
-        userName: this.userName
+        size: size
+      }
+      if (!this.fullnameSearch.length == 0 || this.fullnameSearch.trim()) {
+        filterObj.userName = this.fullnameSearch.trim()
+      }
+       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
+        params.groupId = this.groupSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
       }
       if (this.$authInfo.roleValue() === 'staff') {
+        //excel
+        await this.$services.monthly.getListMonthly(
+          {
+            page: 0,
+            size: 1000,
+            startDate: this.startDate,
+            endDate: this.endDate,
+            groupId: this.groupID,
+            userName: this.userName,
+          },
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
+              this.excelData = response.data
+              this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.excelData.length; index++) {
+                  if(this.excelData[index].status === true){
+                    this.excelData[index].status = 'Explained';
+                    console.log(this.excelData[index].status)
+                  }else{
+                    this.excelData[index].status = ' ';
+                  }
+              }
+              
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
+              }
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+        //list
         await this.$services.monthly.getListMonthly(
           params,
           (response) => {
             if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
               this.tableData = response.data
               this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                    console.log(this.tableData[index].status)
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }
+              
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
+              }
             }
           },
           (err) => {
@@ -418,12 +490,85 @@ export default {
           }
         )
       } else {
+        //excel
+        await this.$services.monthly.getListMonthly(
+          {
+            page: 0,
+            size: 1000,
+            startDate: this.startDate,
+            endDate: this.endDate,
+            groupId: this.groupID,
+            userName: this.userName,
+          },
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
+              this.excelData = response.data
+              this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.excelData.length; index++) {
+                  if(this.excelData[index].status === true){
+                    this.excelData[index].status = 'Explained';
+                  }else{
+                    this.excelData[index].status = ' ';
+                  }
+              }
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
+              }
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+        //list
         await this.$services.monthly.getListMonthly(
           params,
           (response) => {
             if (response.data && response.data.length > 0) {
+              this.titleExcel = '';
               this.tableData = response.data
+              // let temp = {}
+              // let count = 0
+              // this.tableData.forEach((item, index)=> {
+              //   if(item.accountId === this.user.account_Id) {
+              //     temp = item
+              //     count ++
+              //     this.tableData.splice(index, 1)
+              //   } 
+              // })
+              // for(let i=0; i<count;i++) {
+              //   this.tableData.unshift(temp)
+              // }
               this.totalPages = response.totalPages
+              this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+
+              for (let index = 0; index < this.tableData.length; index++) {
+                  if(this.tableData[index].status === true){
+                    this.tableData[index].status = 'Explained';
+                  }else{
+                    this.tableData[index].status = ' ';
+                  }
+              }
+              this.json_fields = {
+                'STT': 'stt',
+                'Account': 'userName',
+                'Group': 'groupName',
+                'Date': 'dateTimeSheet',
+                'Check In': 'checkInTime',
+                'Check Out': 'checkOutTime',
+                'Abnormal Type': 'abnormalType',
+                'Status': 'status'
+              }
             }
           },
           (err) => {
@@ -431,9 +576,6 @@ export default {
           }
         )
       }
-      setTimeout(() => {
-        this.endLoading()
-      }, 300)
     },
     async getListGroupMonthly() {
       await this.$services.monthly.getListGroupMonthly(
