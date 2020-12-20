@@ -122,7 +122,20 @@
           class-name="text-left"
           prop="type"
           :label="$t('Request Type')"
+          width="150px"
         />
+        <el-table-column class-name="text-center" :label="$t('Start Date')">
+          <template slot-scope="{ row }">
+            {{
+              row.start_date ? showDateTime(row.start_date, 'DD/MM/YYYY') : ''
+            }}
+          </template>
+        </el-table-column>
+        <el-table-column class-name="text-center" :label="$t('End Date')">
+          <template slot-scope="{ row }">
+            {{ row.end_date ? showDateTime(row.end_date, 'DD/MM/YYYY') : '' }}
+          </template>
+        </el-table-column>
 
         <el-table-column
           class-name="text-left"

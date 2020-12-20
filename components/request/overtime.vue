@@ -291,12 +291,14 @@
                     default-first-option
                     placeholder="Select Member"
                     class="col-sm-8"
+                    :disabled="isDetailForm"
                   >
                     <el-option
                       v-for="(member, index) in members"
                       :key="index"
                       :label="member.username"
                       :value="member.username"
+                      
                     >
                     </el-option>
                   </el-select>
@@ -641,6 +643,14 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
+      handleInfo(index, row) {
+      this.titlePopup = 'View OverTime Request'
+      this.dialogMode = 'detail'
+      this.isDetailForm = true
+      this.dialogFormWithInput = true
+      this.request = Object.assign({}, row)
+      this.rowSelected = index + 1
+    },
     handleUpdate(index, row) {
       this.request = Object.assign({}, row)
       this.isDetailForm = false
@@ -653,14 +663,7 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    handleInfo(index, row) {
-      this.titlePopup = 'View OverTime Request'
-      this.dialogMode = 'detail'
-      this.isDetailForm = true
-      this.dialogFormWithInput = true
-      this.request = Object.assign({}, row)
-      this.rowSelected = index + 1
-    },
+  
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
