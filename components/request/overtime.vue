@@ -4,7 +4,7 @@
       <section class="group-filter">
         <div class="pc-hidden">
           <el-input
-            v-model="fullnameSearch"
+            v-model="userName"
             :disabled="$authInfo.role() == constant.Role.STAFF"
             placeholder="Account"
             class="input-search"
@@ -47,14 +47,14 @@
           <el-button
             class="button-delete-multi"
             type="primary"
-            @click="getListOTRequest(page, size)"
+            @click="fetch()"
           >
             <i class="el-icon-refresh"></i>
           </el-button>
           <el-button
             v-if="$authInfo.role() !== constant.Role.MANAGER"
             class="gr-button"
-            @click="handleCreate()"
+           @click="fetch()"
           >
             {{ $t('Add request') }}
           </el-button>
@@ -482,7 +482,7 @@ export default {
       constant: Constant,
       tableData: [],
       projectSearch: '',
-      fullnameSearch: '',
+      userName: '',
       startDate: '',
       endDate: '',
       dialogFormWithInput: false,
@@ -542,6 +542,13 @@ export default {
     this.getUserInfo()
   },
   methods: {
+     fetch() {
+        this.userName = ''
+        this.projectSearch = ''
+        this.startDate = ''
+        this.endDate = ''
+        this.getListOTRequest(1, this.size)
+      },
     canSelectRow(row) {
       return row.account_sent === this.user.username && row.status == 'Pending'
     },
@@ -550,16 +557,45 @@ export default {
         page: page - 1,
         size: size,
       }
-      await this.$services.request.getListOTRequest(
-        params,
-        (response) => {
-          this.tableData = response.data
-          this.totalPages = response.totalPages
-        },
-        (err) => {
-          this.notifyError(err.error.error)
-        }
-      )
+     if (!this.userName.length == 0 || this.userName.trim()) {
+        params.userName = this.userName.trim()
+      }
+       if(this.projectSearch !== '' && !this.projectSearch == 0 ) {
+        params.projectName = this.projectSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
+      }
+      if (this.$authInfo.roleValue() === 'staff') {
+        await this.$services.request.getListOTRequest(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.tableData = response.data
+              this.totalPages = response.totalPages
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+      } else {
+        await this.$services.request.getListOTRequest(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.tableData = response.data
+              this.totalPages = response.totalPages
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+      }
     },
     async listDataOtRequest() {
       await this.$services.request.listDataOtRequest(
@@ -583,30 +619,49 @@ export default {
     },
     async searchOtRequest() {
       this.startLoading()
-      await this.$services.request.searchOtRequest(
-        {
-          userName: this.fullnameSearch,
-          projectName: this.projectSearch,
-          startDate: this.startDate,
-          endDate: this.endDate,
-        },
+      let params = {
+        page: 0,
+        size: this.size
+      }
+     if(this.userName.trim() !== '') {
+        params.userName = this.userName
+      }
+      if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
+        params.groupId = this.groupSearch
+      }
+      if(this.startDate && this.startDate.trim() !== '') {
+        params.startDate = this.startDate
+      }
+      if(this.endDate && this.endDate.trim() !== '') {
+        params.endDate = this.endDate
+      }
+      await this.$services.request.getListOTRequest(
+        params,
         (response) => {
+          console.log(0)
           if (response.data && response.data.length > 0) {
+            console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
+
           } else {
+            console.log(2)
             this.tableData = []
             this.totalPages = 0
           }
-          this.endLoading()
         },
         (err) => {
+          console.log(3)
           this.tableData = []
           this.totalPages = 0
-          this.endLoading()
           this.notifyError(err.error.error)
         }
       )
+      this.endLoading()
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

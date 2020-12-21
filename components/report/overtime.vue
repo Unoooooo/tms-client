@@ -464,7 +464,7 @@ export default {
         size: size
       }
      if (!this.userName.length == 0 || this.userName.trim()) {
-        filterObj.userName = this.userName.trim()
+        params.userName = this.userName.trim()
       }
       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
         params.groupId = this.groupSearch

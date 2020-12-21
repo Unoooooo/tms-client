@@ -531,7 +531,7 @@ export default {
       multipleSelection: [],
       totalPages: 1,
       page: 1,
-      size: undefined,
+      size: 5,
     }
   },
   async created() {
@@ -557,12 +557,13 @@ export default {
         this.getListAbnormal(1, this.size)
       },
      async getListAbnormal(page, size) {
+       console.log(1)
       let params = {
         page: page - 1,
         size: size
       }
       if (!this.userName.length == 0 || this.userName.trim()) {
-        filterObj.userName = this.userName.trim()
+        params.userName = this.userName.trim()
       }
        if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
         params.groupId = this.groupSearch
@@ -576,14 +577,7 @@ export default {
       if (this.$authInfo.roleValue() === 'staff') {
         //excel
         await this.$services.abnormal.getListAbnormal(
-          {
-            page: 0,
-            size: 1000,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            groupId: this.groupID,
-            userName: this.userName,
-          },
+          params,
           (response) => {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
@@ -654,14 +648,7 @@ export default {
       } else {
         //excel
         await this.$services.abnormal.getListAbnormal(
-          {
-            page: 0,
-            size: 1000,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            groupId: this.groupID,
-            userName: this.userName,
-          },
+          params,
           (response) => {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
@@ -857,11 +844,9 @@ export default {
     changePageData(page) {
       this.getListAbnormal(page, this.size)
       this.page = page
-      const roleValue = this.$authInfo.roleValue()
-      this.$router.push({
-        name: `${roleValue}-report-abnormal`,
-        query: { page, size: this.size },
-      })
+      this.$router.push({name: this.$route.name, query: {
+        page: page
+      }})
     },
     resetUserData() {
       this.request = {

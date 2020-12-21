@@ -582,21 +582,6 @@ export default {
         }
       )
     },
-    // handleFileUpload() {
-    //   alert('aaa')
-    //   if (info.file.status === 'uploading') {
-    //     this.loading = true;
-    //     return;
-    //   }
-    //   if (info.file.status === 'done') {
-    //     // Get this url from response in real world.
-    //     getBase64(info.file.originFileObj, imageUrl => {
-    //       this.imageUrl = imageUrl;
-    //       this.loading = false;
-    //     });
-    //   }
-    // },
-
     handleFileUpload() {
       this.imageUrl = this.$refs.avatar.files[0]
       console.log(this.imageUrl, 'a')
@@ -606,22 +591,49 @@ export default {
       }
     },
     async getListRemoteRequest(page, size) {
-      let params = {
+       let params = {
         page: page - 1,
-        size: size,
+        size: size
       }
-      await this.$services.request.getListRemoteRequest(
-        params,
-        (response) => {
-          if (response.data && response.data.length > 0) {
-            this.tableData = response.data
-            this.totalPages = response.totalPages
+      if (!this.userName.length == 0 || this.userName.trim()) {
+        params.user_name = this.userName.trim()
+      }
+       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
+        params.groupId = this.groupSearch
+      }
+      if(this.start_date && this.start_date.trim() !== '') {
+        params.start_date = this.start_date
+      }
+      if(this.end_date && this.end_date.trim() !== '') {
+        params.end_date = this.end_date
+      }
+      if (this.$authInfo.roleValue() === 'staff') {
+        await this.$services.request.getListRemoteRequest(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.tableData = response.data
+              this.totalPages = response.totalPages
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
           }
-        },
-        (err) => {
-          this.notifyError(err.error.error)
-        }
-      )
+        )
+      } else {
+        await this.$services.request.getListRemoteRequest(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.tableData = response.data
+              this.totalPages = response.totalPages
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+      }
     },
     async getUserInfo() {
       await this.$services.common.getUserInfo(
@@ -664,35 +676,50 @@ export default {
       }
     },
     async searchRemoteRequest() {
-      this.startLoading()
-      await this.$services.request.searchRemoteRequest(
-        {
-          user_name: this.userName,
-          siteName: this.groupSearch,
-          start_date: this.start_date,
-          end_date: this.end_date,
-        },
+     this.startLoading()
+      let params = {
+        page: 0,
+        size: this.size
+      }
+     if(this.userName.trim() !== '') {
+        params.user_name = this.userName
+      }
+      if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
+        params.groupId = this.groupSearch
+      }
+      if(this.start_date && this.start_date.trim() !== '') {
+        params.start_date = this.start_date
+      }
+      if(this.end_date && this.end_date.trim() !== '') {
+        params.end_date = this.end_date
+      }
+      await this.$services.request.getListRemoteRequest(
+        params,
         (response) => {
+          console.log(0)
           if (response.data && response.data.length > 0) {
+            console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
             this.page = 1
             this.$router.push({name: this.$route.name, query: {
               page: 1
             }})
+
           } else {
+            console.log(2)
             this.tableData = []
             this.totalPages = 0
           }
-          this.endLoading()
         },
         (err) => {
+          console.log(3)
           this.tableData = []
           this.totalPages = 0
           this.notifyError(err.error.error)
-          this.endLoading()
         }
       )
+      this.endLoading()
     },
     getAvatar(image) {
       this.startLoading()
