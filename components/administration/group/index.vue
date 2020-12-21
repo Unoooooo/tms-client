@@ -305,11 +305,16 @@ export default {
     this.getListStaff()
   },
   methods: {
-     fetch() {
+     async fetch() {
         this.groupSearch = ''
-        this.getListGroup(1, this.size)
+        await this.getListGroup(1, this.size)
+        this.page = 1
+        this.$router.push({name: this.$route.name, query: {
+          page: 1
+        }})
       },
     async getListGroup(page, size) {
+      this.tableData = []
       let params = {
         page: page - 1,
         size: size,

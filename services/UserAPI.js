@@ -3,7 +3,7 @@ import BaseService from './BaseService'
 export default class UserAPI extends BaseService {
   async getListUser(params, success, error) {
     await this.get(
-      `accounts?page=${params.page}&size=${params.size}`,
+      `accounts/search?${this.urlParse(params)}`,
       success,
       error
     )
@@ -41,9 +41,9 @@ export default class UserAPI extends BaseService {
     this.delete('accounts/' + username, {}, success, error)
   }
 
-  async searchUser(username, groupname, params, success, error) {
-    this.get(
-      `accounts/search?username=${username}&groupname=${groupname}${params}`,
+  async searchUser(params, success, error) {
+    await this.get(
+      `accounts/search?${this.urlParse(params)}`,
       success,
       error
     )

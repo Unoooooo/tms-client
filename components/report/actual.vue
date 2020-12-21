@@ -287,7 +287,7 @@ export default {
       multipleSelection: [],
       totalPages: 1,
       page: 1,
-      size: 4
+      size: undefined
     }
   },
   async created() {

@@ -542,17 +542,23 @@ export default {
     this.getUserInfo()
   },
   methods: {
-     fetch() {
+     async fetch() {
         this.userName = ''
         this.projectSearch = ''
         this.startDate = ''
         this.endDate = ''
-        this.getListOTRequest(1, this.size)
+        await this.getListOTRequest(1, this.size)
+        this.page = 1
+        this.$router.push({name: this.$route.name, query: {
+          page: 1
+        }})
+        
       },
     canSelectRow(row) {
       return row.account_sent === this.user.username && row.status == 'Pending'
     },
     async getListOTRequest(page, size) {
+      this.tableData = []
       let params = {
         page: page - 1,
         size: size,
@@ -704,6 +710,7 @@ export default {
       this.isDetailForm = true
       this.dialogFormWithInput = true
       this.request = Object.assign({}, row)
+      this.addMemberToGroup.checkedMembers = [...row.listUsernameWithOt]
       this.rowSelected = index + 1
     },
     handleUpdate(index, row) {

@@ -92,6 +92,7 @@
           class-name="text-left"
           prop="type"
           :label="$t('Abnormal Type')"
+          width="160px"
         />
         <el-table-column
           class-name="text-center"
@@ -221,7 +222,7 @@
               </div>
             </div>
           </div>
-        <el-form v-else ref="dataForm" :rules="rules" :model="request">
+        <el-form v-else ref="dataForm" :rules="rules" :model="explanation">
             <el-row :gutter="20">
               <el-col :span="24">
                 <div class="form-group row">
@@ -759,7 +760,7 @@ export default {
       })
     },
     handleUpdate(index, row) {
-      this.exception = Object.assign({}, row)
+      this.explanation = Object.assign({}, row)
       this.dialogMode = 'update'
       this.titlePopup = 'Edit Explanation'
       this.dialogFormWithInput = true

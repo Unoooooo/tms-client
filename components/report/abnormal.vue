@@ -690,18 +690,7 @@ export default {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
               this.tableData = response.data
-              // let temp = {}
-              // let count = 0
-              // this.tableData.forEach((item, index)=> {
-              //   if(item.accountId === this.user.account_Id) {
-              //     temp = item
-              //     count ++
-              //     this.tableData.splice(index, 1)
-              //   } 
-              // })
-              // for(let i=0; i<count;i++) {
-              //   this.tableData.unshift(temp)
-              // }
+            
               this.totalPages = response.totalPages
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
 

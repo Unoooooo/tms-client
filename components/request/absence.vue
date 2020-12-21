@@ -105,6 +105,7 @@
           class-name="text-left"
           prop="type"
           :label="$t('Request Type')"
+          width="160px"
         />
         <el-table-column class-name="text-center" :label="$t('Start Date')">
           <template slot-scope="{ row }">
@@ -797,7 +798,6 @@ export default {
         (response) => {
           console.log(0)
           if (response.data && response.data.length > 0) {
-            console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
             this.page = 1

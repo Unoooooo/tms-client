@@ -3,7 +3,7 @@ import BaseService from './BaseService'
 export default class SiteAPI extends BaseService {
   async getListSite(params, success, error) {
     await this.get(
-      `sites?page=${params.page}&size=${params.size}`,
+      `sites/search?${this.urlParse(params)}`,
       success,
       error
     )
@@ -24,7 +24,11 @@ export default class SiteAPI extends BaseService {
   async deleteSite(siteName, success, error) {
     this.delete(`sites/${siteName}`, {}, success, error)
   }
-  async searchSite(sitename, params, success, error) {
-    this.get(`sites/search?sitename=${sitename}${params}`, success, error)
+  async searchSite(params, success, error) {
+    await this.get(
+      `sites/search?${this.urlParse(params)}`,
+      success,
+      error
+    )
   }
 }

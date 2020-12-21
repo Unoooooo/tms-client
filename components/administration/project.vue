@@ -303,12 +303,17 @@ export default {
     this.getListGroup()
   },
   methods: {
-     fetch() {
+     async fetch() {
         this.groupSearch= ''
         this.projectSearch = ''
-        this.getListProject(1, this.size)
+        await this.getListProject(1, this.size)
+        this.page = 1
+        this.$router.push({name: this.$route.name, query: {
+          page: 1
+        }})
       },
     async getListProject(page, size) {
+      this.tableData = []
       let params = {
         page: page - 1,
         size,

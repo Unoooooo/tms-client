@@ -52,19 +52,21 @@
           class-name="text-center"
           prop="stt"
           :label="$t('STT')"
-          width="80px"
+          width="60px"
         />
         <el-table-column
           class-name="text-left"
           prop="username"
           sortable
           :label="$t('Account')"
+          width="150px"
         />
 
         <el-table-column
           class-name="text-left"
           prop="full_name"
           :label="$t('Full Name')"
+          width="250px"
         />
         <el-table-column
           class-name="text-left"
@@ -81,12 +83,14 @@
           class-name="text-right"
           :label="$t('Phone')"
           prop="mobile"
+          width="120px"
         />
         <el-table-column
           class-name="text-left"
           prop="status"
           sortable
           :label="$t('Status')"
+          width="120px"
         >
           <template slot-scope="{ row }">
             {{ row.status ? 'Active' : 'Deactive' }}
@@ -726,10 +730,14 @@ export default {
     this.getListGroup()
   },
   methods: {
-    fetch() {
+    async fetch() {
         this.accountSearch = ''
         this.groupSearch = ''
-        this.getListUser(1, this.size)
+         await this.getListUser(1, this.size)
+        this.page = 1
+        this.$router.push({name: this.$route.name, query: {
+          page: 1
+        }})
       },
     getAvatar(image) {
       this.$services.common.getAvatar(
@@ -745,7 +753,10 @@ export default {
       )
     },
     async getListUser(page, size) {
+      this.tableData = []
       let params = {
+        username: this.accountSearch,
+        groupname: this.groupSearch,
         page: page - 1,
         size: size,
       }
@@ -780,10 +791,13 @@ export default {
     },
     async searchUser() {
       this.loading = true
+      this.page = 0
       await this.$services.user.searchUser(
-        this.accountSearch,
-        this.groupSearch,
-        '',
+        {
+          username: this.accountSearch,
+          groupname: this.groupSearch,
+          page: 0,
+        },
         (response) => {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data

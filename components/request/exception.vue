@@ -827,9 +827,11 @@ export default {
     },
     async handleUpdate(index, row) {
       this.exception = Object.assign({}, row)
-      this.checkList = await this.progressListTime(
-        this.exception.part_time_infor
-      )
+      if (this.exception.part_time_infor) {
+        this.checkList = await this.progressListTime(
+          this.exception.part_time_infor
+        )
+      }
       this.isDetailForm = false
       this.dialogMode = 'update'
       this.titlePopup = 'Edit Exception Case Request'
@@ -839,12 +841,17 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    handleInfo(index, row) {
+    async handleInfo(index, row) {
       this.titlePopup = 'View Exception Case Request'
       this.dialogMode = 'detail'
       this.isDetailForm = true
       this.dialogFormWithInput = true
       this.exception = Object.assign({}, row)
+      if (this.exception.part_time_infor) {
+        this.checkList = await this.progressListTime(
+          this.exception.part_time_infor
+        )
+      }
       this.rowSelected = index + 1
     },
     progressListTime(data) {

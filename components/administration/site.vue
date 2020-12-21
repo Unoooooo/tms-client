@@ -321,40 +321,62 @@ export default {
     this.getListSite(this.page, this.size)
   },
   methods: {
-    fetch() {
+    async fetch() {
         this.siteSearch= ''
-        this.getListSite(1, this.size)
+        await this.getListSite(1, this.size)
+        this.page = 1
+        this.$router.push({name: this.$route.name, query: {
+          page: 1
+        }})
       },
     async getListSite(page, size) {
-      let params = {
+      this.tableData = []
+       let params = {
         page: page - 1,
-        size,
+        size: size,
+        sitename: this.siteSearch,
+
       }
-      this.loading = true
-      await this.$services.site.getListSite(
-        params,
-        (response) => {
-          if (response.data && response.data.length > 0) {
-            this.tableData = response.data
-            this.totalPages = response.totalPages
-            this.sites = response.data.map((item) => {
-              return { label: item.name, value: item.site_id }
-            })
+      if (!this.siteSearch.length == 0 || this.siteSearch.trim()) {
+        params.sitename = this.siteSearch.trim()
+      }
+      if (this.$authInfo.roleValue() === 'staff') {
+        await this.$services.site.getListSite(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.tableData = response.data
+              this.totalPages = response.totalPages
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
           }
-          this.loading = false
-        },
-        (err) => {
-          this.notifyError(err.error.error)
-          this.loading = false
-        }
-      )
+        )
+      } else {
+        await this.$services.site.getListSite(
+          params,
+          (response) => {
+            if (response.data && response.data.length > 0) {
+              this.tableData = response.data
+              this.totalPages = response.totalPages
+            }
+          },
+          (err) => {
+            this.notifyError(err.error.error)
+          }
+        )
+      }
     },
 
     async searchSite() {
       this.loading = true
+      this.page = 0
       await this.$services.site.searchSite(
-        this.siteSearch,
-        '',
+         {
+          sitename: this.siteSearch,
+          page: 0,
+        },
         (response) => {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
