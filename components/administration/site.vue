@@ -1,5 +1,5 @@
 <template>
-  <section-block title="Manage Site">
+  <section-block title="Site Management">
     <div>
       <section class="project-filter">
         <el-input
