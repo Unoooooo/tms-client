@@ -27,7 +27,7 @@
         <el-button
           class="button-delete-multi"
           type="primary"
-          @click="getListUser(page, size)"
+          @click="fetch()"
         >
           <i class="el-icon-refresh"></i>
         </el-button>
@@ -726,6 +726,11 @@ export default {
     this.getListGroup()
   },
   methods: {
+    fetch() {
+        this.accountSearch = ''
+        this.groupSearch = ''
+        this.getListUser(1, this.size)
+      },
     getAvatar(image) {
       this.$services.common.getAvatar(
         image,
@@ -783,6 +788,10 @@ export default {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
           } else {
             this.tableData = []
             this.totalPages = 0

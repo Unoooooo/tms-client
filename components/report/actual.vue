@@ -52,7 +52,7 @@
         <el-button
           class="button-delete-multi"
           type="primary"
-         @click="fetch()"
+          @click="fetch()"
         >
           <i class="el-icon-refresh"></i>
         </el-button>
@@ -287,7 +287,7 @@ export default {
       multipleSelection: [],
       totalPages: 1,
       page: 1,
-      size: undefined,
+      size: 4
     }
   },
   async created() {
@@ -299,26 +299,31 @@ export default {
     if (query.size) {
       this.size = query.size
     }
-    await this.getUserInfo()
     await this.getListActual(this.page, this.size)
+    await this.getUserInfo()
     await this.getListGroupActual()
     // await this.getListGroupAbnormal()
   },
   methods: {
-    fetch() {
+    async fetch() {
         this.userName = ''
         this.groupSearch = ''
         this.startDate = ''
         this.endDate = ''
-        this.getListActual(1, this.size)
-      },
+        await this.getListActual(1, this.size)
+        this.page = 1
+        this.$router.push({name: this.$route.name, query: {
+          page: 1
+        }})
+    },
     async getListActual(page, size) {
+      this.tableData = []
       let params = {
         page: page - 1,
         size: size
       }
       if (!this.userName.length == 0 || this.userName.trim()) {
-        params.userName = this.fullnameSearch.trim()
+        params.userName = this.userName.trim()
       }
       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
         params.groupId = this.groupSearch
@@ -332,17 +337,11 @@ export default {
       if (this.$authInfo.roleValue() === 'staff') {
         //excel
         await this.$services.actual.getListActual(
-          {
-            page: 0,
-            size: 1000,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            groupId: this.groupID,
-            userName: this.userName,
-          },
+          params,
           (response) => {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
+              this.tableData = response.data
               this.excelData = response.data
               this.totalPages = response.totalPages
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
@@ -406,17 +405,11 @@ export default {
       } else {
         //excel
         await this.$services.actual.getListActual(
-          {
-            page: 0,
-            size: 1000,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            groupId: this.groupID,
-            userName: this.userName,
-          },
+          params,
           (response) => {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
+              this.tableData = response.data
               this.excelData = response.data
               this.totalPages = response.totalPages
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';

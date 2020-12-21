@@ -26,7 +26,7 @@
         <el-button
           class="button-delete-multi"
           type="primary"
-          @click="getListProject(page, size)"
+          @click="fetch()"
         >
           <i class="el-icon-refresh"></i>
         </el-button>
@@ -303,6 +303,11 @@ export default {
     this.getListGroup()
   },
   methods: {
+     fetch() {
+        this.groupSearch= ''
+        this.projectSearch = ''
+        this.getListProject(1, this.size)
+      },
     async getListProject(page, size) {
       let params = {
         page: page - 1,
@@ -355,6 +360,10 @@ export default {
           } else {
             this.tableData = []
             this.totalPages = 0
+            this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
           }
           this.loading = false
         },

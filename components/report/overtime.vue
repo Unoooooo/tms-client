@@ -451,14 +451,19 @@ export default {
     this.getListGroupOvertime()
   },
   methods: {
-  fetch() {
+  async fetch() {
         this.userName = ''
         this.groupSearch = ''
         this.startDate = ''
         this.endDate = ''
-        this.getListOvertime(1, this.size)
+        await this.getListOvertime(1, this.size)
+        this.page = 1
+        this.$router.push({name: this.$route.name, query: {
+          page: 1
+        }})
       },
     async getListOvertime(page, size) {
+      this.tableData = []
        let params = {
         page: page - 1,
         size: size

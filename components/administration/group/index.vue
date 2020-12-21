@@ -20,7 +20,7 @@
         <el-button
           class="button-delete-multi"
           type="primary"
-          @click="getListGroup(page, size)"
+          @click="fetch()"
         >
           <i class="el-icon-refresh"></i>
         </el-button>
@@ -305,6 +305,10 @@ export default {
     this.getListStaff()
   },
   methods: {
+     fetch() {
+        this.groupSearch = ''
+        this.getListGroup(1, this.size)
+      },
     async getListGroup(page, size) {
       let params = {
         page: page - 1,
@@ -340,6 +344,10 @@ export default {
           if (response.data && response.data.length > 0) {
             this.tableData = response.data
             this.totalPages = response.totalPages
+            this.page = 1
+            this.$router.push({name: this.$route.name, query: {
+              page: 1
+            }})
           } else {
             this.tableData = []
             this.totalPages = 0

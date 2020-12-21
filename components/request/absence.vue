@@ -57,7 +57,7 @@
           <el-button
             class="button-delete-multi"
             type="primary"
-            @@click="fetch()"
+            @click="fetch()"
           >
             <i class="el-icon-refresh"></i>
           </el-button>
@@ -271,6 +271,7 @@
                     <el-checkbox
                       v-model="late_checked"
                       :disabled="isDetailForm"
+                      @change="request.late_time = ''"
                     >
                       Late
                     </el-checkbox>
@@ -292,6 +293,7 @@
                     <el-checkbox
                       v-model="soon_checked"
                       :disabled="isDetailForm"
+                      @change="request.soon_time = ''"
                     >
                       Soon
                     </el-checkbox>
@@ -658,16 +660,16 @@ export default {
         this.disable = true
       }
     },
-    soon_checked(val) {
-      if (!val) {
-        this.request.soon_time = ''
-      }
-    },
-    late_checked(val) {
-      if (!val) {
-        this.request.late_time = ''
-      }
-    },
+    // soon_checked(val) {
+    //   if (!val) {
+    //     this.request.soon_time = ''
+    //   }
+    // },
+    // late_checked(val) {
+    //   if (!val) {
+    //     this.request.late_time = ''
+    //   }
+    // },
   },
   created() {
     const query = this.$route.query
@@ -684,14 +686,19 @@ export default {
     this.getUserInfo()
   },
   methods: {
-    fetch() {
+    async fetch() {
         this.userName = ''
         this.groupSearch = ''
         this.startDate = ''
         this.endDate = ''
-        this.getListAbsenceRequest(1, this.size)
+        await this.getListAbsenceRequest(1, this.size)
+        this.page = 1
+        this.$router.push({name: this.$route.name, query: {
+          page: 1
+        }})
       },
      async getListAbsenceRequest(page, size) {
+       this.tableData = []
        let params = {
         page: page - 1,
         size: size
@@ -793,7 +800,7 @@ export default {
             console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages
-             this.page = 1
+            this.page = 1
             this.$router.push({name: this.$route.name, query: {
               page: 1
             }})
@@ -924,7 +931,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const data = this.request
-          if (this.radioType === 1) {
+          if (data.type !== 'Check in/out') {
             delete data.late_time
             delete data.soon_time
           } else {
@@ -936,8 +943,9 @@ export default {
               delete data.late_time
             }
           }
+          console.log(data)
           this.$services.request.createAbsenceRequest(
-            this.request,
+            data,
             (res) => {
               this.getListAbsenceRequest(this.page, this.size)
               this.dialogFormWithInput = false
@@ -946,6 +954,7 @@ export default {
               this.late_checked = false
             },
             (err) => {
+              console.log(1)
               this.notifyError(err.error.error)
             }
           )

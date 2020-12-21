@@ -549,15 +549,19 @@ export default {
     await this.getListGroupAbnormal()
   },
   methods: {
-      fetch() {
+      async fetch() {
         this.userName = ''
         this.groupSearch = ''
         this.startDate = ''
         this.endDate = ''
-        this.getListAbnormal(1, this.size)
+        await this.getListAbnormal(1, this.size)
+        this.page = 1
+        this.$router.push({name: this.$route.name, query: {
+          page: 1
+        }})
       },
      async getListAbnormal(page, size) {
-       console.log(1)
+      this.tableData = []
       let params = {
         page: page - 1,
         size: size

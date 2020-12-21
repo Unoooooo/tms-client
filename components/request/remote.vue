@@ -542,12 +542,16 @@ export default {
       new Date().toLocaleTimeString()
   },
   methods: {
-    fetch() {
+    async fetch() {
         this.userName = ''
         this.groupSearch = ''
         this.end_date = ''
         this.start_date = ''
-        this.getListRemoteRequest(1, this.size)
+        await this.getListRemoteRequest(1, this.size)
+        this.page = 1
+        this.$router.push({name: this.$route.name, query: {
+          page: 1
+        }})
       },
     handleClickInputFile(e) {
       this.$refs.avatar.click()
@@ -591,6 +595,7 @@ export default {
       }
     },
     async getListRemoteRequest(page, size) {
+      this.tableData = []
        let params = {
         page: page - 1,
         size: size

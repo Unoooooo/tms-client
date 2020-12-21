@@ -538,17 +538,22 @@ export default {
     this.getUserInfo()
   },
   methods: {
-    fetch() {
+    async fetch() {
         this.userName = ''
         this.groupSearch = ''
         this.startDate = ''
         this.endDate = ''
-        this.getListExplanation(1, this.size)
+        await this.getListExplanation(1, this.size)
+        this.page = 1
+        this.$router.push({name: this.$route.name, query: {
+          page: 1
+        }})
       },
     canSelectRow(row) {
       return row.account_sent === this.user.username && row.status == 'Pending'
     },
     async getListExplanation(page, size) {
+      this.tableData = []
       let params = {
         page: page - 1,
         size: size

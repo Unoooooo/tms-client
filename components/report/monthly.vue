@@ -376,15 +376,20 @@ export default {
     this.getListGroupMonthly()
   },
   methods: {
-    fetch() {
+    async fetch() {
         this.userName = ''
         this.groupSearch = ''
         this.startDate = ''
         this.endDate = ''
-        this.getListMonthly(1, this.size)
+        await this.getListMonthly(1, this.size)
+        this.page = 1
+        this.$router.push({name: this.$route.name, query: {
+          page: 1
+        }})
       },
  
     async getListMonthly(page, size) {
+      this.tableData = []
        let params = {
         page: page - 1,
         size: size
