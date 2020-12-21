@@ -2,7 +2,7 @@ import BaseService from './BaseService'
 
 export default class ExceptionsAPI extends BaseService {
   async getListException(params, success, error) {
-    await this.get(`exceptions?${this.urlParse(params)}`, success, error)
+    await this.get(`exceptions/search?${this.urlParse(params)}`, success, error)
   }
 
   async getListAccountReceiver(success, error) {
@@ -18,7 +18,7 @@ export default class ExceptionsAPI extends BaseService {
   }
 
   async searchException(params, success, error) {
-    await this.post('exceptions/search', params, success, error)
+    await this.get(`exceptions/search?${this.urlParse(params)}`, success, error)
   }
 
   async updateException(params, success, error) {

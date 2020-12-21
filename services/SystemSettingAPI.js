@@ -25,12 +25,13 @@ export default class SystemSettingAPI extends BaseService {
     await this.put('settings/reset', {}, success, error)
   }
 
-  async jobTimeSheet(success, error) {
-    await this.get('test/job-time-sheet', success, error)
+  async jobTimeSheet(params,success, error) {
+    await this.get('test/job-time-sheet',params, success, error)
   }
 
   async rejectRequest(success, error) {
     await this.get('test/jobRejectRequest', success, error)
+    
   }
   async jobDashBoardStaff(success, error) {
     await this.get('test/jobDashBoardStaff', success, error)

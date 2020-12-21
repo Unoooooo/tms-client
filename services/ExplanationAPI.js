@@ -2,7 +2,7 @@ import BaseService from './BaseService'
 
 export default class ExplanationAPI extends BaseService {
   async getListExplanation(params, success, error) {
-    await this.get(`explanations?${this.urlParse(params)}`, success, error)
+    await this.get(`explanations/search?${this.urlParse(params)}`, success, error)
   }
 
   async getListAccountReceiver(success, error) {
@@ -14,7 +14,7 @@ export default class ExplanationAPI extends BaseService {
   }
 
   async searchExplanation(params, success, error) {
-    await this.post('explanations/search', params, success, error)
+    await this.get(`explanations/search?${this.urlParse(params)}`, success, error)
   }
 
   async updateExplanation(params, success, error) {

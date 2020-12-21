@@ -2,7 +2,11 @@ import BaseService from './BaseService'
 
 export default class RequestAPI extends BaseService {
   async getListAbsenceRequest(params, success, error) {
-    await this.get(`absences/search?${this.urlParse(params)}`, success, error)
+    await this.get(
+      `absences/search?${this.urlParse(params)}`,
+      success,
+      error
+    )
   }
   async getListGroupAbsence(params, success, error) {
     await this.get(`absences/list-group`, params, success, error)
@@ -32,7 +36,11 @@ export default class RequestAPI extends BaseService {
   }
 
   async searchAbsenceRequest(params, success, error) {
-    await this.get(`absences/search?${this.urlParse(params)}`, success, error)
+    await this.get(
+      `absences/search?${this.urlParse(params)}`,
+      success,
+      error
+    )
   }
 
   // async searchAbsenceRequest(
@@ -57,7 +65,7 @@ export default class RequestAPI extends BaseService {
 
   // OT resquest
   async getListOTRequest(params, success, error) {
-    await this.get(`overtimes?${this.urlParse(params)}`, success, error)
+    await this.get(`overtimes/search?${this.urlParse(params)}`, success, error)
   }
 
   async addOtRequest(params, success, error) {
@@ -69,7 +77,7 @@ export default class RequestAPI extends BaseService {
   }
 
   async searchOtRequest(params, success, error) {
-    await this.post('overtimes/search', params, success, error)
+    await this.get(`overtimes/search?${this.urlParse(params)}`, success, error)
   }
 
   async updateOtRequest(params, success, error) {
@@ -89,16 +97,19 @@ export default class RequestAPI extends BaseService {
 
   // Remote request
   async getListRemoteRequest(params, success, error) {
-    await this.post(
+    await this.get(
       `remote/search?${this.urlParse(params)}`,
-      params,
       success,
       error
     )
   }
 
   async searchRemoteRequest(params, success, error) {
-    await this.post('remote/search', params, success, error)
+    await this.get(
+      `remote/search?${this.urlParse(params)}`,
+      success,
+      error
+    )
   }
 
   async rejectCheckInRequest(params, success, error) {

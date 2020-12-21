@@ -5,14 +5,7 @@ export default class AbnormalAPI extends BaseService {
     await this.get(`abnormal-case/search?${this.urlParse(params)}`, success, error)
   }
 
-  // async getListAbnormalStaff(params, success, error) {
-  //   await this.post(
-  //     `abnormal-case/search`,
-  //     params,
-  //     success,
-  //     error
-  //   )
-  // }
+
   async getListGroupAbnormal(params, success, error) {
     await this.get(`abnormal-case/list-group`, params, success, error)
   }
