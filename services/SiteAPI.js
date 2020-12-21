@@ -8,6 +8,14 @@ export default class SiteAPI extends BaseService {
       error
     )
   }
+  async getListSiteRemote(params, success, error) {
+    await this.get(
+      `sites/search`,
+      params,
+      success,
+      error
+    )
+  }
 
   async createSite(params, success, error) {
     await this.post('sites/createSite', params, success, error)

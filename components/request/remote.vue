@@ -535,7 +535,7 @@ export default {
     }
     this.getListRemoteRequest(this.page, this.size)
     this.getUserInfo()
-    this.getListSite()
+    this.getListSiteRemote()
     this.dataString =
       new Date().toISOString().slice(0, 10) +
       ' ' +
@@ -567,13 +567,13 @@ export default {
         row.account_sent === this.user.user_name && row.status == 'Completed'
       )
     },
-    async getListSite(page, size) {
-      let params = {
-        page: page - 1,
-        size,
-      }
-      await this.$services.site.getListSite(
-        params,
+    async getListSiteRemote(page, size) {
+      // let params = {
+      //   page: page - 1,
+      //   size,
+      // }
+      await this.$services.site.getListSiteRemote(
+        // params,
         (response) => {
           if (response.data && response.data.length > 0) {
             this.sites = response.data.map((item) => {
@@ -595,7 +595,7 @@ export default {
       }
     },
     async getListRemoteRequest(page, size) {
-      this.tableData = []
+      
        let params = {
         page: page - 1,
         size: size

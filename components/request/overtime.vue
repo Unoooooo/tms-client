@@ -54,7 +54,7 @@
           <el-button
             v-if="$authInfo.role() !== constant.Role.MANAGER"
             class="gr-button"
-           @click="fetch()"
+           @click="handleCreate()"
           >
             {{ $t('Add request') }}
           </el-button>
