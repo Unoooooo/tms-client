@@ -12,7 +12,9 @@
 <style lang="scss" scoped>
 .page-login {
   height: 100vh;
-
+  background-image: url(~assets/img/login.jpg);
+  background-size: cover;
+ 
   &-box {
     position: absolute;
     width: 100%;
