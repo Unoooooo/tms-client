@@ -545,7 +545,7 @@ export default {
         excelParam.page = 0;
         excelParam.size = 1000;
         await this.$services.overtime.getListOvertime(
-         params,
+         excelParam,
           (response) => {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';

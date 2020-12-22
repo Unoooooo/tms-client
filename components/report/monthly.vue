@@ -653,14 +653,7 @@ export default {
             this.$router.push({name: this.$route.name, query: {
               page: 1
             }})
-            this.titleExcel = '';
-            for (let index = 0; index < this.tableData.length; index++) {
-                  if(this.tableData[index].status === true){
-                    this.tableData[index].status = 'Explained';
-                  }else{
-                    this.tableData[index].status = ' ';
-                  }
-              }                    
+            this.titleExcel = '';                   
              
             if (this.userName != undefined) {
               this.titleExcel += 'Account: ' + this.userName 

@@ -664,13 +664,7 @@ async fetch() {
               page: 1
             }})
             this.titleExcel = '';
-            for (let index = 0; index < this.tableData.length; index++) {
-                  if(this.tableData[index].status === true){
-                    this.tableData[index].status = 'Explained';
-                  }else{
-                    this.tableData[index].status = ' ';
-                  }
-              }                    
+                   
              
             if (this.userName != undefined) {
               this.titleExcel += 'Account: ' + this.userName 
