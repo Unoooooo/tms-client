@@ -1,67 +1,57 @@
 <template>
   <section-block title="Dashboard">
-     <el-row :gutter="12" class="row">
+    <el-row :gutter="12" class="row">
       <div class="column">
-        <el-card shadow="always"> 
+        <el-card shadow="always">
           <div class="number-req">
-            <label>{{ persionDataDashboard.personal_request }}</label>
+            <label>{{ dataDashboard.group_request }}</label>
             <i class="el-icon-folder-opened"></i>
           </div>
-          <label>Personal Request</label>
+          <label>Group Request</label>
         </el-card>
       </div>
       <div class="column">
         <el-card shadow="always">
           <div class="number-req">
-            <label>{{ persionDataDashboard.personal_absence }}</label>
+            <label>{{ dataDashboard.group_absence }}</label>
             <i class="el-icon-document"></i>
           </div>
-          <label>Personal Absence Request</label>
+          <label>Group Absence Request</label>
         </el-card>
       </div>
       <div class="column">
         <el-card shadow="always">
           <div class="number-req">
-            <label>{{ persionDataDashboard.personal_ot_request }}</label>
+            <label>{{ dataDashboard.group_ot_request }}</label>
             <i class="el-icon-timer"></i>
           </div>
-          <label>Personal OT Request</label>
+          <label>Group OT Request</label>
         </el-card>
       </div>
       <div class="column">
         <el-card shadow="always">
           <div class="number-req">
-            <label>{{ persionDataDashboard.personal_explaned }}</label>
+            <label>{{ dataDashboard.group_exception }}</label>
             <i class="el-icon-document"></i>
           </div>
-          <label>Personal Exception cases</label>
+          <label>Group Exception cases</label>
         </el-card>
-       </div>
+      </div>
       <div class="column">
         <el-card shadow="always">
           <div class="number-req">
-            <label>{{ persionDataDashboard.personal_exception }}</label>
+            <label>{{ dataDashboard.group_explaned }}</label>
             <i class="el-icon-document"></i>
           </div>
-          <label>Personal Explanation</label>
+          <label>Group Explanation</label>
         </el-card>
-       </div>
+      </div>
     </el-row>
-
     <div class="table-data">
       <section class="group-filter">
-        <label>Request Summary</label>
-        <el-select v-model="typeDashboard" placeholder="Group">
-          <el-option
-            v-for="item in groups"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-          </el-option>
-        </el-select>
+        <label>Group Request Summary</label>
       </section>
-      <div v-if="dataDashboard !== ''" class="container" style="max-width: 90%">
+      <div class="container" style="max-width: 90%">
         <div class="row">
           <div class="col-sm">
             <label class="title">Absence</label>
@@ -321,7 +311,6 @@
     </div>
   </section-block>
 </template>
-
 <style lang="scss" scoped>
 .row {
   display: flex;
@@ -336,7 +325,6 @@
     }
   }
 }
-
 .number-req {
   label {
     font-size: 30px;
@@ -415,26 +403,9 @@ export default {
   data() {
     return {
       dataDashboard: '',
-      persionDataDashboard: '',
       startDate: '',
       endDate: '',
-      typeDashboard: 1,
-      groups: [
-        {
-          label: 'Persional',
-          value: 1,
-        },
-        {
-          label: this.$authInfo.groupName(),
-          value: 0,
-        },
-      ],
     }
-  },
-  watch: {
-    typeDashboard() {
-      this.getData()
-    },
   },
   created() {
     this.getData()
@@ -442,37 +413,17 @@ export default {
   methods: {
     getData() {
       this.startLoading()
-      this.dataDashboard = ''
-      if (this.typeDashboard == 1) {
-        this.$services.dashboard.dashboardStaff(
-          this.$authInfo.id(),
-          (response) => {
-            if (response.data) {
-              this.dataDashboard = response.data
-              this.persionDataDashboard = response.data
-            }
-            this.endLoading()
-          },
-          (err) => {
-            this.notifyError(err.error.error)
-            this.endLoading()
-          }
-        )
-      } else {
-        this.$services.dashboard.dashboardManager(
-          this.$authInfo.id(),
-          (response) => {
-            if (response.data) {
-              this.dataDashboard = response.data
-            }
-            this.endLoading()
-          },
-          (err) => {
-            this.notifyError(err.error.error)
-            this.endLoading()
-          }
-        )
-      }
+      this.$services.dashboard.dashboardManager(
+        this.$authInfo.id(),
+        (response) => {
+          this.dataDashboard = response.data
+          this.endLoading()
+        },
+        (err) => {
+          this.notifyError(err.error.error)
+          this.endLoading()
+        }
+      )
     },
   },
 }

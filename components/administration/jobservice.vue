@@ -1,68 +1,94 @@
 <template>
   <div>
     <section-block title="Day Reincarnation" style="margin-top: 30px">
-       <table class="table">
+      <table class="table">
         <tr class="tr">
-            <th class="th" colspan="2">Job information </th>
+          <th class="th" colspan="2">Job information</th>
         </tr>
         <tr class="tr">
-            <td class="td">Có chắc là chia tay rồi mình sẽ không đau Có chắc là ta sẽ ko nhớ thương? Có chắc khi mỗi đêm về mình lang thang phố lạnh Và đội bàn tay không vô tình ôm vào hư không</td>
-            <td class="td"><el-button type="danger" @click="dailyTimesheet()">
-            DailyTimesheet
-          </el-button></td>
+          <td class="td">
+          The timeline of the default day from today.
+          </td>
+          <td class="td">
+            <el-button type="danger" @click="dailyTimesheet()">
+              DailyTimesheet
+            </el-button>
+            <el-date-picker
+              v-model="date"
+              type="date"
+              placeholder="Pick a day"
+              format="dd-MM-yyyy"
+              value-format="yyyy-MM-dd"
+              class="dateTime"
+            />
             
+          </td>
         </tr>
         <tr class="tr">
-            <td class="td">Có chắc là chia tay rồi mình sẽ không đau Có chắc là ta sẽ ko nhớ thương? Có chắc khi mỗi đêm về mình lang thang phố lạnh Và đội bàn tay không vô tình ôm vào hư không</td>
-            <td class="td"><el-button type="danger" @click="rejectRequest()">
-            Reject Request
-          </el-button></td>
-           
-        </tr>
-         <tr class="tr">
-            <td class="td">Có chắc là chia tay rồi mình sẽ không đau Có chắc là ta sẽ ko nhớ thương? Có chắc khi mỗi đêm về mình lang thang phố lạnh Và đội bàn tay không vô tình ôm vào hư không</td>
-            <td class="td"><el-button type="danger" @click="jobDashBoardStaff()">
-            DashBoard Staff
-          </el-button></td>
-           
-        </tr>
-         <tr class="tr">
-            <td class="td">Có chắc là chia tay rồi mình sẽ không đau Có chắc là ta sẽ ko nhớ thương? Có chắc khi mỗi đêm về mình lang thang phố lạnh Và đội bàn tay không vô tình ôm vào hư không</td>
-            <td class="td"><el-button type="danger" @click="jobDashBoardGroupManager()">
-            DashBoard Group Manager
-          </el-button></td>
-           
+          <td class="td">
+            The request is in the condition of the pending expired two days.
+          </td>
+          <td class="td">
+            <el-button type="danger" @click="rejectRequest()">
+              Reject Request
+            </el-button>
+          </td>
         </tr>
         <tr class="tr">
-            <td class="td">Có chắc là chia tay rồi mình sẽ không đau Có chắc là ta sẽ ko nhớ thương? Có chắc khi mỗi đêm về mình lang thang phố lạnh Và đội bàn tay không vô tình ôm vào hư không</td>
-            <td class="td"><el-button type="danger" @click="jobDashBoardAdminHr()">
-           DashBoard Admin-Hr
-          </el-button></td>
-           
+          <td class="td">
+            The request number and the request status of each staff.
+          </td>
+          <td class="td">
+            <el-button type="danger" @click="jobDashBoardStaff()">
+              DashBoard Staff
+            </el-button>
+          </td>
         </tr>
-        
-    </table>
-     </section-block>
-    
+        <tr class="tr">
+          <td class="td">
+           The request number and the request status of each group.
+          </td>
+          <td class="td">
+            <el-button type="danger" @click="jobDashBoardGroupManager()">
+              DashBoard Group Manager
+            </el-button>
+          </td>
+        </tr>
+        <tr class="tr">
+          <td class="td">
+           The total number of groups, sites, accounts, projects and the total number of requests that support hr and admin
+          </td>
+          <td class="td">
+            <el-button type="danger" @click="jobDashBoardAdminHr()">
+              DashBoard Admin-Hr
+            </el-button>
+          </td>
+        </tr>
+      </table>
+    </section-block>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.table{
+.table {
   border: 1px solid #000;
-  .tr{
-     border: 1px solid #000;
-     .td{
-        border: 1px solid #000;
-     }
-     .th{
-        border: 1px solid #000;
-        text-align: center;
-        font-size: 20px;
-        text-transform: uppercase;
-        
-     }
+  .tr {
+    border: 1px solid #000;
+    .td {
+      border: 1px solid #000;
+      
+    }
+    .th {
+      border: 1px solid #000;
+      text-align: center;
+      font-size: 20px;
+      text-transform: uppercase;
+    }
   }
+}
+.dateTime{
+  margin-bottom: 10px;
+  width: 137px;
 }
 .el-date-editor--time-select {
   margin-right: 15px;
@@ -135,6 +161,7 @@ export default {
     return {
       settingNormal: {},
       listDayOff: [],
+      date: '',
       multipleSelection: [],
       dialogFormAdd: false,
       addOff: {
@@ -329,16 +356,55 @@ export default {
         )
       })
     },
-    dailyTimesheet() {
+    // dailyTimesheet() {
+    //   let params = {
+    //     date: this.date,
+    //   }
+    //   if (!this.date.length == 0 || this.date.trim()) {
+    //     params.date = this.date.trim()
+    //   }
+    //   this.loading = true
+    //   this.$services.systemSetting.jobTimeSheet(
+    //     (res) => {
+    //       this.notifySuccess(res.message)
+    //     },
+    //     (err) => {
+    //       this.notifyError(err.error.error)
+    //     }
+    //   )
+    // },
+  dailyTimesheet() {
+  this.tableData = []
+      let params = {
+        date: this.date,
+      }
+      this.loading = true
       this.$services.systemSetting.jobTimeSheet(
-        (res) => {
-          this.notifySuccess(res.message)
+        params,
+        (response) => {
+          this.notifySuccess(response.message)
         },
         (err) => {
           this.notifyError(err.error.error)
+          this.loading = false
+          
         }
       )
     },
+    async getListGroup() {
+      await this.$services.group.getListGroup(
+        {},
+        (response) => {
+          if (response.data && response.data.length > 0) {
+            this.groups = response.data.map((item) => {
+              return { label: item.name, value: item.group_id }
+            })
+          }
+        },
+        (err) => this.notifyError(err.error.error)
+      )
+    },
+
     rejectRequest() {
       this.$services.systemSetting.rejectRequest(
         (res) => {
@@ -359,7 +425,7 @@ export default {
         }
       )
     },
-        jobDashBoardStaff() {
+    jobDashBoardStaff() {
       this.$services.systemSetting.jobDashBoardStaff(
         (res) => {
           this.notifySuccess(res.message)
@@ -369,7 +435,7 @@ export default {
         }
       )
     },
-      jobDashBoardAdminHr() {
+    jobDashBoardAdminHr() {
       this.$services.systemSetting.jobDashBoardAdminHr(
         (res) => {
           this.notifySuccess(res.message)

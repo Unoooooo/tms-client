@@ -111,6 +111,7 @@
       </el-table>
 
       <section>
+      
         <el-dialog
           :title="titlePopup"
           :visible.sync="dialogFormWithInput"

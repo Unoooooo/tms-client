@@ -505,13 +505,6 @@ async fetch() {
               this.excelData = response.data
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
 
-              for (let index = 0; index < this.excelData.length; index++) {
-                  if(this.excelData[index].status === true){
-                    this.excelData[index].status = 'Explained';
-                  }else{
-                    this.excelData[index].status = ' ';
-                  }
-              }
               this.json_fields = {
               'STT': 'stt',
               'Account': 'account',
@@ -540,13 +533,6 @@ async fetch() {
               this.totalPages = response.totalPages
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
 
-              for (let index = 0; index < this.tableData.length; index++) {
-                  if(this.tableData[index].status === true){
-                    this.tableData[index].status = 'Explained';
-                  }else{
-                    this.tableData[index].status = ' ';
-                  }
-              }
               this.json_fields = {
                 'STT': 'stt',
                 'Account': 'account',
@@ -653,13 +639,13 @@ async fetch() {
             }
           } else {
             console.log(2)
-            this.tableData = []
+            this.excelData = []
             this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
           }
         },
         (err) => {
           console.log(3)
-          this.tableData = []
+          this.excelData = []
           this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
           this.notifyError(err.error.error)
         }

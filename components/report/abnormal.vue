@@ -580,8 +580,11 @@ export default {
       }
       if (this.$authInfo.roleValue() === 'staff') {
         //excel
+        let excelParam = {...params};
+        excelParam.page = 0;
+        excelParam.size = 1000;
         await this.$services.abnormal.getListAbnormal(
-          params,
+          excelParam,
           (response) => {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
@@ -651,8 +654,11 @@ export default {
         )
       } else {
         //excel
+        let excelParam = {...params};
+        excelParam.page = 0;
+        excelParam.size = 1000;
         await this.$services.abnormal.getListAbnormal(
-          params,
+          excelParam,
           (response) => {
             if (response.data && response.data.length > 0) {
               this.titleExcel = '';
@@ -783,6 +789,31 @@ export default {
       if(this.endDate && this.endDate.trim() !== '') {
         params.endDate = this.endDate
       }
+      //excel
+      let excelParam = {...params};
+      excelParam.page = 0;
+      excelParam.size = 1000;
+      await this.$services.abnormal.searchAbnormalRequest(
+        excelParam,
+        (response) => {
+          console.log(0)
+          if (response.data && response.data.length > 0) {
+            console.log(1)
+            this.excelData = response.data
+          } else {
+            console.log(2)
+            this.excelData = []
+            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';           
+          }
+        },
+        (err) => {
+          console.log(3)
+          this.excelData = []
+          this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+          this.notifyError(err.error.error)
+        }
+      )
+      //list
       await this.$services.abnormal.searchAbnormalRequest(
         params,
         (response) => {

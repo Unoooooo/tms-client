@@ -704,7 +704,6 @@ export default {
         (err) => {
           console.log(3)
           this.excelData = []
-          this.totalPages = 0
           this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
         }
       )

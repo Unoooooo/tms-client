@@ -26,7 +26,12 @@ export default class SystemSettingAPI extends BaseService {
   }
 
   async jobTimeSheet(params,success, error) {
-    await this.get('test/job-time-sheet',params, success, error)
+    // await this.get('test/job-time-sheet',params, success, error)
+    await this.get(
+      `test/job-time-sheet?${this.urlParse(params)}`,
+      success,
+      error
+    )
   }
 
   async rejectRequest(success, error) {
