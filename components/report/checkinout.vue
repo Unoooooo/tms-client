@@ -31,7 +31,7 @@
         <el-date-picker
           v-model="startDate"
           type="date"
-          placeholder="Start date"
+          placeholder="Start Date"
           format="dd-MM-yyyy"
           value-format="yyyy-MM-dd"
           class="date-picker"
@@ -40,7 +40,7 @@
         <el-date-picker
           v-model="endDate"
           type="date"
-          placeholder="End date"
+          placeholder="End Date"
           format="dd-MM-yyyy"
           value-format="yyyy-MM-dd"
           class="date-picker"
@@ -370,11 +370,11 @@ export default {
       rules: {
         title: this.validateRequired('title'),
         groupCompany: this.validateRequired('groupCompany'),
-        late_time: this.validateRequired('late_time'),
-        soon_time: this.validateRequired('soon_time'),
-        start_date: this.validateRequired('start_date'),
-        end_date: this.validateRequired('end_date'),
-        account_receiver: this.validateRequired('account_receiver'),
+        late_time: this.validateRequired('late time'),
+        soon_time: this.validateRequired('soon time'),
+        start_date: this.validateRequired('start date'),
+        end_date: this.validateRequired('end date'),
+        account_receiver: this.validateRequired('account receiver'),
       },
       rowSelected: null,
       multipleSelection: [],
@@ -417,9 +417,13 @@ async fetch() {
        if (!this.userName.length == 0 || this.userName.trim()) {
         params.userName = this.userName.trim()
       }
-      if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
-        params.groupId = this.groupSearch
+      console.log('be',this.groupSearch)
+      if(this.groupSearch && !this.groupSearch== 0) {
+        if(this.groupSearch !== 0) {
+          params.groupId = this.groupSearch
+        }
       }
+
       if(this.startDate && this.startDate.trim() !== '') {
         params.startDate = this.startDate
       }
@@ -434,7 +438,7 @@ async fetch() {
         await this.$services.dailytimesheet.getListTimeSheet(
           excelParam,
           (response) => {
-            if (response.data && response.data.length > 0) {
+            if (response&& response.data && response.data.length > 0) {
               this.titleExcel = '';
               this.excelData = response.data
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
@@ -460,7 +464,7 @@ async fetch() {
         await this.$services.dailytimesheet.getListTimeSheet(
           params,
           (response) => {
-            if (response.data && response.data.length > 0) {
+            if (response&& response.data && response.data.length > 0) {
               this.titleExcel = '';
               this.tableData = response.data
               this.totalPages = response.totalPages
@@ -500,7 +504,7 @@ async fetch() {
         await this.$services.dailytimesheet.getListTimeSheet(
           excelParam,
           (response) => {
-            if (response.data && response.data.length > 0) {
+            if (response&& response.data && response.data.length > 0) {
               this.titleExcel = '';
               this.excelData = response.data
               this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
@@ -526,7 +530,7 @@ async fetch() {
         await this.$services.dailytimesheet.getListTimeSheet(
           params,
           (response) => {
-            if (response.data && response.data.length > 0) {
+            if (response&& response.data && response.data.length > 0) {
               this.titleExcel = '';
               this.tableData = response.data
            
@@ -552,13 +556,15 @@ async fetch() {
         )
       }  
     },
+    
     async getListGroupTimesheet() {
       await this.$services.dailytimesheet.getListGroupTimesheet(
         (response) => {
           if (response.listData && response.listData.length > 0) {
             this.groups = response.listData.map((item) => {
-              return { label: item.name, value: Number(item.group_id) }
+              return { label: item.name, value: item.group_id }
             })
+            console.log('â',this.groups)
           }
         },
         (err) => this.notifyError(err.error.error)
@@ -595,8 +601,12 @@ async fetch() {
       if(this.userName.trim() !== '') {
         params.userName = this.userName
       }
-       if(this.groupSearch !== '' && !this.groupSearch == 0 ) {
-        params.groupId = this.groupSearch
+      console.log('be',this.groupSearch)
+      console.log(new Date(this.endDate) - new Date(this.startDate))
+      if(this.groupSearch && !this.groupSearch== 0) {
+        if(this.groupSearch !== 0) {
+          params.groupId = this.groupSearch
+        }
       }
       if(this.startDate && this.startDate.trim() !== '') {
         params.startDate = this.startDate
@@ -612,7 +622,7 @@ async fetch() {
         excelParam,
         (response) => {
           console.log(0)
-          if (response.data && response.data.length > 0) {
+          if (response&& response.data && response.data.length > 0) {
             console.log(1)
             this.excelData = response.data
             this.titleExcel = '';                   
@@ -639,14 +649,14 @@ async fetch() {
           } else {
             console.log(2)
             this.excelData = []
-            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+            // this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
           }
         },
         (err) => {
           console.log(3)
           this.excelData = []
-          this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
-          this.notifyError(err.error.error)
+          // this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+          // this.notifyError(err.error.error)
         }
       )
       //search list
@@ -654,7 +664,7 @@ async fetch() {
         params,
         (response) => {
           console.log(0)
-          if (response.data && response.data.length > 0) {
+          if (response&& response.data && response.data.length > 0) {
             console.log(1)
             this.tableData = response.data
             this.totalPages = response.totalPages

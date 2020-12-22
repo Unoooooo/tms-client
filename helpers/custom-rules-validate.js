@@ -16,6 +16,7 @@ export default {
         },
       ]
     },
+  
     validatePassword() {
       return [
         { type: 'string' },

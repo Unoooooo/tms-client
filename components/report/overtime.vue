@@ -698,13 +698,13 @@ export default {
           } else {
             console.log(2)
             this.excelData = []
-            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+            // this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
           }
         },
         (err) => {
           console.log(3)
-          this.excelData = []
-          this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+          // this.excelData = []
+          // this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
         }
       )
       //search List

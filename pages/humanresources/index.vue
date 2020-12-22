@@ -271,7 +271,8 @@ export default {
       this.$services.dashboard.dashboardStaff(
         this.$authInfo.id(),
         (response) => {
-          this.dataDashboardStaff = response.data
+          this.dataDashboardStaff = response.data;
+          console.log(response.data)
           this.endLoading()
         },
         (err) => {

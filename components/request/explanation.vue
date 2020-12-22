@@ -14,7 +14,7 @@
           <el-date-picker
             v-model="startDate"
             type="date"
-            placeholder="Start date"
+            placeholder="Start Date"
             format="dd-MM-yyyy"
             value-format="yyyy-MM-dd"
             class="date-picker"
@@ -23,7 +23,7 @@
           <el-date-picker
             v-model="endDate"
             type="date"
-            placeholder="End date"
+            placeholder="End Date"
             format="dd-MM-yyyy"
             value-format="yyyy-MM-dd"
             class="date-picker"
@@ -236,14 +236,14 @@
             <el-row :gutter="20">
               <el-col :span="12">
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">Fullname</label>
+                  <label class="col-sm-4 col-form-label">FullName</label>
                   <el-form-item prop="full_name" class="col-sm-6">
                     <el-input v-model="user.full_name" disabled />
                   </el-form-item>
                 </div>
                 
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">Request type</label>
+                  <label class="col-sm-4 col-form-label">Request Type</label>
                   <el-form-item prop="abnormalType" class="col-sm-6">
                     <el-input v-model="explanation.type" disabled />
                   </el-form-item>
@@ -511,8 +511,8 @@ export default {
       },
       rules: {
         title: this.validateRequired('title'),
-        account_sent: this.validateRequired('account_sent'),
-        account_receiver: this.validateRequired('account_receiver'),
+        account_sent: this.validateRequired('account sent'),
+        account_receiver: this.validateRequired('account receiver'),
         project: this.validateRequired('project'),
         type: this.validateRequired('type'),
         mail_with: this.validateEmailAddress(),

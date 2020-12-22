@@ -517,10 +517,10 @@ export default {
       },
       rules: {
         title: this.validateRequired('title'),
-        account_sent: this.validateRequired('account_sent'),
-        account_receiver: this.validateRequired('account_receiver'),
+        account_sent: this.validateRequired('account sent'),
+        account_receiver: this.validateRequired('account receiver'),
         project: this.validateRequired('project'),
-        date_ot: this.validateRequired('date_ot'),
+        date_ot: this.validateRequired('date ot'),
       },
       rowSelected: null,
       multipleSelection: [],

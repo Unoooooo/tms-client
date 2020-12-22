@@ -14,7 +14,7 @@
           <el-date-picker
             v-model="start_date"
             type="date"
-            placeholder="Start date"
+            placeholder="Start Date"
             format="dd-MM-yyyy"
             value-format="yyyy-MM-dd"
             class="date-picker"
@@ -23,7 +23,7 @@
           <el-date-picker
             v-model="end_date"
             type="date"
-            placeholder="End date"
+            placeholder="End Date"
             format="dd-MM-yyyy"
             value-format="yyyy-MM-dd"
             class="date-picker"
@@ -816,17 +816,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.notifySuccess('coding')
-          // this.$services.checkIn.createUser(
-          //   { ...this.checkIn, password: Constant.PassWordDefault, status: true },
-          //   (res) => {
-          //     this.getListAbsenceRequest(this.page, this.size)
-          //     this.dialogFormWithInput = false
-          //     this.notifySuccess(res.message)
-          //   },
-          //   (err) => {
-          //     this.notifyError(err.error.error).error.error)
-          //   }
-          // )
+  
         }
       })
     },
@@ -834,21 +824,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.notifySuccess('coding')
-          // this.startLoading()
-          // this.$services.checkIn.updateUser(
-          //   this.checkIn.username,
-          //   this.checkIn,
-          //   (res) => {
-          //     this.getListAbsenceRequest(this.page, this.size)
-          //     this.dialogFormWithInput = false
-          //     this.notifySuccess(res.message)
-          //     this.endLoading()
-          //   },
-          //   (err) => {
-          //     this.endLoading()
-          //     this.notifyError(err.error.error).error.error)
-          //   }
-          // )
+  
         }
       })
     },
@@ -865,54 +841,10 @@ export default {
         }
       ).then(() => {
         this.notifySuccess('coding')
-        // this.startLoading()
-        // this.$services.checkIn.deleteUser(
-        //   row.username,
-        //   (res) => {
-        //     this.tableData.splice(index, 1)
-        //     this.notifySuccess(res.message)
-        //     this.endLoading()
-        //   },
-        //   (err) => {
-        //     this.endLoading()
-        //     this.notifyError(err.error.error).error.error)
-        //   }
-        // )
+  
       })
     },
-    handleDeleteMulti() {
-      this.$confirm(
-        this.$t('This will delete all the row selected. Continue?'),
-        this.$t('Confirm'),
-        {
-          confirmButtonText: this.$t('OK'),
-          cancelButtonText: this.$t('Cancel'),
-          type: 'warning',
-        }
-      ).then(() => {
-        this.startLoading()
-        this.notifySuccess('coding')
-        // for (let index = 0; index < this.multipleSelection.length; index++) {
-        //   const element = this.multipleSelection[index]
-        //   this.$services.checkIn.deleteUser(
-        //     element.username,
-        //     (res) => {
-        //       const data = this.tableData.filter(
-        //         (item) => item.username !== element.username
-        //       )
-        //       this.tableData = data
-        //       this.tableData = data
-        //       this.notifySuccess(res.message)
-        //     },
-        //     (err) => {
-        //       this.endLoading()
-        //       this.notifyError(err.error.error).error.error)
-        //     }
-        //   )
-        // }
-        this.endLoading()
-      })
-    },
+ 
   },
 }
 </script>

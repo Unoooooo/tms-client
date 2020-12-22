@@ -374,10 +374,16 @@ export default {
     //   )
     // },
   dailyTimesheet() {
+    console.log(this.date)
+    const getDate=()=>{
+      const today= new Date();
+      return `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`
+    }
   this.tableData = []
       let params = {
-        date: this.date,
+        date: this.date || getDate()
       }
+      
       this.loading = true
       this.$services.systemSetting.jobTimeSheet(
         params,

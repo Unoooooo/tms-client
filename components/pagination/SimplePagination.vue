@@ -37,7 +37,7 @@ export default {
       required: true,
     },
     value: {
-      type: String,
+      type: Number,
       required: true,
     },
   },

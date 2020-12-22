@@ -173,7 +173,7 @@
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column label="Inpermitted Leave Day" width="250">
+              <el-table-column label="Unpermitted Leave Day" width="250">
                 <template slot-scope="{ row }">
                   <i v-if="row.nonPaidLeave" class="el-icon-time"></i>
                   <span style="margin-left: 10px">
@@ -630,14 +630,14 @@ export default {
           } else {
             console.log(2)
             this.excelData = []
-            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+            // this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
           }
         },
         (err) => {
           console.log(3)
           this.excelData = []
-          this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
-          this.notifyError(err.error.error)
+          // this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+          // this.notifyError(err.error.error)
         }
       )
       //search list

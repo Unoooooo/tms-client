@@ -27,7 +27,7 @@
         <el-date-picker
           v-model="startDate"
           type="date"
-          placeholder="Start date"
+          placeholder="Start Date"
           format="dd-MM-yyyy"
           value-format="yyyy-MM-dd"
           class="date-picker"
@@ -36,7 +36,7 @@
         <el-date-picker
           v-model="endDate"
           type="date"
-          placeholder="End date"
+          placeholder="End Date"
           format="dd-MM-yyyy"
           value-format="yyyy-MM-dd"
           class="date-picker"
@@ -125,7 +125,7 @@
         <el-table-column
           class-name="text-left"
           prop="abnormalType"
-          :label="$t('Abnormal type')"
+          :label="$t('Abnormal Type')"
           width="160px"
         />
         <el-table-column
@@ -520,10 +520,10 @@ export default {
       rules: {
         title: this.validateRequired('title'),
         groupCompany: this.validateRequired('groupCompany'),
-        late_time: this.validateRequired('late_time'),
-        soon_time: this.validateRequired('soon_time'),
-        start_date: this.validateRequired('start_date'),
-        end_date: this.validateRequired('end_date'),
+        late_time: this.validateRequired('late time'),
+        soon_time: this.validateRequired('soon time'),
+        start_date: this.validateRequired('start date'),
+        end_date: this.validateRequired('end date'),
         account_receiver: this.validateRequired('account_receiver'),
         explanInTime: this.validateRequired('explan in time'),
         explanOutTime: this.validateRequired('explan out time'),
@@ -532,7 +532,7 @@ export default {
       multipleSelection: [],
       totalPages: 1,
       page: 1,
-      size: 5,
+      size: undefined,
     }
   },
   async created() {
@@ -831,14 +831,14 @@ export default {
           } else {
             console.log(2)
             this.excelData = []
-            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';           
+            // this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';           
           }
         },
         (err) => {
           console.log(3)
           this.excelData = []
-          this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
-          this.notifyError(err.error.error)
+          // this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+          // this.notifyError(err.error.error)
         }
       )
       //list

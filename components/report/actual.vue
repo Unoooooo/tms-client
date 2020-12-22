@@ -13,7 +13,7 @@
           v-model="groupSearch"
           class="table"
           placeholder="Group"
-          :disabled="$authInfo.role() == 4"
+          :disabled="$authInfo.role() == 4 || $authInfo.role() == 3"
         >
           <el-option
             v-for="(item, index) in groups"
@@ -27,7 +27,7 @@
         <el-date-picker
           v-model="startDate"
           type="date"
-          placeholder="Start date"
+          placeholder="Start Date"
           format="dd-MM-yyyy"
           value-format="yyyy-MM-dd"
           class="date-picker"
@@ -36,7 +36,7 @@
         <el-date-picker
           v-model="endDate"
           type="date"
-          placeholder="End date"
+          placeholder="End Date"
           format="dd-MM-yyyy"
           value-format="yyyy-MM-dd"
           class="date-picker"
@@ -122,7 +122,7 @@
           <el-table-column
           class-name="text-left"
           prop="checkPosition"
-          :label="$t('Loccation')"
+          :label="$t('Location')"
         />
       </el-table>
 
@@ -277,11 +277,11 @@ export default {
       rules: {
         title: this.validateRequired('title'),
         groupCompany: this.validateRequired('groupCompany'),
-        late_time: this.validateRequired('late_time'),
-        soon_time: this.validateRequired('soon_time'),
-        start_date: this.validateRequired('start_date'),
-        end_date: this.validateRequired('end_date'),
-        account_receiver: this.validateRequired('account_receiver'),
+        late_time: this.validateRequired('late time'),
+        soon_time: this.validateRequired('soon time'),
+        start_date: this.validateRequired('start date'),
+        end_date: this.validateRequired('end date'),
+        account_receiver: this.validateRequired('account receiver'),
       },
       rowSelected: null,
       multipleSelection: [],
@@ -565,14 +565,14 @@ export default {
           } else {
             console.log(2)
             this.excelData = []
-            this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+            // this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
           }
         },
         (err) => {
           console.log(3)
           this.excelData = []
-          this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
-          this.notifyError(err.error.error)
+          // this.titleExcel += 'Account: | Group: | Start Date: '+ response.startDate +'| End Date: '+ response.endDate + '';
+          // this.notifyError(err.error.error)
         }
       )
       //list

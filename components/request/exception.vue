@@ -11,21 +11,11 @@
             clearable
           />
 
-          <!-- <el-input
-            v-model="groupSearch"
-            :disabled="
-              $authInfo.role() == constant.Role.STAFF ||
-              $authInfo.role() == constant.Role.MANAGER
-            "
-            placeholder="Group"
-            class="input-search"
-            clearable
-          /> -->
-
+      
           <el-date-picker
             v-model="startDate"
             type="date"
-            placeholder="Start date"
+            placeholder="Start Date"
             format="dd-MM-yyyy"
             value-format="yyyy-MM-dd"
             class="date-picker"
@@ -34,7 +24,7 @@
           <el-date-picker
             v-model="endDate"
             type="date"
-            placeholder="End date"
+            placeholder="End Date"
             format="dd-MM-yyyy"
             value-format="yyyy-MM-dd"
             class="date-picker"
@@ -60,18 +50,11 @@
             @click="handleCreate()"
             v-if="$authInfo.role() !== constant.Role.MANAGER"
           >
-            {{ $t('Add request') }}
+            {{ $t('Add Request') }}
           </el-button>
         </div>
 
-        <!-- <div
-          v-if="$authInfo.role() !== constant.Role.MANAGER"
-          class="gr-button"
-        >
-          <el-button class="add-new" @click="handleCreate()">
-            {{ $t('Add request') }}
-          </el-button>
-        </div> -->
+       
       </section>
 
       <el-table
@@ -82,19 +65,7 @@
         class="table-serenade"
         @selection-change="handleSelectionChange"
       >
-        <!-- <el-table-column
-          :selectable="canSelectRow"
-          type="selection"
-          class-name="text-center"
-          width="60px"
-        />
-        <el-table-column class-name="text-center" :label="$t('Date')">
-          <template slot-scope="{ row }">
-            {{
-              row.created_at ? showDateTime(row.update_at, 'DD/MM/YYYY') : ''
-            }}
-          </template>
-        </el-table-column> -->
+        
         <el-table-column
           class-name="text-center"
           prop="stt"
@@ -148,11 +119,7 @@
           sortable
           :label="$t('Status')"
         />
-        <!-- <el-table-column
-          class-name="text-left"
-          prop="response_msg"
-          :label="$t('Message')"
-        /> -->
+   
         <el-table-column
           class-name="text-center"
           prop="action"
@@ -241,7 +208,7 @@
             <el-row :gutter="20">
               <el-col :span="12">
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">Fullname</label>
+                  <label class="col-sm-4 col-form-label">FullName</label>
                   <el-form-item prop="full_name" class="col-sm-6">
                     <el-input v-model="user.full_name" disabled />
                   </el-form-item>
@@ -260,11 +227,11 @@
                   </el-form-item>
                 </div>
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">Request type</label>
+                  <label class="col-sm-4 col-form-label">Request Type</label>
                   <el-form-item prop="type" class="col-sm-6">
                     <el-select
                       v-model="exception.type"
-                      placeholder="Abnormal type"
+                      placeholder="Abnormal Type"
                       :disabled="isDetailForm"
                     >
                       <el-option
@@ -332,7 +299,7 @@
               v-if="exception.type === 'Parttime working'"
               class="form-group row"
             >
-              <label class="col-sm-2 col-form-label">Choose day</label>
+              <label class="col-sm-2 col-form-label">Choose Day</label>
               <el-form-item prop="type" class="col-sm-9">
                 <el-checkbox-group v-model="checkList" :disabled="isDetailForm">
                   <el-checkbox
@@ -345,7 +312,7 @@
             </div>
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Note</label>
-              <el-form-item prop="title" class="col-sm-9">
+              <el-form-item prop="content" class="col-sm-9">
                 <el-input
                   v-model="exception.content"
                   :disabled="isDetailForm"

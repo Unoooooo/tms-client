@@ -283,7 +283,7 @@
                 </el-form-item>
               </div>
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Phone number</label>
+                <label class="col-sm-3 col-form-label">Phone Number</label>
                 <div class="dialog-alert">{{ $t('(*)') }}</div>
                 <el-form-item prop="mobile" class="col-sm-8">
                   <el-input v-model="user.mobile" disabled />
