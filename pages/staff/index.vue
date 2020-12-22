@@ -15,9 +15,8 @@
           <div class="number-req">
             <label>{{ dataDashboard.personal_absence }}</label>
             <i class="el-icon-document"></i>
-            
           </div>
-          <label><a href="http://localhost:3000/staff/request/absence">Personal Absence Request</a></label>
+          <label>Personal Absence Request</label>
         </el-card>
       </div>
       <div class="column">
