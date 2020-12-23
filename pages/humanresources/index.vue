@@ -41,7 +41,7 @@
           <label>Personal Absence Request</label>
         </el-card>
       </div>
-      <div class="column">
+      <!-- <div class="column">
         <el-card shadow="always">
           <div class="number-req">
             <label>{{ dataDashboardStaff.personal_ot_request }}</label>
@@ -49,7 +49,7 @@
           </div>
           <label>Personal OT Request</label>
         </el-card>
-      </div>
+      </div> -->
       <div class="column">
         <el-card shadow="always">
           <div class="number-req">
@@ -105,7 +105,7 @@
   flex-wrap: wrap;
   .column {
     padding: 0px 6px;
-    width: 20%;
+    width: 25%;
     margin-bottom: 10px;
     min-width: 200px;
     .el-card {
