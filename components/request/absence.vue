@@ -248,7 +248,7 @@
                   </el-form-item>
                 </div>
                 <div class="form-group row">
-                  <label class="col-sm-4 col-form-label">Request type</label>
+                  <label class="col-sm-4 col-form-label">Request Type</label>
                   <el-form-item prop="type" class="col-sm-6">
                     <el-select
                       v-model="request.type"

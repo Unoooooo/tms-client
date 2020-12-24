@@ -14,6 +14,7 @@
             placeholder="Account"
             class="input-search"
             clearable
+           
           />
 
           <el-button
@@ -33,17 +34,21 @@
               <i class="el-icon-delete"></i>
             </el-button> -->
 
-            <el-button class="add-new" @click="handleCreate()">
+            <el-button class="add-new"
+             @click="handleCreate()"
+               :disabled="$authInfo.role() == 3">
               {{ $t('Add member') }}
+              
             </el-button>
           </div>
         </section>
 
         <section>
           <el-dialog
-            title="Add member"
+            title="Add Member"
             :visible.sync="dialogFormWithInputNew"
             width="50%"
+            
           >
             <el-form ref="dataForm" :model="addMemberToGroup">
               
@@ -644,7 +649,7 @@ export default {
       await this.$services.user.getListMemberNonGroup(
         id,
         (response) => {
-          this.members = response.data
+          this.members = response.listData
         },
         (err) => this.notifyError(err.error.error)
       )

@@ -19,7 +19,7 @@ export default class UserAPI extends BaseService {
 
   async getListMemberNonGroup(id, success, error) {
     await this.get(
-      'accounts/list-account-non-belong-group/' + id,
+      'groups/addMember/form/' + id,
       success,
       error
     )

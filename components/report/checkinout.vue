@@ -136,13 +136,13 @@
         <el-table-column
           class-name="text-center"
           prop="work_day"
-          :label="$t('Work day')"
+          :label="$t('Work Day')"
           width="110px"
         />
         <el-table-column
           class-name="text-center"
           prop="work_time"
-          :label="$t('Work time')"
+          :label="$t('Work Time')"
           width="110px"
         />
       

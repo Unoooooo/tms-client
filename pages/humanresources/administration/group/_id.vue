@@ -1,5 +1,5 @@
 <template>
-  <section-block title="View Group">
+  <section-block title="View1111 Group">
     <section class="page-content">
       <div class="content">
         <el-row :gutter="20">
