@@ -351,9 +351,9 @@
 .maginAVT {
   margin-left: 30px;
 }
-.widthInput {
-  width: 210px;
-}
+// .widthInput {
+//   width: 210px;
+// }
 .avatar-uploader {
   margin: auto;
   max-width: 300px;
@@ -460,12 +460,13 @@ label {
 }
 @media screen and (max-width: 1370px) {
   .input-search {
-    width: 120px;
+    width: 150px;
     margin-bottom: 10px;
   }
   .date-picker {
-    width: 140px;
+    width: 150px;
     margin-bottom: 10px;
+    display: flex;
   }
 }
 </style>
