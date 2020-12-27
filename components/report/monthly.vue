@@ -818,8 +818,8 @@ export default {
       const temp = Object.assign({}, row)
       const dataRequest = {
         accountId: temp.account_id,
-        startDate: temp.startDate || null,
-        endDate: temp.endDate || null,
+        startDate: this.startDate || null,
+        endDate: this.endDate || null,
       }
       this.Monthly = Object.assign({}, row)
       console.log(index)
