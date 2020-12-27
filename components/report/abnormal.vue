@@ -545,9 +545,9 @@ export default {
       this.size = query.size
     }
     await this.getUserInfo()
+    await this.getListGroupAbnormal()
     await this.getListAbnormal(this.page, this.size)
     await this.getListAbnormalReceiver()
-    await this.getListGroupAbnormal()
   },
   methods: {
       async fetch() {

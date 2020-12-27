@@ -299,9 +299,9 @@ export default {
     if (query.size) {
       this.size = query.size
     }
+    await this.getListGroupActual()
     await this.getListActual(this.page, this.size)
     await this.getUserInfo()
-    await this.getListGroupActual()
     // await this.getListGroupAbnormal()
   },
   methods: {

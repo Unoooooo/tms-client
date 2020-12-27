@@ -393,8 +393,8 @@ export default {
       this.size = query.size
     }
     await this.getUserInfo()
-    await this.getListTimeSheet(this.page, this.size)
     await this.getListGroupTimesheet()
+    await this.getListTimeSheet(this.page, this.size)
   },
   methods: {
 async fetch() {

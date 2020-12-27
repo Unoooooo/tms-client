@@ -726,8 +726,9 @@ export default {
     if (query.size) {
       this.size = query.size
     }
-    this.getListUser(this.page, this.size)
     this.getListGroup()
+    this.getListUser(this.page, this.size)
+    
   },
   methods: {
     async fetch() {

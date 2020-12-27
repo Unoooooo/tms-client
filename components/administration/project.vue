@@ -300,8 +300,8 @@ export default {
     if (query.size) {
       this.size = query.size
     }
-    this.getListProject(this.page, this.size)
     this.getListGroup()
+    this.getListProject(this.page, this.size)
   },
   methods: {
      async fetch() {

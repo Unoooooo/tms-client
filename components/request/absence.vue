@@ -681,9 +681,9 @@ export default {
     if (query.size) {
       this.size = query.size
     }
+    this.getListGroupAbsence()
     this.getListAbsenceRequest(this.page, this.size)
     this.getTypeAbsenceRequest()
-    this.getListGroupAbsence()
     this.getUserInfo()
   },
   methods: {

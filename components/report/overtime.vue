@@ -446,9 +446,9 @@ export default {
     if (query.size) {
       this.size = query.size
     }
+    this.getListGroupOvertime()
     this.getListOvertime(this.page, this.size)
     this.getUserInfo()
-    this.getListGroupOvertime()
   },
   methods: {
   async fetch() {

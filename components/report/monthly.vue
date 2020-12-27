@@ -371,9 +371,9 @@ export default {
     if (query.size) {
       this.size = query.size
     }
+    this.getListGroupMonthly()
     this.getListMonthly(this.page, this.size)
     this.getUserInfo()
-    this.getListGroupMonthly()
   },
   methods: {
     async fetch() {
