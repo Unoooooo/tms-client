@@ -25,7 +25,7 @@
    font-size: 55px;
    font-weight: bold;
    color: #fff;
-   padding-top: 0px;
+   padding-top: 50px;
 
  }
  .design{
@@ -38,14 +38,12 @@
 // height: 100vh;
 //  background-image: url(~assets/img/login.jpg);
 //  background-size: cover;
-
-
   &-box {
     position: absolute;
     width: 100%;
     left: 50%;
     top: 50%;
-    transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-40%);
 
     .content {
       background: #fff;
@@ -84,6 +82,7 @@
       margin-bottom: 1.5rem;
       font-weight: bold;
     }
+
   }
 }
 }
