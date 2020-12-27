@@ -132,6 +132,7 @@
           class-name="text-center"
           prop="time_offical"
           :label="$t('Time Offical')"
+          width="130px"
         />
         <el-table-column
           class-name="text-center"
@@ -143,7 +144,7 @@
           class-name="text-center"
           prop="work_time"
           :label="$t('Work Time')"
-          width="110px"
+          width="120px"
         />
       
       </el-table>

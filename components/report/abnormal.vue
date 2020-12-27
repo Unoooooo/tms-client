@@ -88,7 +88,6 @@
         <el-table-column
           class-name="text-center"
           prop="userName"
-          sortable
           :label="$t('Account')"
         />
         <el-table-column

@@ -92,7 +92,6 @@
         <el-table-column
           class-name="text-left"
           prop="account"
-          sortable
           :label="$t('Account')"
         />
         <el-table-column

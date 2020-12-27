@@ -63,13 +63,11 @@
         <el-table-column
           class-name="text-left"
           prop="account_sent"
-          sortable
           :label="$t('Account')"
         />
         <el-table-column
           class-name="text-left"
           prop="title"
-          sortable
           :label="$t('Title')"
         />
     

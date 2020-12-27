@@ -70,19 +70,19 @@
           class-name="text-center"
           prop="stt"
           :label="$t('STT')"
-          width="80px"
+          width="60px"
         />
         <el-table-column
           class-name="text-left"
           prop="title"
-          sortable
           :label="$t('Title')"
+          width="200px"
         />
         <el-table-column
           class-name="text-left"
           prop="account_sent"
-          sortable
           :label="$t('Account')"
+          width="120px"
         />
         <el-table-column
           class-name="text-left"

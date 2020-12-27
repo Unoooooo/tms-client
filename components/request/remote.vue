@@ -76,13 +76,11 @@
         <el-table-column
           class-name="text-left"
           prop="account_sent"
-          sortable
           :label="$t('Account')"
         />
         <el-table-column
           class-name="text-left"
           prop="groupName"
-          sortable
           :label="$t('Group')"
         />
         <el-table-column
@@ -105,6 +103,7 @@
         <el-table-column
           class-name="text-left"
           prop="status"
+          sortable
           :label="$t('Status')"
         />
         <el-table-column

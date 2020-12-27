@@ -83,13 +83,13 @@
           class-name="text-center"
           prop="stt"
           :label="$t('STT')"
-          width="80px"
+          width="60px"
         />
         <el-table-column
           class-name="text-left"
           prop="title"
-          sortable
           :label="$t('Title')"
+          width="200px"
         />
         <el-table-column
           class-name="text-left"
@@ -105,9 +105,10 @@
           class-name="text-left"
           prop="type"
           :label="$t('Request Type')"
-          width="160px"
+          sortable
+          width="170px"
         />
-        <el-table-column class-name="text-center" :label="$t('Start Date')">
+        <el-table-column class-name="text-center"  :label="$t('Start Date')">
           <template slot-scope="{ row }">
             {{
               row.start_date ? showDateTime(row.start_date, 'DD/MM/YYYY') : ''

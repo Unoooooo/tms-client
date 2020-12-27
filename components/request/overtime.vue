@@ -78,13 +78,13 @@
         <el-table-column
           class-name="text-left"
           prop="title"
-          sortable
           :label="$t('Title')"
         />
         <el-table-column
           class-name="text-left"
           prop="account_sent"
           :label="$t('Account')"
+          width="150px"
         />
         <el-table-column
           class-name="text-left"
@@ -107,6 +107,7 @@
           prop="status"
           sortable
           :label="$t('Status')"
+          width="150px"
         />
         <el-table-column
           class-name="text-center"
