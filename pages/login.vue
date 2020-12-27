@@ -22,7 +22,7 @@
  .tms{
    text-align: center;
    text-transform: uppercase;
-   font-size: 55px;
+   font-size: 40px;
    font-weight: bold;
    color: #fff;
    padding-top: 50px;
