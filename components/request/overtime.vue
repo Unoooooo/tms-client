@@ -307,13 +307,13 @@
                 </div>
               </el-col>
             </el-row>
-            <el-form-item label="Note">
+            <!-- <el-form-item label="Note">
               <el-input
                 v-model="request.content"
                 :disabled="isDetailForm"
                 type="textarea"
               ></el-input>
-            </el-form-item>
+            </el-form-item> -->
           </el-form>
           <hr class="mb-0" />
           <span slot="footer" class="dialog-footer">
