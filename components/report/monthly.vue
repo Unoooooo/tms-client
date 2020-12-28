@@ -1,5 +1,5 @@
 <template>
-  <section-block title="Monthly Report">
+  <section-block title="Monthly Payroll Report">
     <div>
       <section class="group-filter">
         <el-input
